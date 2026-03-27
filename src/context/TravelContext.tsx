@@ -58,10 +58,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem('tripDetails');
     if (saved) {
       const parsed = JSON.parse(saved);
-      return {
-        ...parsed,
-        budget: Number(parsed.budget) || 0,
-      };
+      return { ...parsed, budget: Number(parsed.budget) || 0 };
     }
     return {
       departureCountry: '',

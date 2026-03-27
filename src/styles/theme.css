@@ -3,7 +3,6 @@
 :root {
   --font-size: 16px;
 
-  /* Colors - TripSync palette */
   --background: #2b4f4a;
   --foreground: #e8ddcb;
 
@@ -33,7 +32,6 @@
   --input-background: #23403c;
   --ring: #a7c58e;
 
-  /* Charts */
   --chart-1: #a7c58e;
   --chart-2: #5b8a6a;
   --chart-3: #e8ddcb;
@@ -42,7 +40,6 @@
 
   --radius: 1rem;
 
-  /* Sidebar */
   --sidebar: #2b4f4a;
   --sidebar-foreground: #e8ddcb;
   --sidebar-primary: #a7c58e;
@@ -102,25 +99,5 @@
   }
   html {
     font-size: var(--font-size);
-  }
-  h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.4;
-  }
-  h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.5;
   }
 }

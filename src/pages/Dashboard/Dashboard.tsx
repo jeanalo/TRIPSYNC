@@ -1,9 +1,7 @@
 import { useTravel } from '../../context/TravelContext';
 import { Link } from 'react-router-dom';
-import { Plane, Moon, Wallet, Map, ArrowRight, Clock, PiggyBank } from 'lucide-react';
-import { motion } from 'motion/react';
 
-export default function Dashboard() {
+const Dashboard = () => {
   const { user, tripDetails, expenses, experiences } = useTravel();
 
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
@@ -11,7 +9,6 @@ export default function Dashboard() {
   const budgetProgress = tripDetails.budget
     ? (totalSpent / Number(tripDetails.budget)) * 100
     : 0;
-
   const savedExperiences = experiences.filter((exp) => exp.saved);
 
   return (
@@ -21,21 +18,16 @@ export default function Dashboard() {
           Welcome back, {user?.name || 'Traveler'}
         </h1>
         <p className="text-foreground/70">
-          Here&apos;s what&apos;s happening with your trip to{' '}
+          Here's what's happening with your trip to{' '}
           {tripDetails.destinationCountry || 'your next destination'}.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {/* Trip Summary Card */}
-        <motion.div
-          whileHover={{ y: -5 }}
-          className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between"
-        >
+        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-primary/20 rounded-2xl text-primary">
-              <Plane className="w-6 h-6" />
-            </div>
+            <div className="p-3 bg-primary/20 rounded-2xl text-primary">✈️</div>
             {tripDetails.departureDate && (
               <span className="text-xs font-bold px-3 py-1 bg-secondary/20 text-secondary rounded-full">
                 Upcoming
@@ -55,23 +47,17 @@ export default function Dashboard() {
             </p>
             <Link
               to="/app/setup"
-              className="text-sm font-semibold text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+              className="text-sm font-semibold text-primary hover:text-primary/80"
             >
-              {tripDetails.destinationCountry ? 'Edit Details' : 'Start Planning'}{' '}
-              <ArrowRight className="w-4 h-4" />
+              {tripDetails.destinationCountry ? 'Edit Details →' : 'Start Planning →'}
             </Link>
           </div>
-        </motion.div>
+        </div>
 
         {/* Jet Lag Card */}
-        <motion.div
-          whileHover={{ y: -5 }}
-          className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between"
-        >
+        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-indigo-500/20 rounded-2xl text-indigo-400">
-              <Moon className="w-6 h-6" />
-            </div>
+            <div className="p-3 bg-indigo-500/20 rounded-2xl text-indigo-400">🌙</div>
           </div>
           <div>
             <h3 className="text-lg font-bold text-card-foreground mb-1">
@@ -82,22 +68,17 @@ export default function Dashboard() {
             </p>
             <Link
               to="/app/jet-lag"
-              className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
+              className="text-sm font-semibold text-indigo-400 hover:text-indigo-300"
             >
-              View Plan <ArrowRight className="w-4 h-4" />
+              View Plan →
             </Link>
           </div>
-        </motion.div>
+        </div>
 
         {/* Budget Card */}
-        <motion.div
-          whileHover={{ y: -5 }}
-          className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between"
-        >
+        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-500/20 rounded-2xl text-emerald-500">
-              <Wallet className="w-6 h-6" />
-            </div>
+            <div className="p-3 bg-emerald-500/20 rounded-2xl text-emerald-500">💰</div>
             <span className="text-sm font-bold text-card-foreground">
               ${remainingBudget.toFixed(0)} left
             </span>
@@ -112,22 +93,17 @@ export default function Dashboard() {
             </div>
             <Link
               to="/app/budget"
-              className="text-sm font-semibold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 transition-colors"
+              className="text-sm font-semibold text-emerald-500 hover:text-emerald-400"
             >
-              Manage Budget <ArrowRight className="w-4 h-4" />
+              Manage Budget →
             </Link>
           </div>
-        </motion.div>
+        </div>
 
         {/* Saved Experiences Card */}
-        <motion.div
-          whileHover={{ y: -5 }}
-          className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between"
-        >
+        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-amber-500/20 rounded-2xl text-amber-500">
-              <Map className="w-6 h-6" />
-            </div>
+            <div className="p-3 bg-amber-500/20 rounded-2xl text-amber-500">🗺️</div>
             <span className="text-sm font-bold text-card-foreground">
               {savedExperiences.length} Saved
             </span>
@@ -139,21 +115,18 @@ export default function Dashboard() {
             </p>
             <Link
               to="/app/experiences"
-              className="text-sm font-semibold text-amber-500 hover:text-amber-400 flex items-center gap-1 transition-colors"
+              className="text-sm font-semibold text-amber-500 hover:text-amber-400"
             >
-              Discover More <ArrowRight className="w-4 h-4" />
+              Discover More →
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Bottom section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-card rounded-3xl p-8 shadow-lg border border-border/10">
-          <div className="flex items-center gap-3 mb-6">
-            <Clock className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-bold text-card-foreground">Travel Tips</h2>
-          </div>
+          <h2 className="text-xl font-bold text-card-foreground mb-6">🕐 Travel Tips</h2>
           <div className="space-y-4">
             <div className="p-4 bg-background/50 rounded-2xl border border-border/10">
               <h4 className="font-bold text-foreground mb-1">Hydrate Often</h4>
@@ -171,10 +144,9 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-card rounded-3xl p-8 shadow-lg border border-border/10">
-          <div className="flex items-center gap-3 mb-6">
-            <PiggyBank className="w-6 h-6 text-secondary" />
-            <h2 className="text-xl font-bold text-card-foreground">Budget Status</h2>
-          </div>
+          <h2 className="text-xl font-bold text-card-foreground mb-6">
+            🐷 Budget Status
+          </h2>
           <div className="flex items-center justify-between mb-4">
             <span className="text-card-foreground/70">Total Budget</span>
             <span className="font-bold text-card-foreground">
@@ -193,4 +165,6 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

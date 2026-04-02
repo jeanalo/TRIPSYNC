@@ -106,6 +106,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-2 gap-[30px]">
           {/* Schedule Card */}
           <DetailCard delay={0.4}>
+            <div className="flex flex-col gap-6">
             <CardHeader
               icon={<CalendarDays size={24} />}
               title="Schedule"
@@ -143,10 +144,12 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
+            </div>
           </DetailCard>
 
           {/* Budget Card */}
           <DetailCard delay={0.5}>
+            <div className="flex flex-col gap-6">
             <CardHeader
               icon={<PieChart size={24} />}
               title="Budget"
@@ -180,6 +183,7 @@ const Dashboard = () => {
                   ${remainingBudget > 0 ? remainingBudget.toLocaleString() : '2.300'}
                 </span>
               </div>
+            </div>
             </div>
           </DetailCard>
         </div>

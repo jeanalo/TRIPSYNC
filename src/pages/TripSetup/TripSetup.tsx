@@ -1,0 +1,84 @@
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useTravel, TripDetails } from '../../context/TravelContext';
+import { MapPin, CalendarDays, CheckCircle } from 'lucide-react'; //Icons Library
+
+import PageHeader from '../../components/ui/PageHeader';
+import FormCard from '../../components/ui/FormCard';
+import FormField from '../../components/ui/FormField';
+import SubmitButton from '../../components/ui/SubmitButton';
+
+export default function TripSetup() {
+  const { tripDetails, setTripDetails } = useTravel();
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<TripDetails>({
+    defaultValues: tripDetails,
+  });
+
+  const onSubmit = (data: TripDetails) => {
+    setTripDetails(data);
+    navigate('/app');
+  };
+
+  return (
+    <div>
+      <PageHeader
+        title="Trip Setup"
+        subtitle="Enter your travel details to personalize your experience."
+      />
+
+      <div className="px-12">
+        <FormCard as="form" onSubmit={handleSubmit(onSubmit)} className="w-[803px]">
+          <div className="flex flex-col gap-[45px]">
+            {/* Row 1: Departure Country & Destination Country */}
+            <div className="grid grid-cols-2 gap-[65px]">
+              <FormField label="Departure Country" icon={<MapPin size={24} />}>
+                <input
+                  {...register('departureCountry')}
+                  placeholder="e.g. Cali, Colombia"
+                  required
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder-[#1CA698]/50 outline-none"
+                />
+              </FormField>
+
+              <FormField label="Destination Country" icon={<MapPin size={24} />}>
+                <input
+                  {...register('destinationCountry')}
+                  placeholder="e.g. Tokio, Japan"
+                  required
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder-[#1CA698]/50 outline-none"
+                />
+              </FormField>
+            </div>
+
+            {/* Row 2: Departure Date & Arrival Date */}
+            <div className="grid grid-cols-2 gap-[65px]">
+              <FormField label="Departure Date" icon={<CalendarDays size={24} />}>
+                <input
+                  type="date"
+                  {...register('departureDate')}
+                  required
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none"
+                />
+              </FormField>
+
+              <FormField label="Arrival Date" icon={<CalendarDays size={24} />}>
+                <input
+                  type="date"
+                  {...register('arrivalDate')}
+                  required
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none"
+                />
+              </FormField>
+            </div>
+
+            {/* Submit Button */}
+            <SubmitButton icon={<CheckCircle size={24} />}>
+              Save Trip Details
+            </SubmitButton>
+          </div>
+        </FormCard>
+      </div>
+    </div>
+  );
+}

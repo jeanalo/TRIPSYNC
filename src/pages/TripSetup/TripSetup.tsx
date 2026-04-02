@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useTravel, TripDetails } from '../../context/TravelContext';
 import { MapPin, CalendarDays, CheckCircle } from 'lucide-react'; //Icons Library
@@ -7,11 +7,12 @@ import PageHeader from '../../components/ui/PageHeader';
 import FormCard from '../../components/ui/FormCard';
 import FormField from '../../components/ui/FormField';
 import SubmitButton from '../../components/ui/SubmitButton';
+import CountrySelect from '../../components/ui/CountrySelect';
 
 export default function TripSetup() {
   const { tripDetails, setTripDetails } = useTravel();
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<TripDetails>({
+  const { register, handleSubmit, control } = useForm<TripDetails>({
     defaultValues: tripDetails,
   });
 
@@ -33,20 +34,32 @@ export default function TripSetup() {
             {/* Row 1: Departure Country & Destination Country */}
             <div className="grid grid-cols-2 gap-[65px]">
               <FormField label="Departure Country" icon={<MapPin size={24} />}>
-                <input
-                  {...register('departureCountry')}
-                  placeholder="e.g. Cali, Colombia"
-                  required
-                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder-[#1CA698]/50 outline-none"
+                <Controller
+                  name="departureCountry"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CountrySelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="e.g. Colombia"
+                    />
+                  )}
                 />
               </FormField>
 
               <FormField label="Destination Country" icon={<MapPin size={24} />}>
-                <input
-                  {...register('destinationCountry')}
-                  placeholder="e.g. Tokio, Japan"
-                  required
-                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder-[#1CA698]/50 outline-none"
+                <Controller
+                  name="destinationCountry"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CountrySelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="e.g. Japan"
+                    />
+                  )}
                 />
               </FormField>
             </div>

@@ -1,5 +1,34 @@
 const REST_COUNTRIES_BASE = 'https://restcountries.com/v3.1';
 
+export interface CountryOption {
+  name: string;
+  flag: string;
+  flagImg: string;
+}
+
+export async function fetchAllCountries(): Promise<CountryOption[]> {
+  try {
+    const response = await fetch(
+      `${REST_COUNTRIES_BASE}/all?fields=name,flags,flag`
+    );
+    if (!response.ok) throw new Error('Failed to fetch countries');
+
+    const data = await response.json();
+    const countries: CountryOption[] = data
+      .map((c: { name: { common: string }; flag?: string; flags?: { svg?: string; png?: string } }) => ({
+        name: c.name.common,
+        flag: c.flag || '',
+        flagImg: c.flags?.svg || c.flags?.png || '',
+      }))
+      .sort((a: CountryOption, b: CountryOption) => a.name.localeCompare(b.name));
+
+    return countries;
+  } catch (error) {
+    console.error('Error fetching countries list:', error);
+    return [];
+  }
+}
+
 export interface CountryData {
   name: string;
   capital: string;

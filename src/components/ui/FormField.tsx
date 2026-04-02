@@ -1,0 +1,44 @@
+import type { ReactNode } from 'react';
+
+const colorMap = {
+  teal: {
+    label: 'text-[#1CA698]',
+    border: 'border-[#1CA698]',
+    icon: 'text-[#1CA698]',
+  },
+  blue: {
+    label: 'text-[#0066D2]',
+    border: 'border-[#0066D2]',
+    icon: 'text-[#0066D2]',
+  },
+} as const;
+
+interface FormFieldProps {
+  label: string;
+  icon: ReactNode;
+  colorScheme?: 'teal' | 'blue';
+  children: ReactNode;
+}
+
+export default function FormField({
+  label,
+  icon,
+  colorScheme = 'teal',
+  children,
+}: FormFieldProps) {
+  const colors = colorMap[colorScheme];
+
+  return (
+    <div className="flex flex-col gap-[6px]">
+      <label className={`text-[20px] font-semibold leading-[36px] ${colors.label}`}>
+        {label}
+      </label>
+      <div
+        className={`flex h-[52px] items-center gap-5 rounded-[15px] border ${colors.border} bg-white pl-5 pr-6`}
+      >
+        <span className={`shrink-0 ${colors.icon}`}>{icon}</span>
+        {children}
+      </div>
+    </div>
+  );
+}

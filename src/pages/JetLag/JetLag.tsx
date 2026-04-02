@@ -13,6 +13,8 @@ import FormCard from '../../components/ui/FormCard';
 import FormField from '../../components/ui/FormField';
 import InfoField from '../../components/ui/InfoField';
 import SubmitButton from '../../components/ui/SubmitButton';
+import DetailCard from '../../components/ui/DetailCard';
+import CardHeader from '../../components/ui/CardHeader';
 
 type JetLagFormData = {
   departureTime: string;
@@ -147,22 +149,12 @@ export default function JetLag() {
         {/* Bottom Section: Flight Details + Recommendations */}
         <div className="flex gap-[44px]">
           {/* Flight Details Card */}
-          <motion.div
-            className="w-[389px] shrink-0 rounded-[15px] border-2 border-[#0066D2] px-[32px] py-[30px]"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
+          <DetailCard className="w-[389px] shrink-0" delay={0.3} animateFrom="left">
             <form onSubmit={handleSubmit} className="flex flex-col gap-[25px]">
-              {/* Card Header */}
-              <div className="flex items-center gap-5">
-                <div className="flex h-[55px] w-[55px] items-center justify-center rounded-[15px] bg-[#0066D2]">
-                  <CalendarClock size={24} className="text-white" />
-                </div>
-                <h2 className="text-[22px] font-bold leading-[36px] text-[#0066D2]">
-                  Flight Details
-                </h2>
-              </div>
+              <CardHeader
+                icon={<CalendarClock size={24} />}
+                title="Flight Details"
+              />
 
               {/* Departure Time */}
               <FormField
@@ -203,7 +195,7 @@ export default function JetLag() {
                 Generate Plan
               </SubmitButton>
             </form>
-          </motion.div>
+          </DetailCard>
 
           {/* Recommendations Card */}
           <motion.div

@@ -1,166 +1,187 @@
 import { useTravel } from '../../context/TravelContext';
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
+import {
+  Plane,
+  Moon,
+  CalendarDays,
+  Share2,
+  Map,
+  PieChart,
+} from 'lucide-react';
+
+import PageHeader from '../../components/ui/PageHeader';
+import DetailCard from '../../components/ui/DetailCard';
+import CardHeader from '../../components/ui/CardHeader';
 
 const Dashboard = () => {
-  const { user, tripDetails, expenses, experiences } = useTravel();
+  const { user, tripDetails, expenses, activities } = useTravel();
 
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remainingBudget = (Number(tripDetails.budget) || 0) - totalSpent;
-  const budgetProgress = tripDetails.budget
-    ? (totalSpent / Number(tripDetails.budget)) * 100
-    : 0;
-  const savedExperiences = experiences.filter((exp) => exp.saved);
+
+  // Quick-access cards data
+  const actionCards = [
+    {
+      to: '/app/setup',
+      icon: Plane,
+      title: 'Trip Setup',
+      subtitle: tripDetails.destinationCountry
+        ? `Trip to ${tripDetails.destinationCountry}`
+        : 'No trip scheduled',
+    },
+    {
+      to: '/app/jet-lag',
+      icon: Moon,
+      title: 'Jet Lag Assistant',
+      subtitle: 'Adjust your schedule',
+    },
+    {
+      to: '/app/experiences',
+      icon: Map,
+      title: 'Experiences',
+      subtitle: 'Explore activities',
+    },
+  ];
 
   return (
-    <div className="space-y-6 md:space-y-8">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          Welcome back, {user?.name || 'Traveler'}
-        </h1>
-        <p className="text-foreground/70">
-          Here's what's happening with your trip to{' '}
-          {tripDetails.destinationCountry || 'your next destination'}.
-        </p>
-      </div>
+    <div>
+      {/* Header row */}
+      <PageHeader
+        title={`Welcome back, ${user?.name || 'Pepito'}`}
+        subtitle={
+          <>
+            Here's what's happening with your trip to{' '}
+            {tripDetails.destinationCountry || 'your next destination'}.
+          </>
+        }
+        action={
+          <motion.button
+            className="flex items-center gap-2 rounded-[15px] border-none bg-[#0066D2] px-6 py-3 text-[16px] font-semibold text-white cursor-pointer transition-all duration-300 hover:bg-[#0055b0] hover:shadow-lg"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <Share2 size={20} />
+            Share Trip
+          </motion.button>
+        }
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        {/* Trip Summary Card */}
-        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-primary/20 rounded-2xl text-primary">✈️</div>
-            {tripDetails.departureDate && (
-              <span className="text-xs font-bold px-3 py-1 bg-secondary/20 text-secondary rounded-full">
-                Upcoming
-              </span>
-            )}
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-card-foreground mb-1">
-              {tripDetails.destinationCountry
-                ? `Trip to ${tripDetails.destinationCountry}`
-                : 'Plan a Trip'}
-            </h3>
-            <p className="text-sm text-card-foreground/60 mb-4">
-              {tripDetails.departureDate
-                ? `Departing on ${new Date(tripDetails.departureDate).toLocaleDateString()}`
-                : 'No trip scheduled'}
-            </p>
-            <Link
-              to="/app/setup"
-              className="text-sm font-semibold text-primary hover:text-primary/80"
-            >
-              {tripDetails.destinationCountry ? 'Edit Details →' : 'Start Planning →'}
-            </Link>
-          </div>
+      {/* Content area */}
+      <div className="flex flex-col gap-[30px] px-12">
+        {/* Top row */}
+        <div className="grid grid-cols-3 gap-[30px]">
+          {actionCards.map((card, i) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={card.to}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 * i }}
+              >
+                <Link to={card.to} className="block no-underline">
+                  <div className="flex h-[180px] flex-col justify-between rounded-[15px] bg-[#1CA698] p-[30px] transition-all duration-300 hover:shadow-lg hover:brightness-110">
+                    {/* Icon */}
+                    <div className="flex h-[50px] w-[50px] items-center justify-center rounded-[12px] bg-white/20">
+                      <Icon size={24} className="text-white" />
+                    </div>
+                    {/* Text */}
+                    <div>
+                      <h3 className="text-[22px] font-bold leading-[28px] text-white">
+                        {card.title}
+                      </h3>
+                      <p className="mt-1 text-[14px] leading-[20px] text-white/80">
+                        {card.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* Jet Lag Card */}
-        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-indigo-500/20 rounded-2xl text-indigo-400">🌙</div>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-card-foreground mb-1">
-              Jet Lag Assistant
-            </h3>
-            <p className="text-sm text-card-foreground/60 mb-4">
-              Adjust your sleep schedule before you fly.
-            </p>
-            <Link
-              to="/app/jet-lag"
-              className="text-sm font-semibold text-indigo-400 hover:text-indigo-300"
-            >
-              View Plan →
-            </Link>
-          </div>
-        </div>
+        {/* Bottom row */}
+        <div className="grid grid-cols-2 gap-[30px]">
+          {/* Schedule Card */}
+          <DetailCard delay={0.4}>
+            <CardHeader
+              icon={<CalendarDays size={24} />}
+              title="Schedule"
+              subtitle="Here is your itinerary."
+            />
 
-        {/* Budget Card */}
-        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-emerald-500/20 rounded-2xl text-emerald-500">💰</div>
-            <span className="text-sm font-bold text-card-foreground">
-              ${remainingBudget.toFixed(0)} left
-            </span>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-card-foreground mb-2">Budget</h3>
-            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
-              <div
-                className="h-full bg-emerald-500 rounded-full"
-                style={{ width: `${Math.min(budgetProgress, 100)}%` }}
-              />
+            {/* Activity rows */}
+            <div className="flex flex-col">
+              {(activities.length > 0
+                ? activities.slice(0, 4)
+                : [
+                    { id: '1', name: 'Activity one', location: 'Location' },
+                    { id: '2', name: 'Activity two', location: 'Location' },
+                    { id: '3', name: 'Activity three', location: 'Location' },
+                    { id: '4', name: 'Activity four', location: 'Location' },
+                  ]
+              ).map((act, index) => (
+                <div
+                  key={act.id}
+                  className={`flex items-center justify-between py-4 ${
+                    index > 0 ? 'border-t border-[#0066D2]/15' : ''
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-[18px] font-bold text-[#0066D2]">
+                      {index + 1}
+                    </span>
+                    <span className="text-[16px] text-[#0066D2]">
+                      {act.name}
+                    </span>
+                  </div>
+                  <span className="text-[16px] font-semibold text-[#0066D2]">
+                    {act.location}
+                  </span>
+                </div>
+              ))}
             </div>
-            <Link
-              to="/app/budget"
-              className="text-sm font-semibold text-emerald-500 hover:text-emerald-400"
-            >
-              Manage Budget →
-            </Link>
-          </div>
-        </div>
+          </DetailCard>
 
-        {/* Saved Experiences Card */}
-        <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-amber-500/20 rounded-2xl text-amber-500">🗺️</div>
-            <span className="text-sm font-bold text-card-foreground">
-              {savedExperiences.length} Saved
-            </span>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-card-foreground mb-1">Experiences</h3>
-            <p className="text-sm text-card-foreground/60 mb-4">
-              Explore activities and free tours.
-            </p>
-            <Link
-              to="/app/experiences"
-              className="text-sm font-semibold text-amber-500 hover:text-amber-400"
-            >
-              Discover More →
-            </Link>
-          </div>
-        </div>
-      </div>
+          {/* Budget Card */}
+          <DetailCard delay={0.5}>
+            <CardHeader
+              icon={<PieChart size={24} />}
+              title="Budget"
+              subtitle="Manage your expenses"
+            />
 
-      {/* Bottom section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-card rounded-3xl p-8 shadow-lg border border-border/10">
-          <h2 className="text-xl font-bold text-card-foreground mb-6">🕐 Travel Tips</h2>
-          <div className="space-y-4">
-            <div className="p-4 bg-background/50 rounded-2xl border border-border/10">
-              <h4 className="font-bold text-foreground mb-1">Hydrate Often</h4>
-              <p className="text-sm text-foreground/70">
-                Drink plenty of water during your flight to reduce jet lag symptoms.
-              </p>
+            {/* Budget rows */}
+            <div className="flex flex-col gap-5">
+              <div className="flex items-center justify-between">
+                <span className="text-[16px] text-[#0066D2]">Total budget</span>
+                <span className="text-[20px] font-bold text-[#0066D2]">
+                  ${(Number(tripDetails.budget) || 3500).toLocaleString()}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-[16px] text-[#0066D2]">Spent so far</span>
+                <span className="text-[20px] font-bold text-[#E53935]">
+                  -${totalSpent > 0 ? totalSpent.toLocaleString() : '1.200'}
+                </span>
+              </div>
+
+              {/* Divider */}
+              <div className="h-[1px] bg-[#0066D2]/20" />
+
+              <div className="flex items-center justify-between">
+                <span className="text-[18px] font-bold text-[#0066D2]">
+                  Remaining
+                </span>
+                <span className="text-[22px] font-bold text-[#0066D2]">
+                  ${remainingBudget > 0 ? remainingBudget.toLocaleString() : '2.300'}
+                </span>
+              </div>
             </div>
-            <div className="p-4 bg-background/50 rounded-2xl border border-border/10">
-              <h4 className="font-bold text-foreground mb-1">Local Currency</h4>
-              <p className="text-sm text-foreground/70">
-                Exchange a small amount of cash before you leave the airport.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-card rounded-3xl p-8 shadow-lg border border-border/10">
-          <h2 className="text-xl font-bold text-card-foreground mb-6">
-            🐷 Budget Status
-          </h2>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-card-foreground/70">Total Budget</span>
-            <span className="font-bold text-card-foreground">
-              ${tripDetails.budget || 0}
-            </span>
-          </div>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-card-foreground/70">Spent so far</span>
-            <span className="font-bold text-red-400">-${totalSpent}</span>
-          </div>
-          <div className="pt-4 border-t border-border/10 flex items-center justify-between">
-            <span className="font-bold text-card-foreground">Remaining</span>
-            <span className="font-bold text-green-500 text-xl">${remainingBudget}</span>
-          </div>
+          </DetailCard>
         </div>
       </div>
     </div>

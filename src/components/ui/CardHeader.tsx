@@ -8,8 +8,8 @@ interface CardHeaderProps {
 
 export default function CardHeader({ icon, title, subtitle }: CardHeaderProps) {
   return (
-    <div className="mb-6 flex items-center gap-4">
-      <div className="flex h-[50px] w-[50px] items-center justify-center rounded-[12px] bg-[#0066D2]">
+    <div className="flex items-center gap-5">
+      <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center rounded-[15px] bg-[#0066D2]">
         <span className="text-white">{icon}</span>
       </div>
       <div>

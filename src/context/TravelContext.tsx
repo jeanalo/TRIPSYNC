@@ -52,7 +52,10 @@ interface TravelContextType {
 const TravelContext = createContext<TravelContextType | undefined>(undefined);
 
 export function TravelProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(() => {
+    const saved = localStorage.getItem('user');
+    return saved ? JSON.parse(saved) : null;
+  });
 
   const [tripDetails, setTripDetails] = useState<TripDetails>(() => {
     const saved = localStorage.getItem('tripDetails');
@@ -145,6 +148,14 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem('experiences', JSON.stringify(experiences));
   }, [experiences]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
 
   const addExpense = (expense: Omit<Expense, 'id'>) => {
     setExpenses([

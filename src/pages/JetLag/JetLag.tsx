@@ -11,7 +11,6 @@ import { motion } from 'motion/react';
 import PageHeader from '../../components/ui/PageHeader';
 import FormCard from '../../components/ui/FormCard';
 import FormField from '../../components/ui/FormField';
-import InfoField from '../../components/ui/InfoField';
 import SubmitButton from '../../components/ui/SubmitButton';
 import DetailCard from '../../components/ui/DetailCard';
 import CardHeader from '../../components/ui/CardHeader';
@@ -133,12 +132,12 @@ export default function JetLag() {
         {/* Country Info Card */}
         <FormCard className="flex w-[822px] items-center justify-center">
           <div className="grid grid-cols-2 gap-[65px] w-full max-w-[715px]">
-            <InfoField
+            <FormField
               label="Departure Country"
               value={tripDetails.departureCountry}
               icon={<MapPin size={24} />}
             />
-            <InfoField
+            <FormField
               label="Destination Country"
               value={tripDetails.destinationCountry}
               icon={<MapPin size={24} />}

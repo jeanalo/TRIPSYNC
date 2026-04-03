@@ -1,5 +1,4 @@
 import { useTravel } from '../../context/TravelContext';
-import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   Plane,
@@ -13,6 +12,7 @@ import {
 import PageHeader from '../../components/ui/PageHeader';
 import DetailCard from '../../components/ui/DetailCard';
 import CardHeader from '../../components/ui/CardHeader';
+import SummaryCard from '../../components/ui/SummaryCard';
 
 const Dashboard = () => {
   const { user, tripDetails, expenses, activities } = useTravel();
@@ -74,30 +74,14 @@ const Dashboard = () => {
           {actionCards.map((card, i) => {
             const Icon = card.icon;
             return (
-              <motion.div
+              <SummaryCard
                 key={card.to}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 * i }}
-              >
-                <Link to={card.to} className="block no-underline">
-                  <div className="flex h-[180px] flex-col justify-between rounded-[15px] bg-[#1CA698] p-[30px] transition-all duration-300 hover:shadow-lg hover:brightness-110">
-                    {/* Icon */}
-                    <div className="flex h-[50px] w-[50px] items-center justify-center rounded-[12px] bg-white/20">
-                      <Icon size={24} className="text-white" />
-                    </div>
-                    {/* Text */}
-                    <div>
-                      <h3 className="text-[22px] font-bold leading-[28px] text-white">
-                        {card.title}
-                      </h3>
-                      <p className="mt-1 text-[14px] leading-[20px] text-white/80">
-                        {card.subtitle}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+                icon={<Icon size={24} />}
+                title={card.title}
+                subtitle={card.subtitle}
+                to={card.to}
+                delay={0.1 * i}
+              />
             );
           })}
         </div>

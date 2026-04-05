@@ -1,5 +1,4 @@
 import { useTravel } from '../../context/TravelContext';
-import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   Plane,
@@ -11,8 +10,10 @@ import {
 } from 'lucide-react';
 
 import PageHeader from '../../components/ui/PageHeader';
+import ActionButton from '../../components/ui/ActionButton';
 import DetailCard from '../../components/ui/DetailCard';
 import CardHeader from '../../components/ui/CardHeader';
+import SummaryCard from '../../components/ui/SummaryCard';
 
 const Dashboard = () => {
   const { user, tripDetails, expenses, activities } = useTravel();
@@ -56,54 +57,33 @@ const Dashboard = () => {
           </>
         }
         action={
-          <motion.button
-            className="flex items-center gap-2 rounded-[15px] border-none bg-[#0066D2] px-6 py-3 text-[16px] font-semibold text-white cursor-pointer transition-all duration-300 hover:bg-[#0055b0] hover:shadow-lg"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Share2 size={20} />
+          <ActionButton icon={<Share2 size={20} />}>
             Share Trip
-          </motion.button>
+          </ActionButton>
         }
       />
 
       {/* Content area */}
-      <div className="flex flex-col gap-[30px] px-12">
+      <div className="flex flex-col gap-[30px] px-4 lg:px-12">
         {/* Top row */}
-        <div className="grid grid-cols-3 gap-[30px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[30px]">
           {actionCards.map((card, i) => {
             const Icon = card.icon;
             return (
-              <motion.div
+              <SummaryCard
                 key={card.to}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 * i }}
-              >
-                <Link to={card.to} className="block no-underline">
-                  <div className="flex h-[180px] flex-col justify-between rounded-[15px] bg-[#1CA698] p-[30px] transition-all duration-300 hover:shadow-lg hover:brightness-110">
-                    {/* Icon */}
-                    <div className="flex h-[50px] w-[50px] items-center justify-center rounded-[12px] bg-white/20">
-                      <Icon size={24} className="text-white" />
-                    </div>
-                    {/* Text */}
-                    <div>
-                      <h3 className="text-[22px] font-bold leading-[28px] text-white">
-                        {card.title}
-                      </h3>
-                      <p className="mt-1 text-[14px] leading-[20px] text-white/80">
-                        {card.subtitle}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+                icon={<Icon size={24} />}
+                title={card.title}
+                subtitle={card.subtitle}
+                to={card.to}
+                delay={0.1 * i}
+              />
             );
           })}
         </div>
 
         {/* Bottom row */}
-        <div className="grid grid-cols-2 gap-[30px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
           {/* Schedule Card */}
           <DetailCard delay={0.4}>
             <div className="flex flex-col gap-6">

@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useTravel, TripDetails } from '../../context/TravelContext';
-import { MapPin, CalendarDays, CheckCircle } from 'lucide-react'; //Icons Library
+import { MapPin, CalendarDays, CheckCircle } from 'lucide-react';
 
 import PageHeader from '../../components/ui/PageHeader';
 import FormCard from '../../components/ui/FormCard';
@@ -12,9 +13,13 @@ import CountrySelect from '../../components/ui/CountrySelect';
 export default function TripSetup() {
   const { tripDetails, setTripDetails } = useTravel();
   const navigate = useNavigate();
-  const { register, handleSubmit, control } = useForm<TripDetails>({
+  const { register, handleSubmit, control, reset } = useForm<TripDetails>({
     defaultValues: tripDetails,
   });
+
+  useEffect(() => {
+    reset(tripDetails);
+  }, [tripDetails, reset]);
 
   const onSubmit = (data: TripDetails) => {
     setTripDetails(data);

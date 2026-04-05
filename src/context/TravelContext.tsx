@@ -50,6 +50,51 @@ interface TravelContextType {
   logout: () => void;
 }
 
+const getKey = (key: string, email?: string) => (email ? `${email}:${key}` : key);
+
+const defaultTripDetails: TripDetails = {
+  departureCountry: '',
+  destinationCountry: '',
+  departureDate: '',
+  arrivalDate: '',
+  budget: 0,
+};
+
+const defaultExperiences: Experience[] = [
+  {
+    id: '1',
+    title: 'Sunset Kayaking',
+    location: 'Blue Bay',
+    category: 'Adventure',
+    image: 'https://images.unsplash.com/photo-1595368062405-e4d7840cba14?w=600&q=80',
+    saved: false,
+  },
+  {
+    id: '2',
+    title: 'Ancient Temple Visit',
+    location: 'Old Town',
+    category: 'Cultural',
+    image: 'https://images.unsplash.com/photo-1598177183224-b3cec6da6b04?w=600&q=80',
+    saved: true,
+  },
+  {
+    id: '3',
+    title: 'Street Food Tour',
+    location: 'Night Market',
+    category: 'Chill',
+    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
+    saved: false,
+  },
+  {
+    id: '4',
+    title: 'Hidden Waterfall Hike',
+    location: 'National Park',
+    category: 'Free Tour',
+    image: 'https://images.unsplash.com/photo-1594671733084-66a82cc4304a?w=600&q=80',
+    saved: false,
+  },
+];
+
 const TravelContext = createContext<TravelContextType | undefined>(undefined);
 
 export function TravelProvider({ children }: { children: React.ReactNode }) {
@@ -58,23 +103,19 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const [tripDetails, setTripDetails] = useState<TripDetails>(() => {
-    const saved = localStorage.getItem('tripDetails');
+  const [tripDetails, setTripDetailsState] = useState<TripDetails>(() => {
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const saved = localStorage.getItem(getKey('tripDetails', currentUser?.email));
     if (saved) {
       const parsed = JSON.parse(saved);
       return { ...parsed, budget: Number(parsed.budget) || 0 };
     }
-    return {
-      departureCountry: '',
-      destinationCountry: '',
-      departureDate: '',
-      arrivalDate: '',
-      budget: 0,
-    };
+    return defaultTripDetails;
   });
 
   const [expenses, setExpenses] = useState<Expense[]>(() => {
-    const saved = localStorage.getItem('expenses');
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const saved = localStorage.getItem(getKey('expenses', currentUser?.email));
     if (saved) {
       const parsed = JSON.parse(saved);
       return parsed.map((expense: Expense) => ({
@@ -86,69 +127,75 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [activities, setActivities] = useState<Activity[]>(() => {
-    const saved = localStorage.getItem('activities');
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const saved = localStorage.getItem(getKey('activities', currentUser?.email));
     return saved ? JSON.parse(saved) : [];
   });
 
   const [experiences, setExperiences] = useState<Experience[]>(() => {
-    const saved = localStorage.getItem('experiences');
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: '1',
-            title: 'Sunset Kayaking',
-            location: 'Blue Bay',
-            category: 'Adventure',
-            image:
-              'https://images.unsplash.com/photo-1595368062405-e4d7840cba14?w=600&q=80',
-            saved: false,
-          },
-          {
-            id: '2',
-            title: 'Ancient Temple Visit',
-            location: 'Old Town',
-            category: 'Cultural',
-            image:
-              'https://images.unsplash.com/photo-1598177183224-b3cec6da6b04?w=600&q=80',
-            saved: true,
-          },
-          {
-            id: '3',
-            title: 'Street Food Tour',
-            location: 'Night Market',
-            category: 'Chill',
-            image:
-              'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
-            saved: false,
-          },
-          {
-            id: '4',
-            title: 'Hidden Waterfall Hike',
-            location: 'National Park',
-            category: 'Free Tour',
-            image:
-              'https://images.unsplash.com/photo-1594671733084-66a82cc4304a?w=600&q=80',
-            saved: false,
-          },
-        ];
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const saved = localStorage.getItem(getKey('experiences', currentUser?.email));
+    return saved ? JSON.parse(saved) : defaultExperiences;
   });
 
   useEffect(() => {
-    localStorage.setItem('tripDetails', JSON.stringify(tripDetails));
-  }, [tripDetails]);
+    const savedTrip = localStorage.getItem(getKey('tripDetails', user?.email));
+    if (savedTrip) {
+      const parsed = JSON.parse(savedTrip);
+      setTripDetailsState({ ...parsed, budget: Number(parsed.budget) || 0 });
+    } else {
+      setTripDetailsState(defaultTripDetails);
+    }
+
+    const savedExpenses = localStorage.getItem(getKey('expenses', user?.email));
+    if (savedExpenses) {
+      const parsed = JSON.parse(savedExpenses);
+      setExpenses(
+        parsed.map((expense: Expense) => ({
+          ...expense,
+          amount: Number(expense.amount) || 0,
+        }))
+      );
+    } else {
+      setExpenses([]);
+    }
+
+    const savedActivities = localStorage.getItem(getKey('activities', user?.email));
+    setActivities(savedActivities ? JSON.parse(savedActivities) : []);
+
+    const savedExperiences = localStorage.getItem(getKey('experiences', user?.email));
+    setExperiences(savedExperiences ? JSON.parse(savedExperiences) : defaultExperiences);
+  }, [user?.email]);
 
   useEffect(() => {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-  }, [expenses]);
+    if (user?.email) {
+      localStorage.setItem(
+        getKey('tripDetails', user.email),
+        JSON.stringify(tripDetails)
+      );
+    }
+  }, [tripDetails, user?.email]);
 
   useEffect(() => {
-    localStorage.setItem('activities', JSON.stringify(activities));
-  }, [activities]);
+    if (user?.email) {
+      localStorage.setItem(getKey('expenses', user.email), JSON.stringify(expenses));
+    }
+  }, [expenses, user?.email]);
 
   useEffect(() => {
-    localStorage.setItem('experiences', JSON.stringify(experiences));
-  }, [experiences]);
+    if (user?.email) {
+      localStorage.setItem(getKey('activities', user.email), JSON.stringify(activities));
+    }
+  }, [activities, user?.email]);
+
+  useEffect(() => {
+    if (user?.email) {
+      localStorage.setItem(
+        getKey('experiences', user.email),
+        JSON.stringify(experiences)
+      );
+    }
+  }, [experiences, user?.email]);
 
   useEffect(() => {
     if (user) {
@@ -157,6 +204,10 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem('user');
     }
   }, [user]);
+
+  const setTripDetails = (details: TripDetails) => {
+    setTripDetailsState(details);
+  };
 
   const addExpense = (expense: Omit<Expense, 'id'>) => {
     setExpenses([

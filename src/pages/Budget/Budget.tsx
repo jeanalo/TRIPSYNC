@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTravel } from '../../context/TravelContext';
-import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer } from 'recharts';
 import {
@@ -17,6 +16,7 @@ import {
 } from 'lucide-react';
 
 import PageHeader from '../../components/ui/PageHeader';
+import ActionButton from '../../components/ui/ActionButton';
 import DetailCard from '../../components/ui/DetailCard';
 import CardHeader from '../../components/ui/CardHeader';
 import SummaryCard from '../../components/ui/SummaryCard';
@@ -97,25 +97,18 @@ const Budget = () => {
         title="Budget Tracker"
         subtitle="Keep your finances in check while you explore."
         action={
-          <Link to="/app/budget/add" className="no-underline">
-            <motion.button
-              className="flex items-center gap-2 rounded-[15px] border-none bg-[#0066D2] px-6 py-3 text-[18px] font-semibold text-[#F5F5F5] cursor-pointer transition-all duration-300 hover:bg-[#0055b0] hover:shadow-lg"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <Plus size={22} />
-              Add Expense
-            </motion.button>
-          </Link>
+          <ActionButton icon={<Plus size={22} />} to="/app/budget/add">
+            Add Expense
+          </ActionButton>
         }
       />
 
       {/* Content area */}
-      <div className="flex items-stretch gap-[30px] px-12">
+      <div className="flex flex-col lg:flex-row items-stretch gap-[30px] px-4 lg:px-12">
         {/* LEFT: summary cards + transactions */}
         <div className="flex flex-1 flex-col gap-[24px]">
           {/* Summary cards row */}
-          <div className="grid grid-cols-3 gap-[20px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[20px]">
             {summaryCards.map((card, i) => {
               const Icon = card.icon;
               return (
@@ -195,7 +188,7 @@ const Budget = () => {
         </div>
 
         {/* RIGHT: Spending Breakdown */}
-        <DetailCard className="w-[262px] shrink-0" delay={0.5}>
+        <DetailCard className="w-full lg:w-[262px] shrink-0" delay={0.5}>
           <div className="flex h-full flex-col items-center gap-9">
             <CardHeader
               icon={<PieChart size={24} />}

@@ -33,7 +33,7 @@ const Login = () => {
         <div className="w-full max-w-[400px]">
           {/* Heading */}
           <h2
-            className="text-center text-[48px] font-bold text-[#0066D2] mb-8"
+            className="text-center text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-8"
             id="login-heading"
           >
             Sign In

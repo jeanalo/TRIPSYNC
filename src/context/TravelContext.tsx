@@ -45,6 +45,7 @@ interface TravelContextType {
   experiences: Experience[];
   toggleSaveExperience: (id: string) => void;
   user: { name: string; email: string } | null;
+  register: (email: string, name: string) => void;
   login: (email: string) => void;
   logout: () => void;
 }
@@ -177,8 +178,16 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const register = (email: string, name: string) => {
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+    registeredUsers[email] = { name, email };
+    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+  };
+
   const login = (email: string) => {
-    setUser({ name: 'Traveler', email });
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+    const registered = registeredUsers[email];
+    setUser({ name: registered?.name || email, email });
   };
 
   const logout = () => {
@@ -197,6 +206,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         experiences,
         toggleSaveExperience,
         user,
+        register,
         login,
         logout,
       }}

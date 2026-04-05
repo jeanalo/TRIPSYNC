@@ -11,7 +11,6 @@ import { motion } from 'motion/react';
 import PageHeader from '../../components/ui/PageHeader';
 import FormCard from '../../components/ui/FormCard';
 import FormField from '../../components/ui/FormField';
-import InfoField from '../../components/ui/InfoField';
 import SubmitButton from '../../components/ui/SubmitButton';
 import DetailCard from '../../components/ui/DetailCard';
 import CardHeader from '../../components/ui/CardHeader';
@@ -129,16 +128,16 @@ export default function JetLag() {
       />
 
       {/* Content */}
-      <div className="flex flex-col gap-[30px] w-[822px] px-12">
+      <div className="flex flex-col gap-[30px] pl-12">
         {/* Country Info Card */}
-        <FormCard className="flex items-center justify-center">
+        <FormCard className="flex w-[822px] items-center justify-center">
           <div className="grid grid-cols-2 gap-[65px] w-full max-w-[715px]">
-            <InfoField
+            <FormField
               label="Departure Country"
               value={tripDetails.departureCountry}
               icon={<MapPin size={24} />}
             />
-            <InfoField
+            <FormField
               label="Destination Country"
               value={tripDetails.destinationCountry}
               icon={<MapPin size={24} />}
@@ -147,10 +146,10 @@ export default function JetLag() {
         </FormCard>
 
         {/* Bottom Section: Flight Details + Recommendations */}
-        <div className="flex gap-[44px]">
+        <div className="flex gap-[44px] items-start">
           {/* Flight Details Card */}
-          <DetailCard className="w-[389px] shrink-0" delay={0.3} animateFrom="left">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-[25px]">
+          <DetailCard className="w-[389px] h-[430px] shrink-0" delay={0.3} animateFrom="left">
+            <form onSubmit={handleSubmit} className="flex h-full flex-col gap-[25px]">
               <CardHeader
                 icon={<CalendarClock size={24} />}
                 title="Flight Details"
@@ -191,21 +190,23 @@ export default function JetLag() {
               </FormField>
 
               {/* Generate Plan Button */}
-              <SubmitButton loading={loading} loadingText="Analyzing...">
-                Generate Plan
-              </SubmitButton>
+              <div className="mt-auto">
+                <SubmitButton loading={loading} loadingText="Analyzing...">
+                  Generate Plan
+                </SubmitButton>
+              </div>
             </form>
           </DetailCard>
 
           {/* Recommendations Card */}
           <motion.div
-            className="flex h-[430px] w-[389px] shrink-0 flex-col rounded-[15px] bg-[#1CA698] pb-[42px] pl-[37px] pr-[36px] pt-[30px]"
+            className="flex h-[430px] w-[389px] shrink-0 flex-col rounded-[15px] bg-[#1CA698] px-[32px] py-[30px]"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.4 }}
           >
             {recommendations ? (
-              <div className="flex flex-col gap-[22px]">
+              <div className="flex flex-col gap-[22px] overflow-y-auto">
                 {recommendations.map((rec, index) => (
                   <motion.div
                     key={index}
@@ -231,7 +232,7 @@ export default function JetLag() {
               <div className="flex h-full flex-col items-center justify-center gap-[35px]">
                 {/* Placeholder header */}
                 <div className="flex items-center gap-5">
-                  <div className="flex h-[55px] w-[55px] items-center justify-center rounded-[15px] bg-[#6CD9CE]">
+                  <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center rounded-[15px] bg-[#6CD9CE]">
                     <Moon size={24} className="text-white" />
                   </div>
                   <p className="w-[154px] text-[22px] font-bold leading-[24px] text-[#F5F5F5]">

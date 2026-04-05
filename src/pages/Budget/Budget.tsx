@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import { useTravel } from '../../context/TravelContext';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -6,6 +7,8 @@ import {
   Plus,
   PieChart,
   Pencil,
+  Check,
+  X,
   UtensilsCrossed,
   Building2,
   TrendingDown,
@@ -33,9 +36,37 @@ const DEMO_TRANSACTIONS = [
 ];
 
 const Budget = () => {
-  const { tripDetails, expenses } = useTravel();
+  const { tripDetails, setTripDetails, expenses } = useTravel();
+
+  const [isEditingBudget, setIsEditingBudget] = useState(false);
+  const [budgetDraft, setBudgetDraft] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const totalBudget = Number(tripDetails.budget) || 3500;
+
+  const startEditing = () => {
+    setBudgetDraft(String(totalBudget));
+    setIsEditingBudget(true);
+  };
+
+  const confirmEdit = () => {
+    const newBudget = Number(budgetDraft);
+    if (!isNaN(newBudget) && newBudget >= 0) {
+      setTripDetails({ ...tripDetails, budget: newBudget });
+    }
+    setIsEditingBudget(false);
+  };
+
+  const cancelEdit = () => {
+    setIsEditingBudget(false);
+  };
+
+  useEffect(() => {
+    if (isEditingBudget && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditingBudget]);
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) || 1200;
   const remaining = totalBudget - totalSpent;
 
@@ -93,10 +124,48 @@ const Budget = () => {
                   icon={<Icon size={24} />}
                   title={card.title}
                   subtitle={
-                    <div className="flex items-center gap-3">
-                      {card.hasEdit && <Pencil size={16} />}
-                      <span>{card.value}</span>
-                    </div>
+                    card.hasEdit && isEditingBudget ? (
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className="text-[#FFFFFF] font-bold">$</span>
+                        <input
+                          ref={inputRef}
+                          type="number"
+                          min="0"
+                          value={budgetDraft}
+                          onChange={(e) => setBudgetDraft(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') confirmEdit();
+                            if (e.key === 'Escape') cancelEdit();
+                          }}
+                          className="w-[100px] h-[24px] rounded-lg border border-[#FFFFFF] bg-white/80 px-2 py-1 text-[16px] font-bold text-[#1CA698] outline-none focus:ring-2 focus:ring-[#FFFFFF]/30"
+                        />
+                        <button
+                          onClick={confirmEdit}
+                          className="flex items-center justify-center rounded-full bg-[#1CA698] p-1 border-none cursor-pointer text-white hover:bg-[#17907f] transition-colors"
+                          title="Confirm"
+                        >
+                          <Check size={16} />
+                        </button>
+                        <button
+                          onClick={cancelEdit}
+                          className="flex items-center justify-center rounded-full bg-[#E53935] p-1 border-none cursor-pointer text-white hover:bg-[#c62828] transition-colors"
+                          title="Cancel"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        {card.hasEdit && (
+                          <Pencil
+                            size={16}
+                            className="cursor-pointer text-[#FFFFFF] hover:scale-125 transition-transform"
+                            onClick={startEditing}
+                          />
+                        )}
+                        <span>{card.value}</span>
+                      </div>
+                    )
                   }
                   delay={0.1 * i}
                 />

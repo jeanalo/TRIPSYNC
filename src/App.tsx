@@ -11,7 +11,7 @@ import Budget from './pages/Budget/Budget';
 // import Experiences from './pages/Experiences/Experiences';
 import TripSetup from './pages/TripSetup/TripSetup';
 import JetLag from './pages/JetLag/JetLag';
-// import Profile from './pages/Profile/Profile';
+import Profile from './pages/Profile/Profile';
 import Layout from './components/layout/Layout';
 
 function App() {
@@ -29,8 +29,8 @@ function App() {
           {/* <Route path="budget/add" element={<AddExpense />} /> */}
           {/* <Route path="schedule" element={<Schedule />} />
           <Route path="schedule/add" element={<AddActivity />} />
-          <Route path="experiences" element={<Experiences />} />
-          <Route path="profile" element={<Profile />} /> */}
+          <Route path="experiences" element={<Experiences />} /> */}
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </TravelProvider>

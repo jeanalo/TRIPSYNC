@@ -9,11 +9,11 @@ import {
   PieChart,
 } from 'lucide-react';
 
-import PageHeader from '../../components/ui/PageHeader';
-import ActionButton from '../../components/ui/ActionButton';
-import DetailCard from '../../components/ui/DetailCard';
-import CardHeader from '../../components/ui/CardHeader';
-import SummaryCard from '../../components/ui/SummaryCard';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import ActionButton from '../../components/ActionButton/ActionButton';
+import DetailCard from '../../components/DetailCard/DetailCard';
+import CardHeader from '../../components/CardHeader/CardHeader';
+import SummaryCard from '../../components/SummaryCard/SummaryCard';
 
 const Dashboard = () => {
   const { user, tripDetails, expenses, activities } = useTravel();

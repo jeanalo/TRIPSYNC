@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import PageHeader from '../../components/ui/PageHeader';
-import ActionButton from '../../components/ui/ActionButton';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import ActionButton from '../../components/ActionButton/ActionButton';
 
 const Schedule = () => {
     const navigate = useNavigate();

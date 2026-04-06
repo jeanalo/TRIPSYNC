@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import { useTravel } from '../../context/TravelContext';
-import FormField from '../../components/ui/FormField';
-import SubmitButton from '../../components/ui/SubmitButton';
+import FormField from '../../components/FormField/FormField';
+import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
 const Login = () => {
   const navigate = useNavigate();

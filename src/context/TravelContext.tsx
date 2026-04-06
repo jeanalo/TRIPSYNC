@@ -35,6 +35,17 @@ export type TripDetails = {
   budget: number;
 };
 
+export type Recommendation = {
+  title: string;
+  desc: string;
+};
+
+export type JetLagPlan = {
+  departureTime: string;
+  arrivalTime: string;
+  recommendations: Recommendation[] | null;
+};
+
 interface TravelContextType {
   tripDetails: TripDetails;
   setTripDetails: (details: TripDetails) => void;
@@ -44,6 +55,8 @@ interface TravelContextType {
   addActivity: (activity: Omit<Activity, 'id'>) => void;
   experiences: Experience[];
   toggleSaveExperience: (id: string) => void;
+  jetLagPlan: JetLagPlan | null;
+  setJetLagPlan: (plan: JetLagPlan | null) => void;
   user: { name: string; email: string } | null;
   register: (email: string, name: string) => void;
   login: (email: string) => void;
@@ -138,6 +151,12 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : defaultExperiences;
   });
 
+  const [jetLagPlan, setJetLagPlanState] = useState<JetLagPlan | null>(() => {
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const saved = localStorage.getItem(getKey('jetLagPlan', currentUser?.email));
+    return saved ? JSON.parse(saved) : null;
+  });
+
   useEffect(() => {
     const savedTrip = localStorage.getItem(getKey('tripDetails', user?.email));
     if (savedTrip) {
@@ -165,6 +184,9 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
 
     const savedExperiences = localStorage.getItem(getKey('experiences', user?.email));
     setExperiences(savedExperiences ? JSON.parse(savedExperiences) : defaultExperiences);
+
+    const savedJetLagPlan = localStorage.getItem(getKey('jetLagPlan', user?.email));
+    setJetLagPlanState(savedJetLagPlan ? JSON.parse(savedJetLagPlan) : null);
   }, [user?.email]);
 
   useEffect(() => {
@@ -198,6 +220,19 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
   }, [experiences, user?.email]);
 
   useEffect(() => {
+    if (user?.email) {
+      if (jetLagPlan) {
+        localStorage.setItem(
+          getKey('jetLagPlan', user.email),
+          JSON.stringify(jetLagPlan)
+        );
+      } else {
+        localStorage.removeItem(getKey('jetLagPlan', user.email));
+      }
+    }
+  }, [jetLagPlan, user?.email]);
+
+  useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
     } else {
@@ -207,6 +242,10 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
 
   const setTripDetails = (details: TripDetails) => {
     setTripDetailsState(details);
+  };
+
+  const setJetLagPlan = (plan: JetLagPlan | null) => {
+    setJetLagPlanState(plan);
   };
 
   const addExpense = (expense: Omit<Expense, 'id'>) => {
@@ -256,6 +295,8 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         addActivity,
         experiences,
         toggleSaveExperience,
+        jetLagPlan,
+        setJetLagPlan,
         user,
         register,
         login,

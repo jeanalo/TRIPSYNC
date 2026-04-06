@@ -17,7 +17,7 @@ const Profile = () => {
     <div>
       <PageHeader
         title="My Profile"
-        subtitle="Manage your account and preferences"
+        subtitle="Manage your account and preferences."
         action={
           <ActionButton icon={<LogOut size={24} />} onClick={handleSignOut}>
             Sign Out

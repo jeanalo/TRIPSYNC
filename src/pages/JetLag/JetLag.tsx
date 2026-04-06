@@ -14,6 +14,7 @@ import FormField from '../../components/ui/FormField';
 import SubmitButton from '../../components/ui/SubmitButton';
 import DetailCard from '../../components/ui/DetailCard';
 import CardHeader from '../../components/ui/CardHeader';
+import IconBadge from '../../components/ui/IconBadge';
 
 type JetLagFormData = {
   departureTime: string;
@@ -268,9 +269,9 @@ export default function JetLag() {
               <div className="flex h-full flex-col items-center justify-center gap-[35px]">
                 {/* Placeholder header */}
                 <div className="flex items-center gap-5">
-                  <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center rounded-[15px] bg-[#6CD9CE]">
-                    <Moon size={24} className="text-white" />
-                  </div>
+                  <IconBadge color="teal" size="lg">
+                    <Moon size={24} />
+                  </IconBadge>
                   <p className="w-[154px] text-[22px] font-bold leading-[24px] text-[#F5F5F5]">
                     No plan generated yet
                   </p>

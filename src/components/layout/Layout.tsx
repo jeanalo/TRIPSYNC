@@ -12,6 +12,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import IconBadge from '../ui/IconBadge';
 
 const navItems = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
@@ -104,9 +105,9 @@ const Layout = () => {
 
         {/* User profile */}
         <div className="flex items-center gap-3 px-10 py-6">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[15px] bg-[#1CA698]">
-            <User size={24} className="text-white" />
-          </div>
+          <IconBadge color="primary" size="md">
+            <User size={24} />
+          </IconBadge>
           <div className="flex flex-col">
             <span className="text-[16px] font-medium leading-5 text-[#0066D2]">
               {user?.name || 'Pepito Pérez'}

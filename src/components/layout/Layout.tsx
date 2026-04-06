@@ -12,7 +12,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import IconBadge from '../ui/IconBadge';
+import IconBadge from '../IconBadge/IconBadge';
 
 const navItems = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard },

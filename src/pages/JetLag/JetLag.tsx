@@ -8,13 +8,13 @@ import { useTravel } from '../../context/TravelContext';
 import { MapPin, Clock, CalendarClock, Moon } from 'lucide-react';
 import { motion } from 'motion/react';
 
-import PageHeader from '../../components/ui/PageHeader';
-import FormCard from '../../components/ui/FormCard';
-import FormField from '../../components/ui/FormField';
-import SubmitButton from '../../components/ui/SubmitButton';
-import DetailCard from '../../components/ui/DetailCard';
-import CardHeader from '../../components/ui/CardHeader';
-import IconBadge from '../../components/ui/IconBadge';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import FormCard from '../../components/FormCard/FormCard';
+import FormField from '../../components/FormField/FormField';
+import SubmitButton from '../../components/SubmitButton/SubmitButton';
+import DetailCard from '../../components/DetailCard/DetailCard';
+import CardHeader from '../../components/CardHeader/CardHeader';
+import IconBadge from '../../components/IconBadge/IconBadge';
 
 type JetLagFormData = {
   departureTime: string;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   fetchCountryByName,
   calculateTimeDifference,
@@ -27,15 +27,33 @@ type Recommendation = {
 };
 
 export default function JetLag() {
-  const { tripDetails } = useTravel();
+  const { tripDetails, jetLagPlan, setJetLagPlan } = useTravel();
 
   const [formData, setFormData] = useState<JetLagFormData>({
-    departureTime: '',
-    arrivalTime: '',
+    departureTime: jetLagPlan?.departureTime || '',
+    arrivalTime: jetLagPlan?.arrivalTime || '',
   });
 
-  const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
+  const [recommendations, setRecommendations] = useState<Recommendation[] | null>(
+    jetLagPlan?.recommendations || null
+  );
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (jetLagPlan) {
+      setFormData({
+        departureTime: jetLagPlan.departureTime || '',
+        arrivalTime: jetLagPlan.arrivalTime || '',
+      });
+      setRecommendations(jetLagPlan.recommendations || null);
+    } else {
+      setFormData({
+        departureTime: '',
+        arrivalTime: '',
+      });
+      setRecommendations(null);
+    }
+  }, [jetLagPlan]);
 
   const [countryInfo, setCountryInfo] = useState<{
     departure: CountryData | null;
@@ -137,6 +155,11 @@ export default function JetLag() {
       }
 
       setRecommendations(recs);
+      setJetLagPlan({
+        departureTime: formData.departureTime,
+        arrivalTime: formData.arrivalTime,
+        recommendations: recs,
+      });
     } catch (error) {
       console.error('Error generating jet lag plan:', error);
     } finally {

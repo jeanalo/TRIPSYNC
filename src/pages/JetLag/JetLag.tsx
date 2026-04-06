@@ -14,6 +14,7 @@ import FormField from '../../components/ui/FormField';
 import SubmitButton from '../../components/ui/SubmitButton';
 import DetailCard from '../../components/ui/DetailCard';
 import CardHeader from '../../components/ui/CardHeader';
+import IconBadge from '../../components/ui/IconBadge';
 
 type JetLagFormData = {
   departureTime: string;
@@ -51,6 +52,9 @@ export default function JetLag() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.departureTime || !formData.arrivalTime) return;
+    
     setLoading(true);
 
     try {
@@ -75,31 +79,64 @@ export default function JetLag() {
       });
 
       const absTimeDiff = Math.abs(timeDiff);
-      const direction = timeDiff > 0 ? 'ahead' : 'behind';
+      const direction = timeDiff > 0 ? 'ahead' : timeDiff < 0 ? 'behind' : 'none';
       const daysToAdjust = Math.ceil(absTimeDiff / 1.5);
 
-      setRecommendations([
+      const parseTime = (timeStr: string) => {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours * 60 + minutes;
+      };
+
+      const depMins = parseTime(formData.departureTime);
+      const arrMins = parseTime(formData.arrivalTime);
+
+      let flightDurationMins = arrMins - depMins - (timeDiff * 60);
+      if (flightDurationMins <= 0) flightDurationMins += 24 * 60;
+
+      // Previous validations 
+      const flightDurationHours = Math.max(1, Math.min(Math.round(flightDurationMins / 60) || 1, 48));
+
+      const arrivalHour = parseInt(formData.arrivalTime.split(':')[0], 10);
+      const perceivedArrivalHour = Math.floor(((arrivalHour - timeDiff) % 24 + 24) % 24);
+
+      const recs: Recommendation[] = [
         {
           title: 'Morning Light',
-          desc: 'Get 30 mins of sunlight immediately upon waking at your destination.',
+          desc: perceivedArrivalHour < 12 
+            ? `Your body perceives it as morning (${perceivedArrivalHour}:00). Get 30 mins of sunlight immediately to reset your clock.`
+            : `Your body feels like it's later in the day (${perceivedArrivalHour}:00). Avoid bright light and prioritize getting morning sun the next day.`,
         },
         {
           title: 'Caffeine Curfew',
-          desc:
-            absTimeDiff > 3
-              ? `Stop caffeine intake after 2:00 PM in ${destination?.name || 'destination'} time.`
-              : `Stop caffeine intake after 2:00 PM in ${destination?.name || 'destination'} time.`,
+          desc: perceivedArrivalHour >= 18
+              ? `Your body feels like evening. Avoid caffeine during your ${flightDurationHours}-hour flight so you can sleep upon arrival.`
+              : `To stay alert, you can have caffeine on the flight, but stop by 2:00 PM ${destination?.name || 'destination'} time.`,
         },
         {
           title: 'Sleep Adjustment',
           desc:
-            timeDiff > 0
-              ? `Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} earlier each night for ${daysToAdjust} days before departure.`
-              : timeDiff < 0
-                ? `Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} later each night for ${daysToAdjust} days before departure.`
+            direction === 'ahead'
+              ? `Traveling East: Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} earlier each night for ${daysToAdjust} days before departure.`
+              : direction === 'behind'
+                ? `Traveling West: Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} later each night for ${daysToAdjust} days before departure.`
                 : 'No adjustment needed — same timezone!',
         },
-      ]);
+        {
+          title: 'Hydration',
+          desc: `Drink plenty of water during your ${flightDurationHours}-hour flight. Aim for at least 8oz every hour in the air.`,
+        }
+      ];
+
+      if (absTimeDiff >= 3) {
+        recs.push({
+          title: 'Melatonin',
+          desc: direction === 'ahead'
+            ? 'Traveling East: Consider 0.5mg - 3mg of melatonin 30 minutes before your new bedtime to help you fall asleep earlier.'
+            : 'Traveling West: Consider melatonin only if you wake up in the middle of the night and cannot fall back asleep.'
+        });
+      }
+
+      setRecommendations(recs);
     } catch (error) {
       console.error('Error generating jet lag plan:', error);
     } finally {
@@ -232,9 +269,9 @@ export default function JetLag() {
               <div className="flex h-full flex-col items-center justify-center gap-[35px]">
                 {/* Placeholder header */}
                 <div className="flex items-center gap-5">
-                  <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center rounded-[15px] bg-[#6CD9CE]">
-                    <Moon size={24} className="text-white" />
-                  </div>
+                  <IconBadge color="teal" size="lg">
+                    <Moon size={24} />
+                  </IconBadge>
                   <p className="w-[154px] text-[22px] font-bold leading-[24px] text-[#F5F5F5]">
                     No plan generated yet
                   </p>

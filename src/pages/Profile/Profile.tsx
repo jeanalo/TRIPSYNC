@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { useTravel } from '../../context/TravelContext';
-import PageHeader from '../../components/ui/PageHeader';
-import ActionButton from '../../components/ui/ActionButton';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import ActionButton from '../../components/ActionButton/ActionButton';
 
 const Profile = () => {
   const { user, logout } = useTravel();
@@ -17,7 +17,7 @@ const Profile = () => {
     <div>
       <PageHeader
         title="My Profile"
-        subtitle="Manage your account and preferences"
+        subtitle="Manage your account and preferences."
         action={
           <ActionButton icon={<LogOut size={24} />} onClick={handleSignOut}>
             Sign Out

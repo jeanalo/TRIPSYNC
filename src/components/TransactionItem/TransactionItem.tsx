@@ -1,6 +1,6 @@
 import type { ElementType } from 'react';
 import { FileText } from 'lucide-react';
-import CardHeader from './CardHeader';
+import CardHeader from '../CardHeader/CardHeader';
 
 interface TransactionItemProps {
   icon?: ElementType;

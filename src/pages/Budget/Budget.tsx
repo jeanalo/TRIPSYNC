@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTravel } from '../../context/TravelContext';
-import { motion, AnimatePresence } from 'motion/react';
 import {
   PieChart as RechartsPie,
   Pie,
@@ -33,6 +32,7 @@ import {
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
+import AlertModal from '../../components/AlertModal/AlertModal';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
 import SummaryCard from '../../components/SummaryCard/SummaryCard';
@@ -188,71 +188,31 @@ const Budget = () => {
   return (
     <div>
       {/* Budget threshold alert modal */}
-      <AnimatePresence>
-        {activeAlert !== null &&
-          (() => {
-            const cfg = THRESHOLD_CONFIG[activeAlert];
-            return (
-              <motion.div
-                key="budget-alert-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
-                onClick={() => setActiveAlert(null)}
-              >
-                <motion.div
-                  key="budget-alert-card"
-                  initial={{ scale: 0.85, opacity: 0, y: 20 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  exit={{ scale: 0.85, opacity: 0, y: 20 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  className="relative w-full max-w-sm rounded-2xl p-6 shadow-xl"
-                  style={{ backgroundColor: cfg.bg }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    onClick={() => setActiveAlert(null)}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    <X size={18} />
-                  </button>
-
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div
-                      className="flex h-14 w-14 items-center justify-center rounded-full"
-                      style={{ backgroundColor: cfg.color + '22' }}
-                    >
-                      <AlertTriangle size={28} style={{ color: cfg.color }} />
-                    </div>
-
-                    <div>
-                      <p className="text-3xl font-bold" style={{ color: cfg.color }}>
-                        {activeAlert}% spent
-                      </p>
-                      <p className="mt-2 text-sm text-gray-600">{cfg.message}</p>
-                    </div>
-
-                    <div className="w-full rounded-full bg-gray-200 h-2">
-                      <div
-                        className="h-2 rounded-full transition-all"
-                        style={{ width: `${activeAlert}%`, backgroundColor: cfg.color }}
-                      />
-                    </div>
-
-                    <button
-                      onClick={() => setActiveAlert(null)}
-                      className="mt-1 w-full rounded-xl py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                      style={{ backgroundColor: cfg.color }}
-                    >
-                      Got it
-                    </button>
-                  </div>
-                </motion.div>
-              </motion.div>
-            );
-          })()}
-      </AnimatePresence>
+      {activeAlert !== null && (() => {
+        const cfg = THRESHOLD_CONFIG[activeAlert];
+        return (
+          <AlertModal
+            isOpen
+            onClose={() => setActiveAlert(null)}
+            color={cfg.color}
+            bg={cfg.bg}
+            icon={<AlertTriangle size={28} style={{ color: cfg.color }} />}
+          >
+            <div>
+              <p className="text-3xl font-bold" style={{ color: cfg.color }}>
+                {activeAlert}% spent
+              </p>
+              <p className="mt-2 text-sm text-gray-600">{cfg.message}</p>
+            </div>
+            <div className="w-full rounded-full bg-gray-200 h-2">
+              <div
+                className="h-2 rounded-full transition-all"
+                style={{ width: `${activeAlert}%`, backgroundColor: cfg.color }}
+              />
+            </div>
+          </AlertModal>
+        );
+      })()}
 
       {/* Header */}
       <PageHeader

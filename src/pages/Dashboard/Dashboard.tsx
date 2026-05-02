@@ -9,10 +9,11 @@ import {
   PieChart,
 } from 'lucide-react';
 
-import PageHeader from '../../components/ui/PageHeader';
-import DetailCard from '../../components/ui/DetailCard';
-import CardHeader from '../../components/ui/CardHeader';
-import SummaryCard from '../../components/ui/SummaryCard';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import ActionButton from '../../components/ActionButton/ActionButton';
+import DetailCard from '../../components/DetailCard/DetailCard';
+import CardHeader from '../../components/CardHeader/CardHeader';
+import SummaryCard from '../../components/SummaryCard/SummaryCard';
 
 const Dashboard = () => {
   const { user, tripDetails, expenses, activities } = useTravel();
@@ -56,21 +57,16 @@ const Dashboard = () => {
           </>
         }
         action={
-          <motion.button
-            className="flex items-center gap-2 rounded-[15px] border-none bg-[#0066D2] px-6 py-3 text-[16px] font-semibold text-white cursor-pointer transition-all duration-300 hover:bg-[#0055b0] hover:shadow-lg"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Share2 size={20} />
+          <ActionButton icon={<Share2 size={20} />}>
             Share Trip
-          </motion.button>
+          </ActionButton>
         }
       />
 
       {/* Content area */}
-      <div className="flex flex-col gap-[30px] px-12">
+      <div className="flex flex-col gap-[30px] px-4 lg:px-12">
         {/* Top row */}
-        <div className="grid grid-cols-3 gap-[30px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[30px]">
           {actionCards.map((card, i) => {
             const Icon = card.icon;
             return (
@@ -87,7 +83,7 @@ const Dashboard = () => {
         </div>
 
         {/* Bottom row */}
-        <div className="grid grid-cols-2 gap-[30px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
           {/* Schedule Card */}
           <DetailCard delay={0.4}>
             <div className="flex flex-col gap-6">

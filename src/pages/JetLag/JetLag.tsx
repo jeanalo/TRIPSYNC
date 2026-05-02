@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   fetchCountryByName,
   calculateTimeDifference,
@@ -8,12 +8,13 @@ import { useTravel } from '../../context/TravelContext';
 import { MapPin, Clock, CalendarClock, Moon } from 'lucide-react';
 import { motion } from 'motion/react';
 
-import PageHeader from '../../components/ui/PageHeader';
-import FormCard from '../../components/ui/FormCard';
-import FormField from '../../components/ui/FormField';
-import SubmitButton from '../../components/ui/SubmitButton';
-import DetailCard from '../../components/ui/DetailCard';
-import CardHeader from '../../components/ui/CardHeader';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import FormCard from '../../components/FormCard/FormCard';
+import FormField from '../../components/FormField/FormField';
+import SubmitButton from '../../components/SubmitButton/SubmitButton';
+import DetailCard from '../../components/DetailCard/DetailCard';
+import CardHeader from '../../components/CardHeader/CardHeader';
+import IconBadge from '../../components/IconBadge/IconBadge';
 
 type JetLagFormData = {
   departureTime: string;
@@ -26,15 +27,33 @@ type Recommendation = {
 };
 
 export default function JetLag() {
-  const { tripDetails } = useTravel();
+  const { tripDetails, jetLagPlan, setJetLagPlan } = useTravel();
 
   const [formData, setFormData] = useState<JetLagFormData>({
-    departureTime: '',
-    arrivalTime: '',
+    departureTime: jetLagPlan?.departureTime || '',
+    arrivalTime: jetLagPlan?.arrivalTime || '',
   });
 
-  const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
+  const [recommendations, setRecommendations] = useState<Recommendation[] | null>(
+    jetLagPlan?.recommendations || null
+  );
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (jetLagPlan) {
+      setFormData({
+        departureTime: jetLagPlan.departureTime || '',
+        arrivalTime: jetLagPlan.arrivalTime || '',
+      });
+      setRecommendations(jetLagPlan.recommendations || null);
+    } else {
+      setFormData({
+        departureTime: '',
+        arrivalTime: '',
+      });
+      setRecommendations(null);
+    }
+  }, [jetLagPlan]);
 
   const [countryInfo, setCountryInfo] = useState<{
     departure: CountryData | null;
@@ -51,6 +70,9 @@ export default function JetLag() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.departureTime || !formData.arrivalTime) return;
+    
     setLoading(true);
 
     try {
@@ -75,31 +97,69 @@ export default function JetLag() {
       });
 
       const absTimeDiff = Math.abs(timeDiff);
-      const direction = timeDiff > 0 ? 'ahead' : 'behind';
+      const direction = timeDiff > 0 ? 'ahead' : timeDiff < 0 ? 'behind' : 'none';
       const daysToAdjust = Math.ceil(absTimeDiff / 1.5);
 
-      setRecommendations([
+      const parseTime = (timeStr: string) => {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours * 60 + minutes;
+      };
+
+      const depMins = parseTime(formData.departureTime);
+      const arrMins = parseTime(formData.arrivalTime);
+
+      let flightDurationMins = arrMins - depMins - (timeDiff * 60);
+      if (flightDurationMins <= 0) flightDurationMins += 24 * 60;
+
+      // Previous validations 
+      const flightDurationHours = Math.max(1, Math.min(Math.round(flightDurationMins / 60) || 1, 48));
+
+      const arrivalHour = parseInt(formData.arrivalTime.split(':')[0], 10);
+      const perceivedArrivalHour = Math.floor(((arrivalHour - timeDiff) % 24 + 24) % 24);
+
+      const recs: Recommendation[] = [
         {
           title: 'Morning Light',
-          desc: 'Get 30 mins of sunlight immediately upon waking at your destination.',
+          desc: perceivedArrivalHour < 12 
+            ? `Your body perceives it as morning (${perceivedArrivalHour}:00). Get 30 mins of sunlight immediately to reset your clock.`
+            : `Your body feels like it's later in the day (${perceivedArrivalHour}:00). Avoid bright light and prioritize getting morning sun the next day.`,
         },
         {
           title: 'Caffeine Curfew',
-          desc:
-            absTimeDiff > 3
-              ? `Stop caffeine intake after 2:00 PM in ${destination?.name || 'destination'} time.`
-              : `Stop caffeine intake after 2:00 PM in ${destination?.name || 'destination'} time.`,
+          desc: perceivedArrivalHour >= 18
+              ? `Your body feels like evening. Avoid caffeine during your ${flightDurationHours}-hour flight so you can sleep upon arrival.`
+              : `To stay alert, you can have caffeine on the flight, but stop by 2:00 PM ${destination?.name || 'destination'} time.`,
         },
         {
           title: 'Sleep Adjustment',
           desc:
-            timeDiff > 0
-              ? `Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} earlier each night for ${daysToAdjust} days before departure.`
-              : timeDiff < 0
-                ? `Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} later each night for ${daysToAdjust} days before departure.`
+            direction === 'ahead'
+              ? `Traveling East: Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} earlier each night for ${daysToAdjust} days before departure.`
+              : direction === 'behind'
+                ? `Traveling West: Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} later each night for ${daysToAdjust} days before departure.`
                 : 'No adjustment needed — same timezone!',
         },
-      ]);
+        {
+          title: 'Hydration',
+          desc: `Drink plenty of water during your ${flightDurationHours}-hour flight. Aim for at least 8oz every hour in the air.`,
+        }
+      ];
+
+      if (absTimeDiff >= 3) {
+        recs.push({
+          title: 'Melatonin',
+          desc: direction === 'ahead'
+            ? 'Traveling East: Consider 0.5mg - 3mg of melatonin 30 minutes before your new bedtime to help you fall asleep earlier.'
+            : 'Traveling West: Consider melatonin only if you wake up in the middle of the night and cannot fall back asleep.'
+        });
+      }
+
+      setRecommendations(recs);
+      setJetLagPlan({
+        departureTime: formData.departureTime,
+        arrivalTime: formData.arrivalTime,
+        recommendations: recs,
+      });
     } catch (error) {
       console.error('Error generating jet lag plan:', error);
     } finally {
@@ -128,10 +188,10 @@ export default function JetLag() {
       />
 
       {/* Content */}
-      <div className="flex flex-col gap-[30px] pl-12">
+      <div className="flex flex-col gap-[30px] px-4 lg:pl-12 lg:pr-4">
         {/* Country Info Card */}
-        <FormCard className="flex w-[822px] items-center justify-center">
-          <div className="grid grid-cols-2 gap-[65px] w-full max-w-[715px]">
+        <FormCard className="flex w-full lg:w-[822px] items-center justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-[65px] w-full lg:max-w-[715px]">
             <FormField
               label="Departure Country"
               value={tripDetails.departureCountry}
@@ -146,9 +206,9 @@ export default function JetLag() {
         </FormCard>
 
         {/* Bottom Section: Flight Details + Recommendations */}
-        <div className="flex gap-[44px] items-start">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-[44px] items-center lg:items-start w-full lg:w-[822px]">
           {/* Flight Details Card */}
-          <DetailCard className="w-[389px] h-[430px] shrink-0" delay={0.3} animateFrom="left">
+          <DetailCard className="w-full lg:w-[389px] flex-1 lg:flex-none h-auto lg:h-[430px]" delay={0.3} animateFrom="left">
             <form onSubmit={handleSubmit} className="flex h-full flex-col gap-[25px]">
               <CardHeader
                 icon={<CalendarClock size={24} />}
@@ -200,7 +260,7 @@ export default function JetLag() {
 
           {/* Recommendations Card */}
           <motion.div
-            className="flex h-[430px] w-[389px] shrink-0 flex-col rounded-[15px] bg-[#1CA698] px-[32px] py-[30px]"
+            className="flex h-auto lg:h-[430px] w-full lg:w-[389px] flex-1 lg:flex-none flex-col rounded-[15px] bg-[#1CA698] px-6 lg:px-[32px] py-6 lg:py-[30px]"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.4 }}
@@ -232,9 +292,9 @@ export default function JetLag() {
               <div className="flex h-full flex-col items-center justify-center gap-[35px]">
                 {/* Placeholder header */}
                 <div className="flex items-center gap-5">
-                  <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center rounded-[15px] bg-[#6CD9CE]">
-                    <Moon size={24} className="text-white" />
-                  </div>
+                  <IconBadge color="teal" size="lg">
+                    <Moon size={24} />
+                  </IconBadge>
                   <p className="w-[154px] text-[22px] font-bold leading-[24px] text-[#F5F5F5]">
                     No plan generated yet
                   </p>

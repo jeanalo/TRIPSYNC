@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Tag, Pencil, ShoppingCart, CalendarDays, CheckCircle } from 'lucide-react';
+import { Tag, Pencil, CalendarDays, CheckCircle, DollarSign } from 'lucide-react';
 
 import { useTravel } from '../../context/TravelContext';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -73,7 +73,7 @@ export default function AddExpense() {
             </div>
 
             <div className="grid grid-cols-2 gap-[65px]">
-              <FormField label="Amount" icon={<ShoppingCart size={24} />}>
+              <FormField label="Amount" icon={<DollarSign size={24} />}>
                 <input
                   type="number"
                   step="0.01"

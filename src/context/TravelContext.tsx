@@ -51,6 +51,7 @@ interface TravelContextType {
   setTripDetails: (details: TripDetails) => void;
   expenses: Expense[];
   addExpense: (expense: Omit<Expense, 'id'>) => void;
+  deleteExpense: (id: string) => void;
   activities: Activity[];
   addActivity: (activity: Omit<Activity, 'id'>) => void;
   experiences: Experience[];
@@ -255,6 +256,10 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     ]);
   };
 
+  const deleteExpense = (id: string) => {
+    setExpenses(expenses.filter((e) => e.id !== id));
+  };
+
   const addActivity = (activity: Omit<Activity, 'id'>) => {
     setActivities([
       ...activities,
@@ -291,6 +296,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         setTripDetails,
         expenses,
         addExpense,
+        deleteExpense,
         activities,
         addActivity,
         experiences,

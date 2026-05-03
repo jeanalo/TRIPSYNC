@@ -1,5 +1,4 @@
 import { useTravel } from '../../context/TravelContext';
-import { motion } from 'motion/react';
 import {
   Plane,
   Moon,
@@ -9,11 +8,11 @@ import {
   PieChart,
 } from 'lucide-react';
 
-import PageHeader from '../../components/ui/PageHeader';
-import ActionButton from '../../components/ui/ActionButton';
-import DetailCard from '../../components/ui/DetailCard';
-import CardHeader from '../../components/ui/CardHeader';
-import SummaryCard from '../../components/ui/SummaryCard';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import ActionButton from '../../components/ActionButton/ActionButton';
+import DetailCard from '../../components/DetailCard/DetailCard';
+import CardHeader from '../../components/CardHeader/CardHeader';
+import SummaryCard from '../../components/SummaryCard/SummaryCard';
 
 const Dashboard = () => {
   const { user, tripDetails, expenses, activities } = useTravel();
@@ -141,14 +140,14 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <span className="text-[16px] text-[#0066D2]">Total budget</span>
                 <span className="text-[20px] font-bold text-[#0066D2]">
-                  ${(Number(tripDetails.budget) || 3500).toLocaleString()}
+                  ${Number(tripDetails.budget).toLocaleString()}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-[16px] text-[#0066D2]">Spent so far</span>
                 <span className="text-[20px] font-bold text-[#E53935]">
-                  -${totalSpent > 0 ? totalSpent.toLocaleString() : '1.200'}
+                  -${totalSpent.toLocaleString()}
                 </span>
               </div>
 
@@ -160,7 +159,7 @@ const Dashboard = () => {
                   Remaining
                 </span>
                 <span className="text-[22px] font-bold text-[#0066D2]">
-                  ${remainingBudget > 0 ? remainingBudget.toLocaleString() : '2.300'}
+                  ${remainingBudget.toLocaleString()}
                 </span>
               </div>
             </div>

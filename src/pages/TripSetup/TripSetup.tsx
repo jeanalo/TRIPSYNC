@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTravel, TripDetails } from '../../context/TravelContext';
 import { MapPin, CalendarDays, CheckCircle } from 'lucide-react';
 
-import PageHeader from '../../components/ui/PageHeader';
-import FormCard from '../../components/ui/FormCard';
-import FormField from '../../components/ui/FormField';
-import SubmitButton from '../../components/ui/SubmitButton';
-import CountrySelect from '../../components/ui/CountrySelect';
+import PageHeader from '../../components/PageHeader/PageHeader';
+import FormCard from '../../components/FormCard/FormCard';
+import FormField from '../../components/FormField/FormField';
+import SubmitButton from '../../components/SubmitButton/SubmitButton';
+import CountrySelect from '../../components/CountrySelect/CountrySelect';
 
 export default function TripSetup() {
   const { tripDetails, setTripDetails } = useTravel();

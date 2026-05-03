@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import IconBadge from './IconBadge';
+import IconBadge from '../IconBadge/IconBadge';
 
 interface CardHeaderProps {
   icon: ReactNode;

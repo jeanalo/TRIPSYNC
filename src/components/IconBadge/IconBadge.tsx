@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 interface IconBadgeProps {
   children: ReactNode;
-  color?: 'blue' | 'teal';
+  color?: 'blue' | 'teal' | 'primary';
   size?: 'md' | 'lg';
   className?: string;
 }
@@ -10,6 +10,7 @@ interface IconBadgeProps {
 const colorMap = {
   blue: 'bg-[#0066D2]',
   teal: 'bg-[#6CD9CE]',
+  primary: 'bg-[#1CA698]',
 };
 
 const sizeMap = {

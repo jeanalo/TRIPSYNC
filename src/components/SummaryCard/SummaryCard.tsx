@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import type { ReactNode } from 'react';
-import CardHeader from './CardHeader';
+import CardHeader from '../CardHeader/CardHeader';
 
 interface SummaryCardProps {
   icon: ReactNode;

@@ -62,6 +62,7 @@ interface TravelContextType {
   register: (email: string, name: string) => void;
   login: (email: string) => void;
   logout: () => void;
+  updateUser: (name: string) => void;
 }
 
 const getKey = (key: string, email?: string) => (email ? `${email}:${key}` : key);
@@ -289,6 +290,14 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (name: string) => {
+    if (!user) return;
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+    registeredUsers[user.email] = { ...registeredUsers[user.email], name };
+    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+    setUser({ ...user, name });
+  };
+
   return (
     <TravelContext.Provider
       value={{
@@ -307,6 +316,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         register,
         login,
         logout,
+        updateUser,
       }}
     >
       {children}

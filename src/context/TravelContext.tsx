@@ -51,6 +51,7 @@ interface TravelContextType {
   setTripDetails: (details: TripDetails) => void;
   expenses: Expense[];
   addExpense: (expense: Omit<Expense, 'id'>) => void;
+  deleteExpense: (id: string) => void;
   activities: Activity[];
   addActivity: (activity: Omit<Activity, 'id'>) => void;
   experiences: Experience[];
@@ -61,6 +62,7 @@ interface TravelContextType {
   register: (email: string, name: string) => void;
   login: (email: string) => void;
   logout: () => void;
+  updateUser: (name: string) => void;
 }
 
 const getKey = (key: string, email?: string) => (email ? `${email}:${key}` : key);
@@ -255,6 +257,10 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     ]);
   };
 
+  const deleteExpense = (id: string) => {
+    setExpenses(expenses.filter((e) => e.id !== id));
+  };
+
   const addActivity = (activity: Omit<Activity, 'id'>) => {
     setActivities([
       ...activities,
@@ -284,6 +290,14 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (name: string) => {
+    if (!user) return;
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+    registeredUsers[user.email] = { ...registeredUsers[user.email], name };
+    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+    setUser({ ...user, name });
+  };
+
   return (
     <TravelContext.Provider
       value={{
@@ -291,6 +305,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         setTripDetails,
         expenses,
         addExpense,
+        deleteExpense,
         activities,
         addActivity,
         experiences,
@@ -301,6 +316,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         register,
         login,
         logout,
+        updateUser,
       }}
     >
       {children}

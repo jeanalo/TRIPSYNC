@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Pencil, CheckCircle } from 'lucide-react';
+import { Pencil, CalendarDays, CheckCircle, Clock } from 'lucide-react';
 import { useTravel } from '../../context/TravelContext';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import FormCard from '../../components/FormCard/FormCard';
@@ -50,6 +50,24 @@ export default function AddActivity() {
                 className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder:text-[#1CA698]/40 outline-none"
               />
             </FormField>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[45px] md:gap-[65px]">
+              <FormField label="Date" icon={<CalendarDays size={24} />}>
+                <input
+                  type="date"
+                  {...register('date', { required: true })}
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none"
+                />
+              </FormField>
+
+              <FormField label="Time" icon={<Clock size={24} />}>
+                <input
+                  type="time"
+                  {...register('time', { required: true })}
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none"
+                />
+              </FormField>
+            </div>
 
             <SubmitButton icon={<CheckCircle size={24} />}>Save Activity</SubmitButton>
           </div>

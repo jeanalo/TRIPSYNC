@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Pencil, CalendarDays, CheckCircle, Clock } from 'lucide-react';
+import { Tag, Pencil, CalendarDays, CheckCircle, Clock, MapPin } from 'lucide-react';
 import { useTravel } from '../../context/TravelContext';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import FormCard from '../../components/FormCard/FormCard';
@@ -15,6 +15,16 @@ type FormValues = {
   category: string;
   notes: string;
 };
+
+const CATEGORIES = [
+  'Free Tour',
+  'Adventure',
+  'Cultural',
+  'Chill',
+  'Food',
+  'Transport',
+  'Other',
+];
 
 export default function AddActivity() {
   const { addActivity } = useTravel();
@@ -68,6 +78,39 @@ export default function AddActivity() {
                 />
               </FormField>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[45px] md:gap-[65px]">
+              <FormField label="Location" icon={<MapPin size={24} />}>
+                <input
+                  type="text"
+                  {...register('location')}
+                  placeholder="e.g. City Center"
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder:text-[#1CA698]/40 outline-none"
+                />
+              </FormField>
+
+              <FormField label="Category" icon={<Tag size={24} />}>
+                <select
+                  {...register('category')}
+                  className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none cursor-pointer"
+                >
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+            </div>
+
+            <FormField label="Details" icon={<Pencil size={24} />}>
+              <input
+                type="text"
+                {...register('notes')}
+                placeholder="Amazing experience."
+                className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder:text-[#1CA698]/40 outline-none"
+              />
+            </FormField>
 
             <SubmitButton icon={<CheckCircle size={24} />}>Save Activity</SubmitButton>
           </div>

@@ -1,9 +1,25 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, MapPin, Zap, Star, CheckCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  MapPin,
+  Leaf,
+  Clock,
+  Zap,
+  Star,
+  CheckCircle,
+  Lightbulb,
+  Calendar,
+} from 'lucide-react';
 import { motion } from 'motion/react';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
 import { EXPERIENCES } from '../../data/experiences';
+
+const difficultyColor: Record<string, string> = {
+  Easy: 'text-[#1CA698]',
+  Moderate: 'text-[#F2B705]',
+  Challenging: 'text-red-500',
+};
 
 const categoryBg: Record<string, string> = {
   Chill: '#1CA698',
@@ -113,6 +129,79 @@ const ExperienceDetail = () => {
                         <CheckCircle size={11} className="text-white" />
                       </div>
                       <span className="text-[15px] text-[#0066D2]">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </DetailCard>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <DetailCard delay={0.25} animateFrom="right">
+              <div className="flex flex-col gap-5">
+                <CardHeader icon={<Calendar size={22} />} title="Quick Info" />
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between py-3 border-b border-[#0066D2]/10">
+                    <div className="flex items-center gap-2">
+                      <MapPin size={15} className="text-[#0066D2]" />
+                      <span className="text-[14px] text-[#0066D2]/60">Location</span>
+                    </div>
+                    <span className="text-[14px] font-semibold text-[#0066D2]">
+                      {exp.location}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-3 border-b border-[#0066D2]/10">
+                    <div className="flex items-center gap-2">
+                      <Leaf size={15} className="text-[#0066D2]" />
+                      <span className="text-[14px] text-[#0066D2]/60">Category</span>
+                    </div>
+                    <span className="text-[14px] font-semibold text-[#0066D2]">
+                      {exp.category}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-3 border-b border-[#0066D2]/10">
+                    <div className="flex items-center gap-2">
+                      <Clock size={15} className="text-[#0066D2]" />
+                      <span className="text-[14px] text-[#0066D2]/60">Duration</span>
+                    </div>
+                    <span className="text-[14px] font-semibold text-[#0066D2]">
+                      {exp.duration}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-3">
+                    <div className="flex items-center gap-2">
+                      <Zap size={15} className="text-[#0066D2]" />
+                      <span className="text-[14px] text-[#0066D2]/60">Difficulty</span>
+                    </div>
+                    <span
+                      className={`text-[14px] font-semibold ${difficultyColor[exp.difficulty]}`}
+                    >
+                      {exp.difficulty}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </DetailCard>
+
+            <DetailCard delay={0.35} animateFrom="right">
+              <div className="flex flex-col gap-3">
+                <CardHeader icon={<Leaf size={22} />} title="Eco Note" iconColor="teal" />
+                <p className="text-[14px] text-[#0066D2]/80 leading-relaxed">{exp.eco}</p>
+              </div>
+            </DetailCard>
+
+            <DetailCard delay={0.45} animateFrom="right">
+              <div className="flex flex-col gap-4">
+                <CardHeader icon={<Lightbulb size={22} />} title="Traveler Tips" />
+                <ul className="flex flex-col gap-3">
+                  {exp.tips.map((tip, i) => (
+                    <li key={i} className="flex items-start gap-2.5">
+                      <span className="text-[#F2B705] font-bold text-[20px] leading-none mt-[-2px]">
+                        ·
+                      </span>
+                      <span className="text-[14px] text-[#0066D2]/80 leading-snug">
+                        {tip}
+                      </span>
                     </li>
                   ))}
                 </ul>

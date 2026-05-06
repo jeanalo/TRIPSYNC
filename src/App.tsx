@@ -9,6 +9,7 @@ import AddExpense from './pages/AddExpense/AddExpense';
 import Schedule from './pages/Schedule/Schedule';
 import AddActivity from './pages/AddActivity/AddActivity';
 import Experiences from './pages/Experiences/Experiences';
+import ExperienceDetail from './pages/ExperienceDetail/ExperienceDetail';
 import TripSetup from './pages/TripSetup/TripSetup';
 import JetLag from './pages/JetLag/JetLag';
 import Profile from './pages/Profile/Profile';
@@ -30,6 +31,7 @@ function App() {
           <Route path="schedule" element={<Schedule />} />
           <Route path="schedule/add" element={<AddActivity />} />
           <Route path="experiences" element={<Experiences />} />
+          <Route path="experiences/:id" element={<ExperienceDetail />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>

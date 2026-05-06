@@ -4,16 +4,25 @@ import { MapPin, Bookmark, BookmarkCheck, Leaf } from 'lucide-react';
 import { motion } from 'motion/react';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { EXPERIENCES } from '../../data/experiences';
+import { useTravel } from '../../context/TravelContext';
 
 const FILTERS = ['All', 'Chill', 'Adventure', 'Cultural', 'Free Tour', 'Saved'] as const;
 type Filter = (typeof FILTERS)[number];
 
 const Experiences = () => {
   const navigate = useNavigate();
+  const { tripDetails } = useTravel();
   const [activeFilter, setActiveFilter] = useState<Filter>('All');
   const [saved, setSaved] = useState<Set<number>>(new Set([1]));
 
-  const visible = EXPERIENCES.filter((exp) => {
+  const availableExperiences = tripDetails?.destinationCountry
+    ? EXPERIENCES.filter(
+        (exp) =>
+          exp.country.toLowerCase() === tripDetails.destinationCountry.toLowerCase()
+      )
+    : EXPERIENCES;
+
+  const visible = availableExperiences.filter((exp) => {
     if (activeFilter === 'Saved') return saved.has(exp.id);
     if (activeFilter === 'All') return true;
     return exp.category === activeFilter;

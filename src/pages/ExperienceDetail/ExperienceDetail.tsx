@@ -1,25 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  ArrowLeft,
-  MapPin,
-  Leaf,
-  Clock,
-  Zap,
-  Star,
-  CheckCircle,
-  Lightbulb,
-  Calendar,
-} from 'lucide-react';
+import { ArrowLeft, MapPin, Zap, Star, CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
 import { EXPERIENCES } from '../../data/experiences';
-
-const difficultyColor: Record<string, string> = {
-  Easy: 'text-[#1CA698]',
-  Moderate: 'text-[#F2B705]',
-  Challenging: 'text-red-500',
-};
 
 const categoryBg: Record<string, string> = {
   Chill: '#1CA698',
@@ -44,7 +28,6 @@ const ExperienceDetail = () => {
 
   return (
     <div>
-      {/* Back button + page title */}
       <motion.div
         className="px-4 lg:px-12 pt-8 lg:pt-12 pb-6"
         initial={{ opacity: 0, y: 20 }}
@@ -78,7 +61,6 @@ const ExperienceDetail = () => {
         </div>
       </motion.div>
 
-      {/* Hero image */}
       <motion.div
         className="px-4 lg:px-12 mb-6"
         initial={{ opacity: 0, scale: 0.98 }}
@@ -89,6 +71,56 @@ const ExperienceDetail = () => {
           <img src={exp.image} alt={exp.name} className="w-full h-full object-cover" />
         </div>
       </motion.div>
+
+      <div className="px-4 lg:px-12 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <DetailCard delay={0.2}>
+              <div className="flex flex-col gap-4">
+                <CardHeader icon={<Star size={22} />} title="About This Experience" />
+                <p className="text-[16px] text-[#0066D2]/80 leading-relaxed">
+                  {exp.description}
+                </p>
+              </div>
+            </DetailCard>
+
+            <DetailCard delay={0.3}>
+              <div className="flex flex-col gap-5">
+                <CardHeader icon={<Zap size={22} />} title="Highlights" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {exp.highlights.map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-3 bg-[#F5F5F5] rounded-[10px]"
+                    >
+                      <h.icon size={22} className="text-[#0066D2] shrink-0" />
+                      <span className="text-[15px] font-medium text-[#0066D2]">
+                        {h.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </DetailCard>
+
+            <DetailCard delay={0.4}>
+              <div className="flex flex-col gap-5">
+                <CardHeader icon={<CheckCircle size={22} />} title="What's Included" />
+                <ul className="flex flex-col gap-3">
+                  {exp.included.map((item, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#1CA698] flex items-center justify-center shrink-0">
+                        <CheckCircle size={11} className="text-white" />
+                      </div>
+                      <span className="text-[15px] text-[#0066D2]">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </DetailCard>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

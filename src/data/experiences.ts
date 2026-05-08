@@ -162,7 +162,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Otaku Culture',
     location: 'Akihabara, Tokyo',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1589824988743-f2e065e61f26?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1672444936624-4f0669476666?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3–4 hours',
     difficulty: 'Easy',
     description:
@@ -192,7 +193,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Mount Fuji Sunrise Climb',
     location: 'Yoshida Trail, Mt Fuji',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1570459027562-4a916cb6235a?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1661964177687-57387c2cbd14?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '10–12 hours',
     difficulty: 'Challenging',
     description:
@@ -224,7 +226,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Eiffel Tower at Sunset',
     location: 'Champ de Mars, Paris',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1661963064037-cfcf2e10db2d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2–3 hours',
     difficulty: 'Easy',
     description:
@@ -344,7 +347,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Versailles Bike Tour',
     location: 'Palace of Versailles',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1591266360459-6e8a335ca5c0?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1561322457-a7bd028e7fea?q=80&w=1326&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '5–6 hours',
     difficulty: 'Moderate',
     description:
@@ -468,7 +472,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Tuscan Vineyard Day',
     location: 'Chianti, Tuscany',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1505765050516-f72dcac9c60e?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1676232713727-bc13cfc12c26?q=80&w=1075&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '6–8 hours',
     difficulty: 'Easy',
     description:
@@ -498,7 +503,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Amalfi Coast Boat Tour',
     location: 'Amalfi Coast',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1533614767277-49d6c9d27a13?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1612698093158-e07ac200d44e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '7 hours',
     difficulty: 'Moderate',
     description:
@@ -592,7 +598,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Sagrada Família Tower Climb',
     location: 'Barcelona',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1656597787628-62741d181641?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -622,7 +629,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Tapas & Flamenco Night',
     location: 'El Born, Barcelona',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1551918120-9739cb430c6d?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1722461079337-1775b8f61137?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -652,7 +660,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Park Güell Free Tour',
     location: 'Park Güell, Barcelona',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1583779457094-ab6f0c80b066?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1587203835042-7167273f13d3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Moderate',
     description:
@@ -712,7 +721,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Costa Brava Kayak Trip',
     location: 'Costa Brava, Catalonia',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1522778526097-ce0a22ceb253?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1580484226012-5696fffa0673?q=80&w=1147&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Moderate',
     description:
@@ -804,7 +814,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Central Park Rowboat',
     location: 'Central Park, NYC',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1582507451030-d63b21d62b27?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1717420287882-b9e10af84f28?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '1–2 hours',
     difficulty: 'Easy',
     description:
@@ -894,7 +905,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Yellowstone Geyser Trail',
     location: 'Yellowstone, Wyoming',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1577095862488-fb2b78a59c54?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1759167939991-38fb7d8c976f?q=80&w=1460&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '8 hours',
     difficulty: 'Moderate',
     description:
@@ -924,7 +936,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'New Orleans Jazz Crawl',
     location: 'French Quarter, NOLA',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1549965738-e1aaf1168073?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1560110734-f03640ca8eda?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -988,7 +1001,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Cenote Cave Diving',
     location: 'Tulum, Yucatán',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1518503669085-3478e1f7ea1c?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1719941463960-f3310fe64e46?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '5 hours',
     difficulty: 'Moderate',
     description:
@@ -1048,7 +1062,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Cancún Beach Day',
     location: 'Isla Mujeres',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1518509562904-e7ef99cddc85?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1565358720137-55235e0878a2?q=80&w=1115&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '7 hours',
     difficulty: 'Easy',
     description:
@@ -1108,7 +1123,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Oaxaca Mezcal Route',
     location: 'Oaxaca Valley',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1599577180589-0a76d8920c8f?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1683313890724-ec2df503a9d6?q=80&w=1133&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '8 hours',
     difficulty: 'Easy',
     description:
@@ -1172,7 +1188,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Iguazu Falls Tour',
     location: 'Iguazu Falls',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1515861461225-1ee16ed59963?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1501072507980-6c49c465932f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '6–8 hours',
     difficulty: 'Moderate',
     description:
@@ -1202,7 +1219,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Copacabana Sunrise Bike',
     location: 'Rio de Janeiro',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1548863227-3af567fc3b27?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1542354528-2643adb07000?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -1262,7 +1280,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Amazon Lodge Stay',
     location: 'Manaus / Amazon River',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1637687222430-ca092fb9062a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 days / 2 nights',
     difficulty: 'Challenging',
     description:
@@ -1292,7 +1311,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Salvador Capoeira Class',
     location: 'Pelourinho, Salvador',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1564769662467-7c4f2f7e1d8e?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1759352856072-985a4ddab82d?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Moderate',
     description:
@@ -1326,7 +1346,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Tango Lesson & Show',
     location: 'San Telmo, Buenos Aires',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1545569310-9d9eb1c0a1a3?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1682434873732-7fa18753ee3e?q=80&w=1128&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -1356,7 +1377,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Recoleta Cemetery Tour',
     location: 'Recoleta, Buenos Aires',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1777824255040-17a8b3ef549a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -1416,7 +1438,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Iguazu from Argentina',
     location: 'Iguazu Falls',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1603923760854-fcedce1e34dc?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1652122513880-e216a29d3f63?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '7 hours',
     difficulty: 'Moderate',
     description:
@@ -1629,7 +1652,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Lake Titicaca Homestay',
     location: 'Amantaní Island',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1543746746-b08fa78ce53b?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1631302261222-8560efb440db?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 days',
     difficulty: 'Moderate',
     description:
@@ -1659,7 +1683,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Amazon Rainforest Lodge',
     location: 'Tambopata, Madre de Dios',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1637687222430-ca092fb9062a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 days / 2 nights',
     difficulty: 'Challenging',
     description:
@@ -1813,7 +1838,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Delphi Day Trip',
     location: 'Delphi',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1607475068020-7a8be9d9e0c8?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1681046192294-217612ee58a1?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '12 hours',
     difficulty: 'Moderate',
     description:
@@ -1997,7 +2023,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Thai Massage at Temple',
     location: 'Wat Pho, Bangkok',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1582719504218-69e1ce6d8a64?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1661682870922-2f011fca6ad5?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -2085,7 +2112,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Varanasi Ganges Boat',
     location: 'Varanasi',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1561361398-a8c52b4be283?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1652396507015-74b259a6f58d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -2115,7 +2143,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Jaipur Pink City Walk',
     location: 'Jaipur',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1599661046827-dacde6976549?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1620563204920-ea65cb792533?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -2205,7 +2234,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Old Delhi Rickshaw Ride',
     location: 'Delhi',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1561361398-a8c52b4be283?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1664532545811-c2c4f3ee7d71?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -2269,7 +2299,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Forbidden City Tour',
     location: 'Beijing',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1599040066907-5099ec57f3d4?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1601100839459-438937873160?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -2329,7 +2360,8 @@ export const EXPERIENCES: Experience[] = [
     name: "Xi'an Terracotta Warriors",
     location: "Xi'an",
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1565017228812-d3afa3e1d9c7?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1648726444582-6d108b5d13dc?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '6 hours',
     difficulty: 'Easy',
     description:
@@ -2359,7 +2391,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Tea Ceremony in Hangzhou',
     location: 'Hangzhou',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a4?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1743401462427-ae6461b69e93?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -2389,7 +2422,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Yangtze Three Gorges Cruise',
     location: 'Yangtze River',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1561019346-2f4f30b21ee9?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1729675411142-b4447d743307?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 days',
     difficulty: 'Easy',
     description:
@@ -2421,7 +2455,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Pyramids of Giza Tour',
     location: 'Giza',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1708992485876-f193e746f6dd?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '6 hours',
     difficulty: 'Easy',
     description:
@@ -2481,7 +2516,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Khan el-Khalili Bazaar',
     location: 'Cairo',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1525093859165-32fc23a8378b?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1710211288826-b7df3ab71588?q=80&w=1264&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -2511,7 +2547,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Valley of the Kings',
     location: 'Luxor',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1626714219020-2cb88dadbe75?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1697729832745-727415df238f?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '5 hours',
     difficulty: 'Moderate',
     description:
@@ -2566,7 +2603,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Alexandria Day Trip',
     location: 'Alexandria',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1568452472005-bcfb6c8a7f48?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1705422753686-5126879e2f09?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '12 hours',
     difficulty: 'Easy',
     description:
@@ -2690,7 +2728,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Robben Island Tour',
     location: 'Cape Town',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1612220470937-b9c8e7e1b6c8?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1646558582818-17d85b393c4a?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -2720,7 +2759,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Cape Point Free Walk',
     location: 'Cape Peninsula',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1549048046-dfb22a51fd3e?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1691883364613-d627099e4d4c?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Moderate',
     description:
@@ -2750,7 +2790,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Boulders Beach Penguins',
     location: 'Simons Town',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1721137158885-b92a4f8b641d?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -2814,7 +2855,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Great Barrier Reef Snorkel',
     location: 'Cairns',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1582629851568-4f9a0a4c0517?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1664922114319-4700c0ef74b1?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '8 hours',
     difficulty: 'Easy',
     description:
@@ -2874,7 +2916,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Bondi Coastal Walk',
     location: 'Bondi to Coogee, Sydney',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1565013744946-2cba18a23eee?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1658285395586-bd32ea76b6c2?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2.5 hours',
     difficulty: 'Moderate',
     description:
@@ -2934,7 +2977,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Daintree Rainforest',
     location: 'Daintree, Queensland',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1570459027562-4a916cb6235a?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1670020264568-a8adc2da5b61?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '10 hours',
     difficulty: 'Moderate',
     description:
@@ -2963,7 +3007,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Tower of London',
     location: 'London',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1584546568207-cdcdf91066b1?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1680806491784-6d3d0d406562?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -3023,7 +3068,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Edinburgh Castle Tour',
     location: 'Edinburgh, Scotland',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1568227548687-22ec56fdf6f3?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Moderate',
     description:
@@ -3053,7 +3099,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'English Pub Crawl',
     location: 'London',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1532634740-46b1ad4e5e3e?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1663841366392-1517cc0bf9e1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -3083,7 +3130,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Stonehenge & Bath',
     location: 'Wiltshire',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1599909366516-6c1ae0e7800c?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1664611213412-f7d6731880a4?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '11 hours',
     difficulty: 'Easy',
     description:
@@ -3113,7 +3161,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Highland Day Tour',
     location: 'Scottish Highlands',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1597266207484-89eb6dd0708d?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1695827724182-742453f1ed59?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '12 hours',
     difficulty: 'Moderate',
     description:
@@ -3146,7 +3195,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Berlin Wall & History Tour',
     location: 'Berlin',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1587330979470-3016b6702d89?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1560969185-ee68ef9080c0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3.5 hours',
     difficulty: 'Easy',
     description:
@@ -3171,7 +3221,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Munich Beer Hall Tour',
     location: 'Munich',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1764705743879-01b5825ed902?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -3261,7 +3312,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Rhine Valley Cruise',
     location: 'Middle Rhine',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1583933196071-17066d2c5e6e?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1640265225639-6cc10eddae74?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '8 hours',
     difficulty: 'Easy',
     description:
@@ -3291,7 +3343,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Hamburg Free Walking Tour',
     location: 'Hamburg',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1551448050-c8e9eef7da99?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1691015434417-a38d8a4fe996?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2.5 hours',
     difficulty: 'Easy',
     description:
@@ -3325,7 +3378,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Lisbon Tram 28',
     location: 'Lisbon',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1577004395533-71d7d6f0eaf2?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1593471104864-2f1d7bb58149?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -3350,7 +3404,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Porto Wine Cellars',
     location: 'Vila Nova de Gaia',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1583944894898-26ff60beea64?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1566467021572-37fbefe8fcb2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -3380,7 +3435,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Sintra Day Trip',
     location: 'Sintra',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1599935232844-eaaab44e22e9?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1606422981270-d410b689e6db?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '8 hours',
     difficulty: 'Moderate',
     description:
@@ -3410,7 +3466,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Algarve Sea Caves',
     location: 'Lagos',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1602092920025-cf76e8d6cdee?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1726994886576-d00668cfdfd8?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -3435,7 +3492,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Lisbon Free Walk',
     location: 'Lisbon',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1568051243857-3115527d3e92?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1762786924509-b531886ba017?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Moderate',
     description:
@@ -3465,7 +3523,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Pastel de Nata Class',
     location: 'Lisbon',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1631380908927-5e2659ad9d39?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1554090151-1e082048a18c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -3554,7 +3613,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Grand Bazaar Tour',
     location: 'Istanbul',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1775574222563-22a713da3f4f?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -3584,7 +3644,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Bosphorus Sunset Cruise',
     location: 'Istanbul',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1604918428943-90fcd7d61c4a?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1661779708398-38fce7816eca?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2.5 hours',
     difficulty: 'Easy',
     description:
@@ -3614,7 +3675,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Pamukkale Thermal Pools',
     location: 'Pamukkale',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1589403960862-5b34e8d61c41?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1712029680492-4ddd46154adf?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '11 hours',
     difficulty: 'Moderate',
     description:
@@ -3798,7 +3860,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Komodo Dragon Trek',
     location: 'Komodo Island',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1578661728923-32d8a787e9e2?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1661876927592-7ce56910bbda?q=80&w=1263&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '12 hours',
     difficulty: 'Moderate',
     description:
@@ -3828,7 +3891,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Balinese Cooking Class',
     location: 'Ubud, Bali',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1559717865-a99cac1c95d8?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1658218615066-660f7c936926?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '5 hours',
     difficulty: 'Easy',
     description:
@@ -3890,7 +3954,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Hanoi Old Quarter Tour',
     location: 'Hanoi',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1540331547168-8b63109225b7?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1721222847140-51f6297895c3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -3920,7 +3985,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Hoi An Lantern Town',
     location: 'Hoi An',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1598548014275-3f9b8f73e9e9?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1696215106267-c14bbed43f68?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -3950,7 +4016,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Mekong Delta Free Tour',
     location: 'Ben Tre',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1583394293214-28ded15ee548?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1589562337460-9d825d2cd5a2?q=80&w=1050&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3.5 hours',
     difficulty: 'Easy',
     description:
@@ -3980,7 +4047,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Saigon Street Food Tour',
     location: 'Ho Chi Minh City',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1560448075-bb485b067938?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1661456043900-a14f5d3fa63c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '4 hours',
     difficulty: 'Easy',
     description:
@@ -4069,7 +4137,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Sahara Desert Camel Trek',
     location: 'Merzouga',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1546412414-e1885259563a?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1759655161894-391de91f848b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 days',
     difficulty: 'Challenging',
     description:
@@ -4129,7 +4198,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Atlas Mountain Day Trip',
     location: 'Atlas Mountains',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1564505384-b88f1d27dd0d?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1527528635755-d2ed9370e552?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '8 hours',
     difficulty: 'Moderate',
     description:
@@ -4159,7 +4229,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Fes Tannery & Medina',
     location: 'Fes',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1539709123094-08b5d3ce75e9?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1738616470190-25c7e6a17c4c?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dimages.unsplash.com/photo-1539709123094-08b5d3ce75e9?w=1200&q=80',
     duration: '5 hours',
     difficulty: 'Moderate',
     description:
@@ -4189,7 +4260,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Chefchaouen Free Walk',
     location: 'Chefchaouen',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1577124470203-f9bcd1c4d22c?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1697729733847-0ed51661e005?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Moderate',
     description:
@@ -4253,7 +4325,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Blue Lagoon Geothermal Spa',
     location: 'Grindavík',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1521669606999-c4ff60c01b03?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1415226556993-1404e0c6e727?q=80&w=759&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -4283,7 +4356,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Golden Circle Day Trip',
     location: 'Southwest Iceland',
     category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1539066319-1a9e09e2d5d2?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1725218548299-667b35c85281?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '8 hours',
     difficulty: 'Easy',
     description:
@@ -4407,7 +4481,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Amsterdam Canal Cruise',
     location: 'Amsterdam',
     category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1534351590666-13e3e96c5017?w=1200&q=80',
+    image:
+      'https://images.unsplash.com/photo-1741290721345-a2422c9716bb?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '1.5 hours',
     difficulty: 'Easy',
     description:
@@ -4437,7 +4512,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Anne Frank House',
     location: 'Amsterdam',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1576595580361-90a855a84d4f?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1694475731860-1fe1cb7a1897?q=80&w=1167&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '2 hours',
     difficulty: 'Easy',
     description:
@@ -4497,7 +4573,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Van Gogh Museum',
     location: 'Amsterdam',
     category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1582056615423-30b8b1f5e5e1?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1706548911842-7162d4bd2c98?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:
@@ -4527,7 +4604,8 @@ export const EXPERIENCES: Experience[] = [
     name: 'Amsterdam Free Tour',
     location: 'Amsterdam',
     category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1576924542622-772579fd1cf2?w=1200&q=80',
+    image:
+      'https://plus.unsplash.com/premium_photo-1734413233922-a7e86e756a23?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     duration: '3 hours',
     difficulty: 'Easy',
     description:

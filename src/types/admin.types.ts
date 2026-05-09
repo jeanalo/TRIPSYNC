@@ -55,6 +55,31 @@ export interface AdminExperienceFilters {
   status: string;
 }
 
+export interface AdminTrip {
+  id: string;
+  travelerName: string;
+  originCountry: string;
+  destinationCountry: string;
+  startDate: string;
+  endDate: string;
+  budget: number;
+  status: 'active' | 'upcoming' | 'completed' | 'cancelled';
+}
+
+export interface AdminTripsStats {
+  totalTrips: number;
+  activeTrips: number;
+  completedTrips: number;
+  topDestination: string;
+}
+
+export interface AdminTripFilters {
+  search: string;
+  country: string;
+  status: string;
+  date: string;
+}
+
 export interface UnsplashImage {
   id: string;
   url: string;

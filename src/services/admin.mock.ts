@@ -4,6 +4,8 @@ import type {
   SelectOption,
   AdminExperience,
   AdminExperiencesStats,
+  AdminTrip,
+  AdminTripsStats,
 } from '@/types/admin.types';
 
 export const mockAdminStats: AdminStats = {
@@ -11,6 +13,76 @@ export const mockAdminStats: AdminStats = {
   activeTrips: 12,
   topDestination: 'Bali, Indonesia',
 };
+
+export const mockAdminTripsStats: AdminTripsStats = {
+  totalTrips: 245,
+  activeTrips: 42,
+  completedTrips: 185,
+  topDestination: 'Paris, France',
+};
+
+export const mockAdminTrips: AdminTrip[] = [
+  {
+    id: 'trip-101',
+    travelerName: 'Alice Johnson',
+    originCountry: 'USA',
+    destinationCountry: 'France',
+    startDate: '2024-06-10',
+    endDate: '2024-06-25',
+    budget: 3500,
+    status: 'upcoming',
+  },
+  {
+    id: 'trip-102',
+    travelerName: 'Bob Smith',
+    originCountry: 'UK',
+    destinationCountry: 'Japan',
+    startDate: '2024-05-01',
+    endDate: '2024-05-15',
+    budget: 4200,
+    status: 'active',
+  },
+  {
+    id: 'trip-103',
+    travelerName: 'Charlie Brown',
+    originCountry: 'Canada',
+    destinationCountry: 'Brazil',
+    startDate: '2024-02-10',
+    endDate: '2024-02-20',
+    budget: 2800,
+    status: 'completed',
+  },
+  {
+    id: 'trip-104',
+    travelerName: 'Diana Prince',
+    originCountry: 'Germany',
+    destinationCountry: 'Australia',
+    startDate: '2024-08-05',
+    endDate: '2024-08-20',
+    budget: 5500,
+    status: 'upcoming',
+  },
+  {
+    id: 'trip-105',
+    travelerName: 'Edward Elric',
+    originCountry: 'Spain',
+    destinationCountry: 'Italy',
+    startDate: '2024-04-15',
+    endDate: '2024-04-22',
+    budget: 1500,
+    status: 'active',
+  },
+  {
+    id: 'trip-106',
+    travelerName: 'Fiona Gallagher',
+    originCountry: 'Ireland',
+    destinationCountry: 'Thailand',
+    startDate: '2024-01-05',
+    endDate: '2024-01-20',
+    budget: 2200,
+    status: 'cancelled',
+  },
+];
 
 export const mockAdminExperiencesStats: AdminExperiencesStats = {
   totalExperiences: 128,

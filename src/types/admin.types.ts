@@ -1,18 +1,15 @@
-/** Statistics displayed on the admin dashboard cards */
 export interface AdminStats {
   activeUsers: number;
   activeTrips: number;
   topDestination: string;
 }
 
-/** Filters for the Search Trips widget */
 export interface SearchTripsFilters {
   country: string;
   city: string;
   travelDate: string;
 }
 
-/** A single city entry in the Most Visited Cities ranking */
 export interface VisitedCity {
   rank: number;
   name: string;
@@ -20,7 +17,6 @@ export interface VisitedCity {
   visitors: number;
 }
 
-/** Form data for creating a new experience */
 export interface CreateExperienceFormData {
   country: string;
   city: string;
@@ -30,16 +26,22 @@ export interface CreateExperienceFormData {
   location: string;
   category: string;
   details: string;
+  imageUrl?: string;
 }
 
-/** Navigation item for the admin sidebar */
+export interface UnsplashImage {
+  id: string;
+  url: string;
+  thumb: string;
+  alt_description: string;
+}
+
 export interface AdminNavItem {
   to: string;
   label: string;
   icon: string;
 }
 
-/** Select option used across admin dropdowns */
 export interface SelectOption {
   value: string;
   label: string;

@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ChevronDown } from 'lucide-react';
-import type { CreateExperienceFormData, SelectOption } from '@/types/admin.types';
+import { X, ChevronDown, Search, Image as ImageIcon, Loader2 } from 'lucide-react';
+import type { CreateExperienceFormData, SelectOption, UnsplashImage } from '@/types/admin.types';
+import { searchUnsplashImages } from '@/services/unsplash.service';
 
 interface CreateExperienceModalProps {
   isOpen: boolean;
@@ -25,8 +26,33 @@ export default function CreateExperienceModal({
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<CreateExperienceFormData>();
+
+  const [imageQuery, setImageQuery] = useState('');
+  const [imageResults, setImageResults] = useState<UnsplashImage[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  const selectedImageUrl = watch('imageUrl');
+
+  const handleImageSearch = async () => {
+    if (!imageQuery.trim()) return;
+    setIsSearching(true);
+    try {
+      const results = await searchUnsplashImages(imageQuery);
+      setImageResults(results);
+    } catch (error) {
+      console.error('Search failed', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSelectImage = (url: string) => {
+    setValue('imageUrl', url);
+  };
 
   
   useEffect(() => {
@@ -75,7 +101,7 @@ export default function CreateExperienceModal({
 
         
           <motion.div
-            className="relative z-10 w-full max-w-[480px] rounded-2xl bg-white shadow-2xl"
+            className="relative z-10 w-full max-w-[480px] max-h-[90vh] rounded-2xl bg-white shadow-2xl flex flex-col overflow-hidden"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -98,10 +124,10 @@ export default function CreateExperienceModal({
 
             <form
               onSubmit={handleSubmit(handleFormSubmit)}
-              className="flex flex-col gap-3.5 px-7 pb-7"
+              className="flex-1 flex flex-col min-h-0"
             >
-              
-              <div className="relative">
+              <div className="flex-1 overflow-y-auto px-7 py-2 flex flex-col gap-3.5 custom-scrollbar">
+                <div className="relative">
                 <select
                   id="create-exp-country"
                   {...register('country', { required: true })}
@@ -195,7 +221,7 @@ export default function CreateExperienceModal({
                 />
               </div>
 
-             
+            
               <textarea
                 id="create-exp-details"
                 {...register('details')}
@@ -204,13 +230,78 @@ export default function CreateExperienceModal({
                 rows={3}
               />
 
-              
-              <button
-                type="submit"
-                className="w-full rounded-xl bg-[#1CA698] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md mt-1"
-              >
-                Create Experience
-              </button>
+             
+              <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#daa520]/30 bg-[#F5F7FA]/50">
+                <label className="text-[13px] font-semibold text-[#0066D2] flex items-center gap-2">
+                  <ImageIcon size={16} /> Select Experience Image
+                </label>
+                
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={imageQuery}
+                      onChange={(e) => setImageQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleImageSearch())}
+                      placeholder="Search Unsplash (e.g. Paris, Beach)"
+                      className={`${inputClasses} py-2 text-[13px]`}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleImageSearch}
+                    disabled={isSearching}
+                    className="bg-[#0066D2] text-white px-3 rounded-lg hover:bg-[#0055b0] disabled:opacity-50 transition-colors"
+                  >
+                    {isSearching ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
+                  </button>
+                </div>
+
+                {imageResults.length > 0 && (
+                  <div className="grid grid-cols-4 gap-2 mt-1 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
+                    {imageResults.map((img) => (
+                      <button
+                        key={img.id}
+                        type="button"
+                        onClick={() => handleSelectImage(img.url)}
+                        className={`relative aspect-square rounded-md overflow-hidden border-2 transition-all ${
+                          selectedImageUrl === img.url ? 'border-[#1CA698] scale-95' : 'border-transparent hover:border-[#1CA698]/50'
+                        }`}
+                      >
+                        <img src={img.thumb} alt={img.alt_description} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {selectedImageUrl && (
+                  <div className="mt-2">
+                    <p className="text-[11px] text-[#1CA698] font-medium mb-1 flex items-center gap-1">
+                      Preview:
+                    </p>
+                    <div className="relative h-[100px] w-full rounded-lg overflow-hidden border border-[#1CA698]/30">
+                      <img src={selectedImageUrl} alt="Selected" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setValue('imageUrl', '')}
+                        className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full hover:bg-black/70"
+                      >
+                      <X size={12} />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+              <div className="px-7 pb-7 pt-2">
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-[#1CA698] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md mt-1"
+                >
+                  Create Experience
+                </button>
+              </div>
             </form>
           </motion.div>
         </div>

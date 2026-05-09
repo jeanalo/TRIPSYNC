@@ -70,7 +70,7 @@ export default function AdminTrips() {
 
   return (
     <div className="flex flex-col">
-      {/* Page Header */}
+     
       <motion.div
         className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7"
         initial={{ opacity: 0, y: 20 }}
@@ -115,7 +115,7 @@ export default function AdminTrips() {
         />
       </div>
 
-      {/* Main Content Card */}
+      
       <div className="bg-[#F5F7FA] rounded-3xl p-1">
         <TripsFilters
           filters={filters}
@@ -131,7 +131,7 @@ export default function AdminTrips() {
         />
       </div>
 
-      {/* Modals (Still need them because sidebar button might trigger them) */}
+     
       <CreateExperienceModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

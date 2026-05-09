@@ -103,21 +103,34 @@ export default function AdminSidebar({
           </button>
         </div>
 
-        <div className="flex items-center gap-3 px-5 py-4 border-t border-[#e0e0e0]">
-          <div className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-[#1CA698]">
+        <Link 
+          to="/admin/profile"
+          className={`flex items-center gap-3 px-5 py-4 border-t border-[#e0e0e0] no-underline transition-all duration-200 ${
+            location.pathname === '/admin/profile' 
+              ? 'bg-[#1CA698]/8 text-[#1CA698]' 
+              : 'hover:bg-[#1CA698]/5'
+          }`}
+        >
+          <div className={`flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full transition-colors duration-200 ${
+            location.pathname === '/admin/profile' ? 'bg-[#1CA698]' : 'bg-[#1CA698]'
+          }`}>
             <User size={18} className="text-white" />
           </div>
 
           <div className="flex flex-col min-w-0">
-            <span className="text-[13px] font-medium leading-tight text-[#0066D2] truncate">
+            <span className={`text-[13px] font-medium leading-tight truncate transition-colors duration-200 ${
+              location.pathname === '/admin/profile' ? 'text-[#1CA698]' : 'text-[#0066D2]'
+            }`}>
               Admin User
             </span>
 
-            <span className="text-[11px] leading-tight text-[#0066D2]/60 truncate">
+            <span className={`text-[11px] leading-tight truncate transition-colors duration-200 ${
+              location.pathname === '/admin/profile' ? 'text-[#1CA698]/70' : 'text-[#0066D2]/60'
+            }`}>
               admin@tripsync.com
             </span>
           </div>
-        </div>
+        </Link>
       </aside>
     </>
   );

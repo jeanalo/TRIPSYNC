@@ -104,6 +104,38 @@ export interface AdminUserFilters {
   status: string;
 }
 
+export interface AdminAnalyticsStats {
+  totalBookings: number;
+  mostVisitedCity: string;
+  activeTravelers: number;
+  revenueThisMonth: number;
+}
+
+export interface MonthlyBooking {
+  month: string;
+  bookings: number;
+}
+
+export interface TopDestination {
+  city: string;
+  bookings: number;
+}
+
+export interface TravelCategoryMetric {
+  name: string;
+  percentage: number;
+}
+
+export interface RecentActivity {
+  id: string;
+  traveler: string;
+  destination: string;
+  experience: string;
+  budget: number;
+  date: string;
+  status: 'completed' | 'upcoming' | 'active';
+}
+
 export interface UnsplashImage {
   id: string;
   url: string;

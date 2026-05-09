@@ -68,15 +68,6 @@ export default function AdminDashboard() {
             Here's what's happening with your admin dashboard
           </p>
         </div>
-
-        <button
-          type="button"
-          onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-[#1CA698] px-5 py-2.5 text-[14px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-lg shrink-0"
-        >
-          <Plus size={18} strokeWidth={2.5} />
-          Create Experience
-        </button>
       </motion.div>
 
       

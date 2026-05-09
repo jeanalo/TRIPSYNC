@@ -19,6 +19,7 @@ import AdminLayout from './components/admin/AdminLayout/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import AdminExperiences from './pages/AdminExperiences/AdminExperiences';
 import AdminTrips from './pages/AdminTrips/AdminTrips';
+import AdminUsers from './pages/AdminUsers/AdminUsers';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="experiences" element={<AdminExperiences />} />
           <Route path="trips" element={<AdminTrips />} />
+          <Route path="users" element={<AdminUsers />} />
         </Route>
       </Routes>
     </TravelProvider>

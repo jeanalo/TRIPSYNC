@@ -80,6 +80,30 @@ export interface AdminTripFilters {
   date: string;
 }
 
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  country: string;
+  joinDate: string;
+  tripCount: number;
+  status: 'active' | 'inactive' | 'premium';
+}
+
+export interface AdminUserStats {
+  totalUsers: number;
+  activeUsers: number;
+  newThisMonth: number;
+  topCountry: string;
+}
+
+export interface AdminUserFilters {
+  search: string;
+  country: string;
+  status: string;
+}
+
 export interface UnsplashImage {
   id: string;
   url: string;

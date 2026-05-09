@@ -136,6 +136,41 @@ export interface RecentActivity {
   status: 'completed' | 'upcoming' | 'active';
 }
 
+export interface AdminPreference {
+  language: string;
+  timezone: string;
+  emailNotifications: boolean;
+  dashboardView: 'standard' | 'compact' | 'detailed';
+}
+
+export interface AdminSecurity {
+  passwordStatus: string;
+  twoFactorEnabled: boolean;
+  lastLogin: string;
+}
+
+export interface AdminFullProfile {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  role: string;
+  status: 'active' | 'inactive';
+  phone: string;
+  location: string;
+  joinedDate: string;
+  preferences: AdminPreference;
+  security: AdminSecurity;
+}
+
+export interface AdminAccountActivity {
+  id: string;
+  action: string;
+  section: string;
+  date: string;
+  status: 'success' | 'warning' | 'info';
+}
+
 export interface UnsplashImage {
   id: string;
   url: string;

@@ -21,6 +21,7 @@ import AdminExperiences from './pages/AdminExperiences/AdminExperiences';
 import AdminTrips from './pages/AdminTrips/AdminTrips';
 import AdminUsers from './pages/AdminUsers/AdminUsers';
 import AdminAnalytics from './pages/AdminAnalytics/AdminAnalytics';
+import AdminProfile from './pages/AdminProfile/AdminProfile';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="trips" element={<AdminTrips />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
       </Routes>
     </TravelProvider>

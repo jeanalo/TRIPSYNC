@@ -8,6 +8,8 @@ import type {
   AdminTripsStats,
   AdminUser,
   AdminUserStats,
+  AdminFullProfile,
+  AdminAccountActivity,
 } from '@/types/admin.types';
 
 export const mockAdminStats: AdminStats = {
@@ -15,6 +17,60 @@ export const mockAdminStats: AdminStats = {
   activeTrips: 12,
   topDestination: 'Bali, Indonesia',
 };
+
+export const mockAdminFullProfile: AdminFullProfile = {
+  id: 'admin-001',
+  name: 'Juanita Pérez',
+  email: 'juanita@tripsync.com',
+  avatar: 'https://i.pravatar.cc/150?u=juanita',
+  role: 'Platform Administrator',
+  status: 'active',
+  phone: '+1 (555) 123-4567',
+  location: 'Bogotá, Colombia',
+  joinedDate: '2023-10-01',
+  preferences: {
+    language: 'English',
+    timezone: 'UTC -5 (Colombia)',
+    emailNotifications: true,
+    dashboardView: 'standard',
+  },
+  security: {
+    passwordStatus: 'Last changed 3 months ago',
+    twoFactorEnabled: true,
+    lastLogin: '2024-03-24 10:15 AM',
+  },
+};
+
+export const mockAdminAccountActivity: AdminAccountActivity[] = [
+  {
+    id: 'act-001',
+    action: 'Created new experience',
+    section: 'Experiences',
+    date: '2024-03-24 09:30 AM',
+    status: 'success',
+  },
+  {
+    id: 'act-002',
+    action: 'Reviewed trip report',
+    section: 'Trips',
+    date: '2024-03-23 04:45 PM',
+    status: 'info',
+  },
+  {
+    id: 'act-003',
+    action: 'Updated user status',
+    section: 'Users',
+    date: '2024-03-22 11:20 AM',
+    status: 'warning',
+  },
+  {
+    id: 'act-004',
+    action: 'Checked analytics dashboard',
+    section: 'Analytics',
+    date: '2024-03-21 02:15 PM',
+    status: 'info',
+  },
+];
 
 export const mockAdminUserStats: AdminUserStats = {
   totalUsers: 1240,

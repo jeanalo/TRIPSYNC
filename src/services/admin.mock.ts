@@ -6,6 +6,8 @@ import type {
   AdminExperiencesStats,
   AdminTrip,
   AdminTripsStats,
+  AdminUser,
+  AdminUserStats,
 } from '@/types/admin.types';
 
 export const mockAdminStats: AdminStats = {
@@ -13,6 +15,66 @@ export const mockAdminStats: AdminStats = {
   activeTrips: 12,
   topDestination: 'Bali, Indonesia',
 };
+
+export const mockAdminUserStats: AdminUserStats = {
+  totalUsers: 1240,
+  activeUsers: 856,
+  newThisMonth: 124,
+  topCountry: 'USA',
+};
+
+export const mockAdminUsers: AdminUser[] = [
+  {
+    id: 'usr-001',
+    name: 'Emily Carter',
+    email: 'emily.carter@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=emily',
+    country: 'USA',
+    joinDate: '2024-01-15',
+    tripCount: 4,
+    status: 'premium',
+  },
+  {
+    id: 'usr-002',
+    name: 'Daniel Smith',
+    email: 'daniel.smith@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=daniel',
+    country: 'UK',
+    joinDate: '2024-02-10',
+    tripCount: 2,
+    status: 'active',
+  },
+  {
+    id: 'usr-003',
+    name: 'Sofia Martinez',
+    email: 'sofia.martinez@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=sofia',
+    country: 'Spain',
+    joinDate: '2024-03-05',
+    tripCount: 1,
+    status: 'active',
+  },
+  {
+    id: 'usr-004',
+    name: 'Liam Johnson',
+    email: 'liam.johnson@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=liam',
+    country: 'Canada',
+    joinDate: '2023-12-20',
+    tripCount: 0,
+    status: 'inactive',
+  },
+  {
+    id: 'usr-005',
+    name: 'Isabella Silva',
+    email: 'isabella.silva@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=isabella',
+    country: 'Brazil',
+    joinDate: '2024-01-20',
+    tripCount: 3,
+    status: 'premium',
+  },
+];
 
 export const mockAdminTripsStats: AdminTripsStats = {
   totalTrips: 245,

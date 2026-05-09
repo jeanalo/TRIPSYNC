@@ -17,6 +17,7 @@ import Profile from './pages/Profile/Profile';
 import Layout from './components/layout/Layout';
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import AdminExperiences from './pages/AdminExperiences/AdminExperiences';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
+          <Route path="experiences" element={<AdminExperiences />} />
         </Route>
       </Routes>
     </TravelProvider>

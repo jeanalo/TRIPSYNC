@@ -2,8 +2,9 @@ import type {
   AdminStats,
   VisitedCity,
   SelectOption,
+  AdminExperience,
+  AdminExperiencesStats,
 } from '@/types/admin.types';
-
 
 export const mockAdminStats: AdminStats = {
   activeUsers: 54,
@@ -11,6 +12,70 @@ export const mockAdminStats: AdminStats = {
   topDestination: 'Bali, Indonesia',
 };
 
+export const mockAdminExperiencesStats: AdminExperiencesStats = {
+  totalExperiences: 128,
+  activeExperiences: 92,
+  pendingApproval: 36,
+  mostPopularCategory: 'Adventure',
+};
+
+export const mockAdminExperiences: AdminExperience[] = [
+  {
+    id: 'exp-001',
+    name: 'Eiffel Tower Tour',
+    city: 'Paris',
+    category: 'Cultural',
+    price: 45,
+    rating: 4.8,
+    status: 'active',
+    imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=200',
+    dateCreated: '2024-03-15',
+  },
+  {
+    id: 'exp-002',
+    name: 'Amazon Rainforest Trek',
+    city: 'Manaus',
+    category: 'Adventure',
+    price: 120,
+    rating: 4.9,
+    status: 'active',
+    imageUrl: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&q=80&w=200',
+    dateCreated: '2024-03-10',
+  },
+  {
+    id: 'exp-003',
+    name: 'Sushi Making Workshop',
+    city: 'Tokyo',
+    category: 'Gastronomy',
+    price: 65,
+    rating: 4.7,
+    status: 'pending',
+    imageUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=200',
+    dateCreated: '2024-03-18',
+  },
+  {
+    id: 'exp-004',
+    name: 'London Bridge Walking Tour',
+    city: 'London',
+    category: 'Cultural',
+    price: 0,
+    rating: 4.5,
+    status: 'active',
+    imageUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=200',
+    dateCreated: '2024-03-05',
+  },
+  {
+    id: 'exp-005',
+    name: 'Bali Surf School',
+    city: 'Bali',
+    category: 'Adventure',
+    price: 35,
+    rating: 4.9,
+    status: 'pending',
+    imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=200',
+    dateCreated: '2024-03-20',
+  },
+];
 
 export const mockVisitedCities: VisitedCity[] = [
   { rank: 1, name: 'Paris', country: 'France', visitors: 5 },

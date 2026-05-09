@@ -29,6 +29,32 @@ export interface CreateExperienceFormData {
   imageUrl?: string;
 }
 
+export interface AdminExperience {
+  id: string;
+  name: string;
+  city: string;
+  category: string;
+  price: number;
+  rating: number;
+  status: 'active' | 'pending';
+  imageUrl: string;
+  dateCreated: string;
+}
+
+export interface AdminExperiencesStats {
+  totalExperiences: number;
+  activeExperiences: number;
+  pendingApproval: number;
+  mostPopularCategory: string;
+}
+
+export interface AdminExperienceFilters {
+  search: string;
+  category: string;
+  city: string;
+  status: string;
+}
+
 export interface UnsplashImage {
   id: string;
   url: string;

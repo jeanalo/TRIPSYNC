@@ -1,12 +1,29 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { User, Mail, Shield, Settings, Activity, MapPin, Phone, Calendar, Lock, Smartphone, Edit2 } from 'lucide-react';
+import { 
+  User, 
+  Mail, 
+  Shield, 
+  Settings, 
+  Activity, 
+  MapPin, 
+  Phone, 
+  Calendar, 
+  Lock, 
+  Smartphone, 
+  Edit2, 
+  LogOut 
+} from 'lucide-react';
 import { mockAdminFullProfile, mockAdminAccountActivity } from '@/services/admin.mock';
 import EditProfileModal from '@/components/admin/EditProfileModal/EditProfileModal';
 import ProfileUpdatedModal from '@/components/admin/ProfileUpdatedModal/ProfileUpdatedModal';
 import type { AdminFullProfile } from '@/types/admin.types';
+import { useAuth } from '@/providers/AuthProvider';
 
 export default function AdminProfile() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [profile, setProfile] = useState<AdminFullProfile>(mockAdminFullProfile);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUpdateSuccessOpen, setIsUpdateSuccessOpen] = useState(false);
@@ -24,6 +41,11 @@ export default function AdminProfile() {
     }));
     setIsEditModalOpen(false);
     setIsUpdateSuccessOpen(true);
+  };
+
+  const handleSignOut = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -44,13 +66,23 @@ export default function AdminProfile() {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsEditModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-[#1CA698] px-5 py-2.5 text-[14px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-lg shrink-0"
-        >
-          <Edit2 size={18} strokeWidth={2.5} />
-          Edit Profile
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="flex items-center gap-2 rounded-xl bg-[#1CA698] px-5 py-2.5 text-[14px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-lg shrink-0"
+          >
+            <Edit2 size={18} strokeWidth={2.5} />
+            Edit Profile
+          </button>
+
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 rounded-xl bg-white border border-[#e0e0e0] px-5 py-2.5 text-[14px] font-semibold text-[#E53935] cursor-pointer transition-all duration-200 hover:bg-[#fdeaea] hover:border-[#E53935]/30 hover:shadow-sm shrink-0"
+          >
+            <LogOut size={18} strokeWidth={2.5} />
+            Sign Out
+          </button>
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -146,7 +178,7 @@ export default function AdminProfile() {
         </div>
       </div>
 
-      {/* Modals */}
+      
       <EditProfileModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}

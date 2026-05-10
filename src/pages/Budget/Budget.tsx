@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
 import {
   PieChart as RechartsPie,
   Pie,

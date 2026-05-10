@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
-import { useTravel } from '../../context/TravelContext';
+import { useAuth } from '../../providers/AuthProvider';
 import FormField from '../../components/FormField/FormField';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useTravel();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

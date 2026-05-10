@@ -10,6 +10,7 @@ import {
   User,
   X,
 } from 'lucide-react';
+import { useAuth } from '../../../providers/AuthProvider';
 
 const adminNavItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -31,6 +32,7 @@ export default function AdminSidebar({
   onCreateExperience,
 }: AdminSidebarProps) {
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     onMobileClose();
@@ -121,13 +123,13 @@ export default function AdminSidebar({
             <span className={`text-[13px] font-medium leading-tight truncate transition-colors duration-200 ${
               location.pathname === '/admin/profile' ? 'text-[#1CA698]' : 'text-[#0066D2]'
             }`}>
-              Admin User
+              {user?.name || 'Admin User'}
             </span>
 
             <span className={`text-[11px] leading-tight truncate transition-colors duration-200 ${
               location.pathname === '/admin/profile' ? 'text-[#1CA698]/70' : 'text-[#0066D2]/60'
             }`}>
-              admin@tripsync.com
+              {user?.email || 'admin@tripsync.com'}
             </span>
           </div>
         </Link>

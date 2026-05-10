@@ -9,9 +9,8 @@ import UsersTable from '@/components/admin/UsersTable/UsersTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
+import { useAdmin } from '@/providers/AdminProvider';
 import {
-  mockAdminUsers,
-  mockAdminUserStats,
   mockCountryOptions,
   mockCityOptions,
   mockCategoryOptions,
@@ -28,6 +27,7 @@ interface AdminLayoutOutletContext {
 }
 
 export default function AdminUsers() {
+  const { users, usersStats } = useAdmin();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [filters, setFilters] = useState<AdminUserFilters>({
@@ -46,12 +46,11 @@ export default function AdminUsers() {
   }, [outletContext?.isCreateModalRequested]);
 
   const handleCreateSubmit = (data: CreateExperienceFormData) => {
-    console.log('Experience created:', data);
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
 
-  const filteredUsers = mockAdminUsers.filter((user) => {
+  const filteredUsers = users.filter((user) => {
     const matchesSearch = 
       user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
       user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -67,7 +66,6 @@ export default function AdminUsers() {
 
   return (
     <div className="flex flex-col">
-      
       <motion.div
         className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7"
         initial={{ opacity: 0, y: 20 }}
@@ -84,35 +82,33 @@ export default function AdminUsers() {
         </div>
       </motion.div>
 
-      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
         <StatsCard
           icon={<Users size={22} />}
           label="Total users"
-          value={mockAdminUserStats.totalUsers}
+          value={usersStats.totalUsers}
           delay={0.1}
         />
         <StatsCard
           icon={<TrendingUp size={22} />}
           label="Active users"
-          value={mockAdminUserStats.activeUsers}
+          value={usersStats.activeUsers}
           delay={0.2}
         />
         <StatsCard
           icon={<UserPlus size={22} />}
           label="New this month"
-          value={mockAdminUserStats.newThisMonth}
+          value={usersStats.newThisMonth}
           delay={0.3}
         />
         <StatsCard
           icon={<Globe size={22} />}
           label="Top country"
-          value={mockAdminUserStats.topCountry}
+          value={usersStats.topCountry}
           delay={0.4}
         />
       </div>
 
-     
       <div className="bg-[#F5F7FA] rounded-3xl p-1">
         <UserFilters
           filters={filters}
@@ -122,13 +118,12 @@ export default function AdminUsers() {
         
         <UsersTable
           users={filteredUsers}
-          onEdit={(id) => console.log('Edit', id)}
-          onDelete={(id) => console.log('Delete', id)}
-          onView={(id) => console.log('View', id)}
+          onEdit={() => {}}
+          onDelete={() => {}}
+          onView={() => {}}
         />
       </div>
 
-        
       <CreateExperienceModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

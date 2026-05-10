@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Tag, Pencil, CalendarDays, CheckCircle, DollarSign, AlertTriangle } from 'lucide-react';
 
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import AlertModal from '../../components/AlertModal/AlertModal';
 import FormCard from '../../components/FormCard/FormCard';

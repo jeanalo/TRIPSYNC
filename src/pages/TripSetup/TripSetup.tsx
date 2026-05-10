@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useTravel, TripDetails } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
+import type { TripDetails } from '../../types/travel.types';
 import { MapPin, CalendarDays, CheckCircle } from 'lucide-react';
 
 import PageHeader from '../../components/PageHeader/PageHeader';

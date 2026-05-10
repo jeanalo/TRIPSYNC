@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, User, Mail, Lock, Settings, Save, Eye, EyeOff } from 'lucide-react';
-import { useTravel } from '../../context/TravelContext';
+import { useAuth } from '../../providers/AuthProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
 import FormCard from '../../components/FormCard/FormCard';
@@ -9,7 +9,7 @@ import FormField from '../../components/FormField/FormField';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
 const Profile = () => {
-  const { user, logout, updateUser } = useTravel();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);

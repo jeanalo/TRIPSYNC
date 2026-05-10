@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { TravelProvider } from './context/TravelContext';
+import { AppProviders } from './providers/AppProviders';
 
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
@@ -28,7 +28,7 @@ import AdminProfile from './pages/AdminProfile/AdminProfile';
 
 function App() {
   return (
-    <TravelProvider>
+    <AppProviders>
       <Routes>
         <Route path="/" element={<AuthSelector />} />
         <Route path="/login" element={<Login />} />
@@ -59,7 +59,7 @@ function App() {
           <Route path="profile" element={<AdminProfile />} />
         </Route>
       </Routes>
-    </TravelProvider>
+    </AppProviders>
   );
 }
 

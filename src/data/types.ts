@@ -1,11 +1,9 @@
-import type { LucideIcon } from 'lucide-react';
-
 export type ExperienceCategory = 'Chill' | 'Adventure' | 'Cultural' | 'Free Tour';
 
 export type Difficulty = 'Easy' | 'Moderate' | 'Challenging';
 
 export interface Highlight {
-  icon: LucideIcon;
+  icon: string;
   text: string;
 }
 

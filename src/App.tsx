@@ -13,7 +13,15 @@ import ExperienceDetail from './pages/ExperienceDetail/ExperienceDetail';
 import TripSetup from './pages/TripSetup/TripSetup';
 import JetLag from './pages/JetLag/JetLag';
 import Profile from './pages/Profile/Profile';
-import Layout from './components/Layout/Layout';
+
+import Layout from './components/layout/Layout';
+import AdminLayout from './components/admin/AdminLayout/AdminLayout';
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import AdminExperiences from './pages/AdminExperiences/AdminExperiences';
+import AdminTrips from './pages/AdminTrips/AdminTrips';
+import AdminUsers from './pages/AdminUsers/AdminUsers';
+import AdminAnalytics from './pages/AdminAnalytics/AdminAnalytics';
+import AdminProfile from './pages/AdminProfile/AdminProfile';
 
 function App() {
   return (
@@ -33,6 +41,15 @@ function App() {
           <Route path="experiences" element={<Experiences />} />
           <Route path="experiences/:id" element={<ExperienceDetail />} />
           <Route path="profile" element={<Profile />} />
+        </Route>
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="experiences" element={<AdminExperiences />} />
+          <Route path="trips" element={<AdminTrips />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
       </Routes>
     </TravelProvider>

@@ -13,7 +13,8 @@ import {
 import { motion } from 'motion/react';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
-import { EXPERIENCES } from '../../data/experiences';
+import { useExperiences } from '@/hooks/useExperience';
+import { iconsMap } from '../../utils/iconsMap';
 
 const difficultyColor: Record<string, string> = {
   Easy: 'text-[#1CA698]',
@@ -31,8 +32,13 @@ const categoryBg: Record<string, string> = {
 const ExperienceDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { experiences, loading } = useExperiences();
 
-  const exp = EXPERIENCES.find((e) => e.id === Number(id));
+  const exp = experiences.find((e) => e.id === Number(id));
+
+  if (loading) {
+    return <p className="p-10">Loading...</p>;
+  }
 
   if (!exp) {
     return (
@@ -109,7 +115,13 @@ const ExperienceDetail = () => {
                       key={i}
                       className="flex items-center gap-3 p-3 bg-[#F5F5F5] rounded-[10px]"
                     >
-                      <h.icon size={22} className="text-[#0066D2] shrink-0" />
+                      {(() => {
+                        const Icon = iconsMap[h.icon as keyof typeof iconsMap];
+
+                        return Icon ? (
+                          <Icon size={22} className="text-[#0066D2] shrink-0" />
+                        ) : null;
+                      })()}
                       <span className="text-[15px] font-medium text-[#0066D2]">
                         {h.text}
                       </span>

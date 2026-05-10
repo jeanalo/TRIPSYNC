@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapPin, Bookmark, BookmarkCheck, Leaf } from 'lucide-react';
 import { motion } from 'motion/react';
 import PageHeader from '../../components/PageHeader/PageHeader';
-import { EXPERIENCES } from '../../data/experiences';
+import { useExperiences } from '@/hooks/useExperience';
 import { useTravel } from '../../context/TravelContext';
 
 const FILTERS = ['All', 'Chill', 'Adventure', 'Cultural', 'Free Tour', 'Saved'] as const;
@@ -11,16 +11,17 @@ type Filter = (typeof FILTERS)[number];
 
 const Experiences = () => {
   const navigate = useNavigate();
+  const { experiences, loading } = useExperiences();
   const { tripDetails } = useTravel();
   const [activeFilter, setActiveFilter] = useState<Filter>('All');
   const [saved, setSaved] = useState<Set<number>>(new Set([1]));
 
   const availableExperiences = tripDetails?.destinationCountry
-    ? EXPERIENCES.filter(
+    ? experiences.filter(
         (exp) =>
           exp.country.toLowerCase() === tripDetails.destinationCountry.toLowerCase()
       )
-    : EXPERIENCES;
+    : experiences;
 
   const visible = availableExperiences.filter((exp) => {
     if (activeFilter === 'Saved') return saved.has(exp.id);
@@ -36,6 +37,10 @@ const Experiences = () => {
       return next;
     });
   };
+
+  if (loading) {
+    return <p className="p-10">Loading...</p>;
+  }
 
   return (
     <div>

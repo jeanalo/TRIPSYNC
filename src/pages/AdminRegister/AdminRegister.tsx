@@ -58,7 +58,7 @@ const AdminRegister = () => {
           
           <div className="text-center mb-8">
             <h2
-              className="text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-2"
+              className="text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-2 leading-[1.1]"
               id="admin-register-heading"
             >
               Create Admin Account

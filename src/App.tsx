@@ -3,6 +3,9 @@ import { TravelProvider } from './context/TravelContext';
 
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
+import AuthSelector from './pages/Auth/AuthSelector';
+import AdminLogin from './pages/AdminLogin/AdminLogin';
+import AdminRegister from './pages/AdminRegister/AdminRegister';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Budget from './pages/Budget/Budget';
 import AddExpense from './pages/AddExpense/AddExpense';
@@ -27,8 +30,12 @@ function App() {
   return (
     <TravelProvider>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<AuthSelector />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
 
         <Route path="/app" element={<Layout />}>
           <Route index element={<Dashboard />} />

@@ -15,12 +15,12 @@ const Register = () => {
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     register(email, name);
-    navigate('/');
+    navigate('/login');
   };
 
   return (
     <div className="flex h-screen w-screen" id="register-page">
-      {/* Left brand panel */}
+      
       <div className="hidden md:block w-1/2 h-full">
         <img
           src="/banner-tripsync.svg"
@@ -29,10 +29,10 @@ const Register = () => {
         />
       </div>
 
-      {/* Right form panel */}
+      
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white px-6">
         <div className="w-full max-w-[400px]">
-          {/* Heading */}
+          
           <h2
             className="text-center text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-8"
             id="register-heading"
@@ -41,7 +41,7 @@ const Register = () => {
           </h2>
 
           <form onSubmit={handleRegister} className="flex flex-col gap-5">
-            {/* Full Name */}
+            
             <FormField label="Full Name" icon={<User size={24} />}>
               <input
                 id="register-name"
@@ -54,7 +54,7 @@ const Register = () => {
               />
             </FormField>
 
-            {/* Email Address */}
+            
             <FormField label="Email Address" icon={<Mail size={24} />}>
               <input
                 id="register-email"
@@ -67,7 +67,7 @@ const Register = () => {
               />
             </FormField>
 
-            {/* Password */}
+            
             <FormField label="Password" icon={<Lock size={24} />}>
               <input
                 id="register-password"
@@ -83,11 +83,11 @@ const Register = () => {
             <SubmitButton>Sign Up</SubmitButton>
           </form>
 
-          {/* Footer link */}
+          
           <p className="mt-6 text-center text-[16px] text-[#171717]">
             Already have an account?{' '}
             <Link
-              to="/"
+              to="/login"
               className="font-semibold text-[#1CA698] hover:underline"
               id="register-login-link"
             >

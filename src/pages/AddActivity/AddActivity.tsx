@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Tag, Pencil, CalendarDays, CheckCircle, Clock, MapPin } from 'lucide-react';
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import FormCard from '../../components/FormCard/FormCard';
 import FormField from '../../components/FormField/FormField';

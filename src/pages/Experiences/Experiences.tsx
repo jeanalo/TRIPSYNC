@@ -4,7 +4,7 @@ import { MapPin, Bookmark, BookmarkCheck, Leaf } from 'lucide-react';
 import { motion } from 'motion/react';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { useExperiences } from '@/hooks/useExperience';
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
 
 const FILTERS = ['All', 'Chill', 'Adventure', 'Cultural', 'Free Tour', 'Saved'] as const;
 type Filter = (typeof FILTERS)[number];

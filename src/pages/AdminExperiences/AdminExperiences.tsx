@@ -9,9 +9,8 @@ import ExperienceTable from '@/components/admin/ExperienceTable/ExperienceTable'
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
+import { useAdmin } from '@/providers/AdminProvider';
 import {
-  mockAdminExperiences,
-  mockAdminExperiencesStats,
   mockCategoryOptions,
   mockCityOptions,
   mockCountryOptions,
@@ -28,6 +27,7 @@ interface AdminLayoutOutletContext {
 }
 
 export default function AdminExperiences() {
+  const { experiences, experiencesStats } = useAdmin();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [filters, setFilters] = useState<AdminExperienceFilters>({
@@ -47,12 +47,11 @@ export default function AdminExperiences() {
   }, [outletContext?.isCreateModalRequested]);
 
   const handleCreateSubmit = (data: CreateExperienceFormData) => {
-    console.log('Experience created:', data);
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
 
-  const filteredExperiences = mockAdminExperiences.filter((exp) => {
+  const filteredExperiences = experiences.filter((exp) => {
     const matchesSearch = exp.name.toLowerCase().includes(filters.search.toLowerCase());
     const matchesCategory = !filters.category || exp.category.toLowerCase() === filters.category.toLowerCase();
     const matchesCity = !filters.city || exp.city.toLowerCase() === filters.city.toLowerCase();
@@ -62,7 +61,6 @@ export default function AdminExperiences() {
 
   return (
     <div className="flex flex-col">
-      {/* Page Header */}
       <motion.div
         className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7"
         initial={{ opacity: 0, y: 20 }}
@@ -79,35 +77,33 @@ export default function AdminExperiences() {
         </div>
       </motion.div>
 
-      {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
         <StatsCard
           icon={<Layers size={22} />}
           label="Total experiences"
-          value={mockAdminExperiencesStats.totalExperiences}
+          value={experiencesStats.totalExperiences}
           delay={0.1}
         />
         <StatsCard
           icon={<CheckCircle2 size={22} />}
           label="Active experiences"
-          value={mockAdminExperiencesStats.activeExperiences}
+          value={experiencesStats.activeExperiences}
           delay={0.2}
         />
         <StatsCard
           icon={<Clock size={22} />}
           label="Pending approval"
-          value={mockAdminExperiencesStats.pendingApproval}
+          value={experiencesStats.pendingApproval}
           delay={0.3}
         />
         <StatsCard
           icon={<BarChart3 size={22} />}
           label="Popular category"
-          value={mockAdminExperiencesStats.mostPopularCategory}
+          value={experiencesStats.mostPopularCategory}
           delay={0.4}
         />
       </div>
 
-      {/* Main Content Card */}
       <div className="bg-[#F5F7FA] rounded-3xl p-1">
         <ExperienceFilters
           filters={filters}
@@ -118,13 +114,12 @@ export default function AdminExperiences() {
         
         <ExperienceTable
           experiences={filteredExperiences}
-          onEdit={(id) => console.log('Edit', id)}
-          onDelete={(id) => console.log('Delete', id)}
-          onView={(id) => console.log('View', id)}
+          onEdit={() => {}}
+          onDelete={() => {}}
+          onView={() => {}}
         />
       </div>
 
-      {/* Modals */}
       <CreateExperienceModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

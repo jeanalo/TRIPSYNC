@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronDown, Search, Image as ImageIcon, Loader2 } from 'lucide-react';
 import type { CreateExperienceFormData, SelectOption, UnsplashImage } from '@/types/admin.types';
 import { searchUnsplashImages } from '@/services/unsplash.service';
+import { socketService } from '@/services/socket.service';
 
 interface CreateExperienceModalProps {
   isOpen: boolean;
@@ -77,6 +78,22 @@ export default function CreateExperienceModal({
   }, [isOpen, onClose]);
 
   const handleFormSubmit = (data: CreateExperienceFormData) => {
+    onSubmit(data);
+  };
+
+  const handleSendRecommendation = (data: CreateExperienceFormData) => {
+    socketService.connect();
+    socketService.sendAdminRecommendation(data.city, {
+      id: Math.random().toString(36).substring(7),
+      city: data.city,
+      category: data.category,
+      activityName: data.activityName,
+      location: data.location,
+      date: data.date,
+      time: data.time,
+      details: data.details,
+      imageUrl: data.imageUrl,
+    });
     onSubmit(data);
   };
 
@@ -294,12 +311,19 @@ export default function CreateExperienceModal({
             </div>
           </div>
 
-              <div className="px-7 pb-7 pt-2">
+              <div className="px-7 pb-7 pt-2 flex flex-col gap-3">
                 <button
                   type="submit"
                   className="w-full rounded-xl bg-[#1CA698] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md mt-1"
                 >
                   Create Experience
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit(handleSendRecommendation)}
+                  className="w-full rounded-xl bg-[#eafaf1] px-4 py-3 text-[15px] font-semibold text-[#27ae60] border border-[#27ae60] cursor-pointer transition-all duration-200 hover:bg-[#27ae60] hover:text-white hover:shadow-md"
+                >
+                  Send as Recommendation
                 </button>
               </div>
             </form>

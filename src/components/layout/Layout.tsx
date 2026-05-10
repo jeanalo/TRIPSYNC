@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
+import { useAuth } from '../../providers/AuthProvider';
+import { useRealtime } from '../../providers/RealtimeProvider';
 import {
   LayoutDashboard,
   Plane,
@@ -10,9 +12,11 @@ import {
   Map,
   User,
   Menu,
-  X
+  X,
+  MapPin
 } from 'lucide-react';
 import IconBadge from '../IconBadge/IconBadge';
+import RealtimeRecommendationToast from '../RealtimeRecommendationToast/RealtimeRecommendationToast';
 
 const navItems = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
@@ -25,18 +29,18 @@ const navItems = [
 ];
 
 const Layout = () => {
-  const { user } = useTravel();
+  const { user } = useAuth();
+  const { activeCity, setActiveCity } = useTravel();
+  const { latestNotification, clearNotification } = useRealtime();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Close mobile menu on route change
+  
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-white">
-      {/* Mobile Top Bar */}
       <div className="flex lg:hidden items-center justify-between p-4 bg-white border-b border-[#e0e0e0] sticky top-0 z-30">
         <button onClick={() => setIsMobileMenuOpen(true)}>
           <Menu size={28} className="text-[#0066D2]" />
@@ -46,7 +50,6 @@ const Layout = () => {
         </Link>
       </div>
 
-      {/* Overlay for mobile menu */}
       {isMobileMenuOpen && (
         <div 
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
@@ -54,9 +57,7 @@ const Layout = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside className={`fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-[#e0e0e0] bg-white transition-transform duration-300 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {/* Mobile close button */}
         <button 
           className="lg:hidden absolute top-4 right-4 text-[#0066D2] p-2"
           onClick={() => setIsMobileMenuOpen(false)}
@@ -64,7 +65,6 @@ const Layout = () => {
           <X size={24} />
         </button>
 
-        {/* Logo */}
         <div className="px-10 pt-9 pb-6 hidden lg:block">
           <Link to="/app" className="flex items-center no-underline">
             <img src="/logo.png" alt="TripSync logo" />
@@ -74,7 +74,31 @@ const Layout = () => {
           <img src="/logo.png" alt="TripSync logo" className="h-8" />
         </div>
 
-        {/* Navigation */}
+        <div className="px-10 py-4 mb-4 border-y border-[#e0e0e0] bg-[#F5F7FA]/30">
+          <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.05em] mb-2 block">
+            Active City
+          </label>
+          <div className="relative">
+            <select
+              value={activeCity}
+              onChange={(e) => setActiveCity(e.target.value)}
+              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-3 py-2 text-[13px] text-[#0066D2] font-semibold outline-none focus:border-[#1CA698] transition-all appearance-none cursor-pointer hover:border-[#1CA698]/50"
+            >
+              <option value="tokyo">Tokyo</option>
+              <option value="paris">Paris</option>
+              <option value="london">London</option>
+              <option value="madrid">Madrid</option>
+              <option value="cali">Cali</option>
+              <option value="rio">Rio de Janeiro</option>
+              <option value="bali">Bali</option>
+              <option value="new-york">New York</option>
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1CA698]">
+              <MapPin size={14} />
+            </div>
+          </div>
+        </div>
+
         <nav className="flex flex-1 flex-col gap-[30px] px-10">
           {navItems.map((item) => {
             const isActive =
@@ -100,10 +124,8 @@ const Layout = () => {
           })}
         </nav>
 
-        {/* Separator */}
         <div className="mx-0 border-t border-[#e0e0e0]" />
 
-        {/* User profile */}
         <div className="flex items-center gap-3 px-10 py-6">
           <IconBadge color="primary" size="md">
             <User size={24} />
@@ -119,10 +141,14 @@ const Layout = () => {
         </div>
       </aside>
 
-      {/* Main content */}
       <main className="lg:ml-[280px] flex-1 p-0 flex flex-col min-w-0">
         <Outlet />
       </main>
+
+      <RealtimeRecommendationToast 
+        notification={latestNotification} 
+        onClose={clearNotification} 
+      />
     </div>
   );
 };

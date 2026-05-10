@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Plus, CalendarDays, MapPin, Tag } from 'lucide-react';
-import { useTravel } from '../../context/TravelContext';
-import type { Activity } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
+import type { Activity } from '../../types/travel.types';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
 import DetailCard from '../../components/DetailCard/DetailCard';

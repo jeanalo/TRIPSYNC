@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Plus, CalendarDays, MapPin, Tag } from 'lucide-react';
-import { useTravel } from '../../providers/TravelProvider';
+import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import type { Activity } from '../../types/travel.types';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
@@ -29,7 +29,7 @@ function groupByDate(activities: Activity[]): Record<string, Activity[]> {
 
 const Schedule = () => {
   const navigate = useNavigate();
-  const { activities } = useTravel();
+  const { activities } = useExpenseActivity();
 
   const grouped = groupByDate(activities);
   const sortedDates = Object.keys(grouped).sort();

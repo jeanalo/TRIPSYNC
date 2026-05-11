@@ -1,21 +1,26 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { User, Mail, Lock, ShieldAlert, KeyRound } from 'lucide-react';
+import { useAuth } from '../../providers/AuthProvider';
 import FormField from '../../components/FormField/FormField';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
 import AdminAccountCreatedModal from '../../components/admin/AdminAccountCreatedModal/AdminAccountCreatedModal';
 
+const ADMIN_ACCESS_CODE = import.meta.env.VITE_ADMIN_ACCESS_CODE ?? 'TRIPSYNC-ADMIN';
+
 const AdminRegister = () => {
+  const { registerAdmin } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [accessCode, setAccessCode] = useState('');
-  
+
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     setError('');
 
@@ -24,18 +29,25 @@ const AdminRegister = () => {
       return;
     }
 
-    if (accessCode !== 'TRIPSYNC-ADMIN') {
+    if (accessCode !== ADMIN_ACCESS_CODE) {
       setError('Invalid admin access code.');
       return;
     }
 
-   
-    setIsSuccessModalOpen(true);
+    setIsLoading(true);
+    try {
+      await registerAdmin(email, name, password);
+      setIsSuccessModalOpen(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al crear la cuenta de administrador.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex min-h-screen w-screen" id="admin-register-page">
-      
+
       <div className="hidden md:block w-1/2 h-full fixed left-0 top-0">
         <img
           src="/banner-tripsync.svg"
@@ -44,10 +56,10 @@ const AdminRegister = () => {
         />
       </div>
 
-      
+
       <div className="flex w-full md:w-1/2 md:ml-auto items-center justify-center bg-white px-6 py-12">
         <div className="w-full max-w-[400px]">
-          
+
           <div className="flex justify-center mb-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1CA698]/10 text-[#1CA698] text-[13px] font-bold uppercase tracking-wide">
               <ShieldAlert size={16} />
@@ -55,7 +67,6 @@ const AdminRegister = () => {
             </div>
           </div>
 
-          
           <div className="text-center mb-8">
             <h2
               className="text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-2"
@@ -75,7 +86,6 @@ const AdminRegister = () => {
               </div>
             )}
 
-            
             <FormField label="Full Name" icon={<User size={24} />}>
               <input
                 id="admin-register-name"
@@ -88,7 +98,6 @@ const AdminRegister = () => {
               />
             </FormField>
 
-            
             <FormField label="Email Address" icon={<Mail size={24} />}>
               <input
                 id="admin-register-email"
@@ -101,7 +110,6 @@ const AdminRegister = () => {
               />
             </FormField>
 
-            
             <FormField label="Password" icon={<Lock size={24} />}>
               <input
                 id="admin-register-password"
@@ -114,7 +122,6 @@ const AdminRegister = () => {
               />
             </FormField>
 
-            
             <FormField label="Confirm Password" icon={<Lock size={24} />}>
               <input
                 id="admin-register-confirm-password"
@@ -127,26 +134,23 @@ const AdminRegister = () => {
               />
             </FormField>
 
-            
             <FormField label="Admin Access Code" icon={<KeyRound size={24} />}>
               <input
                 id="admin-register-code"
                 type="text"
                 value={accessCode}
-                onChange={(e) => {
-                  setAccessCode(e.target.value);
-                  setError('');
-                }}
+                onChange={(e) => { setAccessCode(e.target.value); setError(''); }}
                 placeholder="Enter access code"
                 required
                 className="flex-1 h-full bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none placeholder:text-[16px]"
               />
             </FormField>
 
-            <SubmitButton>Sign Up</SubmitButton>
+            <SubmitButton disabled={isLoading}>
+              {isLoading ? 'Creating Account...' : 'Sign Up'}
+            </SubmitButton>
           </form>
 
-          
           <p className="mt-6 text-center text-[16px] text-[#171717]">
             Already have an admin account?{' '}
             <Link

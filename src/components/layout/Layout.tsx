@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
 import { useTravel } from '../../providers/TravelProvider';
 import { useAuth } from '../../providers/AuthProvider';
 import { useRealtime } from '../../providers/RealtimeProvider';
@@ -12,8 +12,7 @@ import {
   Map,
   User,
   Menu,
-  X,
-  MapPin
+  X
 } from 'lucide-react';
 import IconBadge from '../IconBadge/IconBadge';
 import RealtimeRecommendationToast from '../RealtimeRecommendationToast/RealtimeRecommendationToast';
@@ -29,15 +28,18 @@ const navItems = [
 ];
 
 const Layout = () => {
-  const { user } = useAuth();
-  const { activeCity, setActiveCity } = useTravel();
+  const { user, loading } = useAuth();
+  useTravel();
   const { latestNotification, clearNotification } = useRealtime();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-white">
@@ -72,31 +74,6 @@ const Layout = () => {
         </div>
         <div className="px-10 pt-12 pb-6 lg:hidden">
           <img src="/logo.png" alt="TripSync logo" className="h-8" />
-        </div>
-
-        <div className="px-10 py-4 mb-4 border-y border-[#e0e0e0] bg-[#F5F7FA]/30">
-          <label className="text-[10px] font-bold text-[#999] uppercase tracking-[0.05em] mb-2 block">
-            Active City
-          </label>
-          <div className="relative">
-            <select
-              value={activeCity}
-              onChange={(e) => setActiveCity(e.target.value)}
-              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-3 py-2 text-[13px] text-[#0066D2] font-semibold outline-none focus:border-[#1CA698] transition-all appearance-none cursor-pointer hover:border-[#1CA698]/50"
-            >
-              <option value="tokyo">Tokyo</option>
-              <option value="paris">Paris</option>
-              <option value="london">London</option>
-              <option value="madrid">Madrid</option>
-              <option value="cali">Cali</option>
-              <option value="rio">Rio de Janeiro</option>
-              <option value="bali">Bali</option>
-              <option value="new-york">New York</option>
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1CA698]">
-              <MapPin size={14} />
-            </div>
-          </div>
         </div>
 
         <nav className="flex flex-1 flex-col gap-[30px] px-10">

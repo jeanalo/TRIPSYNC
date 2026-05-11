@@ -19,7 +19,6 @@ export interface VisitedCity {
 
 export interface CreateExperienceFormData {
   country: string;
-  city: string;
   date: string;
   time: string;
   activityName: string;

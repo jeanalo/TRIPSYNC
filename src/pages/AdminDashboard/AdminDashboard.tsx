@@ -100,8 +100,6 @@ export default function AdminDashboard() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        countryOptions={mockCountryOptions}
-        cityOptions={mockCityOptions}
         categoryOptions={mockCategoryOptions}
       />
 

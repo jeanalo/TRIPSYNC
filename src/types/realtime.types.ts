@@ -1,6 +1,6 @@
 export interface RealtimeRecommendationPayload {
   id: string;
-  city: string;
+  country: string;
   category: string;
   activityName: string;
   location: string;
@@ -13,11 +13,11 @@ export interface RealtimeRecommendationPayload {
 export interface RecommendationNotification {
   id: string;
   type: 'new-recommendation';
-  city: string;
+  country: string;
   payload: RealtimeRecommendationPayload;
   timestamp: string;
 }
 
-export interface CityRoomPayload {
-  city: string;
+export interface CountryRoomPayload {
+  country: string;
 }

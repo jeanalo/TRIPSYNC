@@ -79,7 +79,7 @@ export default function RealtimeRecommendationToast({
               </h3>
               <p className="text-[13px] text-[#666] flex items-center gap-1.5 mt-1.5 font-medium">
                 <MapPin size={14} className="text-[#1CA698]" />
-                {payload.location}, {payload.city}
+                {payload.location}, {payload.country}
               </p>
             </div>
 

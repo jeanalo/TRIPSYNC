@@ -1,14 +1,20 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import AdminSidebar from '../AdminSidebar/AdminSidebar';
 import AdminHeader from '../AdminHeader/AdminHeader';
+import { useAuth } from '../../../providers/AuthProvider';
 
 interface AdminLayoutContext {
   openCreateModal: () => void;
 }
 
 export default function AdminLayout() {
+  const { user, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/admin/login" replace />;
+  if (user.role !== 'admin') return <Navigate to="/" replace />;
   const [isCreateModalRequested, setIsCreateModalRequested] = useState(false);
 
   const handleCreateExperience = () => {

@@ -1,8 +1,11 @@
 import { Routes, Route } from 'react-router-dom';
-import { TravelProvider } from './context/TravelContext';
+import { AppProviders } from './providers/AppProviders';
 
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
+import AuthSelector from './pages/Auth/AuthSelector';
+import AdminLogin from './pages/AdminLogin/AdminLogin';
+import AdminRegister from './pages/AdminRegister/AdminRegister';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Budget from './pages/Budget/Budget';
 import AddExpense from './pages/AddExpense/AddExpense';
@@ -13,14 +16,26 @@ import ExperienceDetail from './pages/ExperienceDetail/ExperienceDetail';
 import TripSetup from './pages/TripSetup/TripSetup';
 import JetLag from './pages/JetLag/JetLag';
 import Profile from './pages/Profile/Profile';
-import Layout from './components/Layout/Layout';
+
+import Layout from './components/layout/Layout';
+import AdminLayout from './components/admin/AdminLayout/AdminLayout';
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import AdminExperiences from './pages/AdminExperiences/AdminExperiences';
+import AdminTrips from './pages/AdminTrips/AdminTrips';
+import AdminUsers from './pages/AdminUsers/AdminUsers';
+import AdminAnalytics from './pages/AdminAnalytics/AdminAnalytics';
+import AdminProfile from './pages/AdminProfile/AdminProfile';
 
 function App() {
   return (
-    <TravelProvider>
+    <AppProviders>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<AuthSelector />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
 
         <Route path="/app" element={<Layout />}>
           <Route index element={<Dashboard />} />
@@ -34,8 +49,17 @@ function App() {
           <Route path="experiences/:id" element={<ExperienceDetail />} />
           <Route path="profile" element={<Profile />} />
         </Route>
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="experiences" element={<AdminExperiences />} />
+          <Route path="trips" element={<AdminTrips />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="profile" element={<AdminProfile />} />
+        </Route>
       </Routes>
-    </TravelProvider>
+    </AppProviders>
   );
 }
 

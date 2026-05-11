@@ -1,4 +1,5 @@
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
+import { useAuth } from '../../providers/AuthProvider';
 import {
   Plane,
   Moon,
@@ -15,7 +16,8 @@ import CardHeader from '../../components/CardHeader/CardHeader';
 import SummaryCard from '../../components/SummaryCard/SummaryCard';
 
 const Dashboard = () => {
-  const { user, tripDetails, expenses, activities } = useTravel();
+  const { user } = useAuth();
+  const { tripDetails, expenses, activities } = useTravel();
 
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remainingBudget = (Number(tripDetails.budget) || 0) - totalSpent;

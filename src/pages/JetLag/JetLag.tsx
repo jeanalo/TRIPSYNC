@@ -4,7 +4,7 @@ import {
   calculateTimeDifference,
   CountryData,
 } from '../../services/api';
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
 import { MapPin, Clock, CalendarClock, Moon } from 'lucide-react';
 import { motion } from 'motion/react';
 

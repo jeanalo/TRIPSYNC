@@ -1,27 +1,31 @@
 import { Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { supabase } from '../config/supabase';
 import { AuthRequest } from '../shared/types';
 import { UserRole } from '../features/users/users.types';
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
-    
+
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, 'secretkey') as { id: string, email: string, role: UserRole };
-    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
     req.user = {
-      id: decoded.id,
-      email: decoded.email,
-      name: "Mock User",
-      role: decoded.role
+      id: user.id,
+      email: user.email ?? '',
+      name: (user.user_metadata?.name as string) ?? user.email ?? '',
+      role: (user.user_metadata?.role as UserRole) ?? 'user',
     };
 
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({ message: 'Invalid token' });
   }
 };

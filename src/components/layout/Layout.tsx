@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { useTravel } from '../../context/TravelContext';
+import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
+import { useTravel } from '../../providers/TravelProvider';
+import { useAuth } from '../../providers/AuthProvider';
+import { useRealtime } from '../../providers/RealtimeProvider';
 import {
   LayoutDashboard,
   Plane,
@@ -13,6 +15,7 @@ import {
   X
 } from 'lucide-react';
 import IconBadge from '../IconBadge/IconBadge';
+import RealtimeRecommendationToast from '../RealtimeRecommendationToast/RealtimeRecommendationToast';
 
 const navItems = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
@@ -25,18 +28,21 @@ const navItems = [
 ];
 
 const Layout = () => {
-  const { user } = useTravel();
+  const { user, loading } = useAuth();
+  useTravel();
+  const { latestNotification, clearNotification } = useRealtime();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-white">
-      {/* Mobile Top Bar */}
       <div className="flex lg:hidden items-center justify-between p-4 bg-white border-b border-[#e0e0e0] sticky top-0 z-30">
         <button onClick={() => setIsMobileMenuOpen(true)}>
           <Menu size={28} className="text-[#0066D2]" />
@@ -46,7 +52,6 @@ const Layout = () => {
         </Link>
       </div>
 
-      {/* Overlay for mobile menu */}
       {isMobileMenuOpen && (
         <div 
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
@@ -54,9 +59,7 @@ const Layout = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside className={`fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-[#e0e0e0] bg-white transition-transform duration-300 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {/* Mobile close button */}
         <button 
           className="lg:hidden absolute top-4 right-4 text-[#0066D2] p-2"
           onClick={() => setIsMobileMenuOpen(false)}
@@ -64,7 +67,6 @@ const Layout = () => {
           <X size={24} />
         </button>
 
-        {/* Logo */}
         <div className="px-10 pt-9 pb-6 hidden lg:block">
           <Link to="/app" className="flex items-center no-underline">
             <img src="/logo.png" alt="TripSync logo" />
@@ -74,7 +76,6 @@ const Layout = () => {
           <img src="/logo.png" alt="TripSync logo" className="h-8" />
         </div>
 
-        {/* Navigation */}
         <nav className="flex flex-1 flex-col gap-[30px] px-10">
           {navItems.map((item) => {
             const isActive =
@@ -100,10 +101,8 @@ const Layout = () => {
           })}
         </nav>
 
-        {/* Separator */}
         <div className="mx-0 border-t border-[#e0e0e0]" />
 
-        {/* User profile */}
         <div className="flex items-center gap-3 px-10 py-6">
           <IconBadge color="primary" size="md">
             <User size={24} />
@@ -119,10 +118,14 @@ const Layout = () => {
         </div>
       </aside>
 
-      {/* Main content */}
       <main className="lg:ml-[280px] flex-1 p-0 flex flex-col min-w-0">
         <Outlet />
       </main>
+
+      <RealtimeRecommendationToast 
+        notification={latestNotification} 
+        onClose={clearNotification} 
+      />
     </div>
   );
 };

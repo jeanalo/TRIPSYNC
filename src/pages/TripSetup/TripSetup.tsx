@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useTravel, TripDetails } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
+import type { TripDetails } from '../../types/travel.types';
 import { MapPin, CalendarDays, CheckCircle } from 'lucide-react';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -36,7 +37,7 @@ export default function TripSetup() {
       <div className="px-4 lg:px-12 flex justify-center lg:block">
         <FormCard as="form" onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[803px]">
           <div className="flex flex-col gap-[45px]">
-            {/* Row 1: Departure Country & Destination Country */}
+          
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-[65px]">
               <FormField label="Departure Country" icon={<MapPin size={24} />}>
                 <Controller
@@ -69,7 +70,7 @@ export default function TripSetup() {
               </FormField>
             </div>
 
-            {/* Row 2: Departure Date & Arrival Date */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-[65px]">
               <FormField label="Departure Date" icon={<CalendarDays size={24} />}>
                 <input
@@ -90,7 +91,7 @@ export default function TripSetup() {
               </FormField>
             </div>
 
-            {/* Submit Button */}
+            
             <SubmitButton icon={<CheckCircle size={24} />}>
               Save Trip Details
             </SubmitButton>

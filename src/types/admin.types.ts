@@ -6,13 +6,11 @@ export interface AdminStats {
 
 export interface SearchTripsFilters {
   country: string;
-  city: string;
   travelDate: string;
 }
 
-export interface VisitedCity {
+export interface VisitedCountry {
   rank: number;
-  name: string;
   country: string;
   visitors: number;
 }
@@ -31,7 +29,7 @@ export interface CreateExperienceFormData {
 export interface AdminExperience {
   id: string;
   name: string;
-  city: string;
+  country: string;
   category: string;
   price: number;
   rating: number;
@@ -50,7 +48,6 @@ export interface AdminExperiencesStats {
 export interface AdminExperienceFilters {
   search: string;
   category: string;
-  city: string;
   status: string;
 }
 
@@ -105,7 +102,7 @@ export interface AdminUserFilters {
 
 export interface AdminAnalyticsStats {
   totalBookings: number;
-  mostVisitedCity: string;
+  mostVisitedCountry: string;
   activeTravelers: number;
   revenueThisMonth: number;
 }
@@ -116,7 +113,7 @@ export interface MonthlyBooking {
 }
 
 export interface TopDestination {
-  city: string;
+  country: string;
   bookings: number;
 }
 

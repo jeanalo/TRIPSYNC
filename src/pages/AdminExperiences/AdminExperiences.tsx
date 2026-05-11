@@ -10,10 +10,7 @@ import CreateExperienceModal from '@/components/admin/CreateExperienceModal/Crea
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useAdmin } from '@/providers/AdminProvider';
-import {
-  mockCategoryOptions,
-  mockCityOptions,
-} from '@/services/admin.mock';
+import { mockCategoryOptions } from '@/services/admin.mock';
 
 import type {
   AdminExperienceFilters,
@@ -32,7 +29,6 @@ export default function AdminExperiences() {
   const [filters, setFilters] = useState<AdminExperienceFilters>({
     search: '',
     category: '',
-    city: '',
     status: '',
   });
 
@@ -53,9 +49,8 @@ export default function AdminExperiences() {
   const filteredExperiences = experiences.filter((exp) => {
     const matchesSearch = exp.name.toLowerCase().includes(filters.search.toLowerCase());
     const matchesCategory = !filters.category || exp.category.toLowerCase() === filters.category.toLowerCase();
-    const matchesCity = !filters.city || exp.city.toLowerCase() === filters.city.toLowerCase();
     const matchesStatus = !filters.status || exp.status === filters.status;
-    return matchesSearch && matchesCategory && matchesCity && matchesStatus;
+    return matchesSearch && matchesCategory && matchesStatus;
   });
 
   return (
@@ -108,7 +103,6 @@ export default function AdminExperiences() {
           filters={filters}
           onFilterChange={setFilters}
           categoryOptions={mockCategoryOptions}
-          cityOptions={mockCityOptions}
         />
         
         <ExperienceTable

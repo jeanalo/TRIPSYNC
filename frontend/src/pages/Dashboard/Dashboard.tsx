@@ -1,13 +1,7 @@
-import { useTravel } from '../../providers/TravelProvider';
-import { useAuth } from '../../providers/AuthProvider';
-import {
-  Plane,
-  Moon,
-  CalendarDays,
-  Share2,
-  Map,
-  PieChart,
-} from 'lucide-react';
+import { useTrip } from '../../context/TripProvider';
+import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
+import { useAuth } from '../../context/AuthProvider';
+import { Plane, Moon, CalendarDays, Share2, Map, PieChart } from 'lucide-react';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
@@ -17,7 +11,8 @@ import SummaryCard from '../../components/SummaryCard/SummaryCard';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { tripDetails, expenses, activities } = useTravel();
+  const { tripDetails } = useTrip();
+  const { expenses, activities } = useExpenseActivity();
 
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remainingBudget = (Number(tripDetails.budget) || 0) - totalSpent;
@@ -57,11 +52,7 @@ const Dashboard = () => {
             {tripDetails.destinationCountry || 'your next destination'}.
           </>
         }
-        action={
-          <ActionButton icon={<Share2 size={20} />}>
-            Share Trip
-          </ActionButton>
-        }
+        action={<ActionButton icon={<Share2 size={20} />}>Share Trip</ActionButton>}
       />
 
       {/* Content area */}
@@ -88,83 +79,79 @@ const Dashboard = () => {
           {/* Schedule Card */}
           <DetailCard delay={0.4}>
             <div className="flex flex-col gap-6">
-            <CardHeader
-              icon={<CalendarDays size={24} />}
-              title="Schedule"
-              subtitle="Here is your itinerary."
-            />
+              <CardHeader
+                icon={<CalendarDays size={24} />}
+                title="Schedule"
+                subtitle="Here is your itinerary."
+              />
 
-            {/* Activity rows */}
-            <div className="flex flex-col">
-              {(activities.length > 0
-                ? activities.slice(0, 4)
-                : [
-                    { id: '1', name: 'Activity one', location: 'Location' },
-                    { id: '2', name: 'Activity two', location: 'Location' },
-                    { id: '3', name: 'Activity three', location: 'Location' },
-                    { id: '4', name: 'Activity four', location: 'Location' },
-                  ]
-              ).map((act, index) => (
-                <div
-                  key={act.id}
-                  className={`flex items-center justify-between py-4 ${
-                    index > 0 ? 'border-t border-[#0066D2]/15' : ''
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-[18px] font-bold text-[#0066D2]">
-                      {index + 1}
-                    </span>
-                    <span className="text-[16px] text-[#0066D2]">
-                      {act.name}
+              {/* Activity rows */}
+              <div className="flex flex-col">
+                {(activities.length > 0
+                  ? activities.slice(0, 4)
+                  : [
+                      { id: '1', name: 'Activity one', location: 'Location' },
+                      { id: '2', name: 'Activity two', location: 'Location' },
+                      { id: '3', name: 'Activity three', location: 'Location' },
+                      { id: '4', name: 'Activity four', location: 'Location' },
+                    ]
+                ).map((act, index) => (
+                  <div
+                    key={act.id}
+                    className={`flex items-center justify-between py-4 ${
+                      index > 0 ? 'border-t border-[#0066D2]/15' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-[18px] font-bold text-[#0066D2]">
+                        {index + 1}
+                      </span>
+                      <span className="text-[16px] text-[#0066D2]">{act.name}</span>
+                    </div>
+                    <span className="text-[16px] font-semibold text-[#0066D2]">
+                      {act.location}
                     </span>
                   </div>
-                  <span className="text-[16px] font-semibold text-[#0066D2]">
-                    {act.location}
-                  </span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
             </div>
           </DetailCard>
 
           {/* Budget Card */}
           <DetailCard delay={0.5}>
             <div className="flex flex-col gap-6">
-            <CardHeader
-              icon={<PieChart size={24} />}
-              title="Budget"
-              subtitle="Manage your expenses"
-            />
+              <CardHeader
+                icon={<PieChart size={24} />}
+                title="Budget"
+                subtitle="Manage your expenses"
+              />
 
-            {/* Budget rows */}
-            <div className="flex flex-col gap-5">
-              <div className="flex items-center justify-between">
-                <span className="text-[16px] text-[#0066D2]">Total budget</span>
-                <span className="text-[20px] font-bold text-[#0066D2]">
-                  ${Number(tripDetails.budget).toLocaleString()}
-                </span>
+              {/* Budget rows */}
+              <div className="flex flex-col gap-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[16px] text-[#0066D2]">Total budget</span>
+                  <span className="text-[20px] font-bold text-[#0066D2]">
+                    ${Number(tripDetails.budget).toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-[16px] text-[#0066D2]">Spent so far</span>
+                  <span className="text-[20px] font-bold text-[#E53935]">
+                    -${totalSpent.toLocaleString()}
+                  </span>
+                </div>
+
+                {/* Divider */}
+                <div className="h-[1px] bg-[#0066D2]/20" />
+
+                <div className="flex items-center justify-between">
+                  <span className="text-[18px] font-bold text-[#0066D2]">Remaining</span>
+                  <span className="text-[22px] font-bold text-[#0066D2]">
+                    ${remainingBudget.toLocaleString()}
+                  </span>
+                </div>
               </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-[16px] text-[#0066D2]">Spent so far</span>
-                <span className="text-[20px] font-bold text-[#E53935]">
-                  -${totalSpent.toLocaleString()}
-                </span>
-              </div>
-
-              {/* Divider */}
-              <div className="h-[1px] bg-[#0066D2]/20" />
-
-              <div className="flex items-center justify-between">
-                <span className="text-[18px] font-bold text-[#0066D2]">
-                  Remaining
-                </span>
-                <span className="text-[22px] font-bold text-[#0066D2]">
-                  ${remainingBudget.toLocaleString()}
-                </span>
-              </div>
-            </div>
             </div>
           </DetailCard>
         </div>

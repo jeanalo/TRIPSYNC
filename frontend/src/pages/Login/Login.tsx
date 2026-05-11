@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
-import { useAuth } from '../../providers/AuthProvider';
+import { useAuth } from '../../context/AuthProvider';
 import FormField from '../../components/FormField/FormField';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
@@ -21,7 +21,11 @@ const Login = () => {
       await login(email, password);
       navigate('/app');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión. Verifica tus credenciales.');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Error al iniciar sesión. Verifica tus credenciales.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -29,7 +33,6 @@ const Login = () => {
 
   return (
     <div className="flex h-screen w-screen" id="login-page">
-
       <div className="hidden md:block w-1/2 h-full">
         <img
           src="/banner-tripsync.svg"
@@ -38,10 +41,8 @@ const Login = () => {
         />
       </div>
 
-
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white px-6">
         <div className="w-full max-w-[400px]">
-
           <h2
             className="text-center text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-8"
             id="login-heading"

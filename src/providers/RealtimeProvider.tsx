@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { socketService } from '../services/socket.service';
+import { realtimeService } from '../services/realtime.service';
 import { useTravel } from './TravelProvider';
-import type { 
-  RecommendationNotification, 
-  RealtimeRecommendationPayload 
+import type {
+  RecommendationNotification,
+  RealtimeRecommendationPayload
 } from '../types/realtime.types';
 
 interface RealtimeContextType {
@@ -14,31 +14,26 @@ interface RealtimeContextType {
 const RealtimeContext = createContext<RealtimeContextType | undefined>(undefined);
 
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
-  const { activeCity } = useTravel();
+  const { tripDetails } = useTravel();
+  const activeCountry = tripDetails.destinationCountry;
   const [latestNotification, setLatestNotification] = useState<RecommendationNotification | null>(null);
 
   useEffect(() => {
-    if (!activeCity) return;
+    if (!activeCountry) return;
 
-    socketService.connect();
-    socketService.joinCity(activeCity);
-
-    const unsubscribe = socketService.onNewRecommendation((recommendation: RealtimeRecommendationPayload) => {
+    const unsubscribe = realtimeService.subscribe(activeCountry, (recommendation: RealtimeRecommendationPayload) => {
       const notification: RecommendationNotification = {
         id: Math.random().toString(36).substring(7),
         type: 'new-recommendation',
-        city: activeCity,
+        country: activeCountry,
         payload: recommendation,
         timestamp: new Date().toISOString(),
       };
       setLatestNotification(notification);
     });
 
-    return () => {
-      unsubscribe();
-      socketService.leaveCity(activeCity);
-    };
-  }, [activeCity]);
+    return () => unsubscribe();
+  }, [activeCountry]);
 
   const clearNotification = () => {
     setLatestNotification(null);

@@ -13,7 +13,6 @@ import { useAdmin } from '@/providers/AdminProvider';
 import {
   mockCategoryOptions,
   mockCityOptions,
-  mockCountryOptions,
 } from '@/services/admin.mock';
 
 import type {
@@ -124,8 +123,6 @@ export default function AdminExperiences() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        countryOptions={mockCountryOptions}
-        cityOptions={mockCityOptions}
         categoryOptions={mockCategoryOptions}
       />
 

@@ -12,7 +12,6 @@ import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 import { useAdmin } from '@/providers/AdminProvider';
 import {
   mockCountryOptions,
-  mockCityOptions,
   mockCategoryOptions,
 } from '@/services/admin.mock';
 
@@ -131,8 +130,6 @@ export default function AdminTrips() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        countryOptions={mockCountryOptions}
-        cityOptions={mockCityOptions}
         categoryOptions={mockCategoryOptions}
       />
 

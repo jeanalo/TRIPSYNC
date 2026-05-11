@@ -4,14 +4,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronDown, Search, Image as ImageIcon, Loader2 } from 'lucide-react';
 import type { CreateExperienceFormData, SelectOption, UnsplashImage } from '@/types/admin.types';
 import { searchUnsplashImages } from '@/services/unsplash.service';
-import { socketService } from '@/services/socket.service';
+import { realtimeService } from '@/services/realtime.service';
+import { useCountries } from '@/hooks/useCountries';
 
 interface CreateExperienceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: CreateExperienceFormData) => void;
-  countryOptions: SelectOption[];
-  cityOptions: SelectOption[];
   categoryOptions: SelectOption[];
 }
 
@@ -19,17 +18,15 @@ export default function CreateExperienceModal({
   isOpen,
   onClose,
   onSubmit,
-  countryOptions,
-  cityOptions,
   categoryOptions,
 }: CreateExperienceModalProps) {
+  const { countries, loading: loadingCountries } = useCountries();
   const {
     register,
     handleSubmit,
     reset,
     setValue,
     watch,
-    formState: { errors },
   } = useForm<CreateExperienceFormData>();
 
   const [imageQuery, setImageQuery] = useState('');
@@ -82,10 +79,9 @@ export default function CreateExperienceModal({
   };
 
   const handleSendRecommendation = (data: CreateExperienceFormData) => {
-    socketService.connect();
-    socketService.sendAdminRecommendation(data.city, {
+    realtimeService.sendRecommendation(data.country, {
       id: Math.random().toString(36).substring(7),
-      city: data.city,
+      country: data.country,
       category: data.category,
       activityName: data.activityName,
       location: data.location,
@@ -149,31 +145,12 @@ export default function CreateExperienceModal({
                   id="create-exp-country"
                   {...register('country', { required: true })}
                   className={selectClasses}
+                  disabled={loadingCountries}
                 >
-                  <option value="">Country</option>
-                  {countryOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={16}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-                />
-              </div>
-
-             
-              <div className="relative">
-                <select
-                  id="create-exp-city"
-                  {...register('city', { required: true })}
-                  className={selectClasses}
-                >
-                  <option value="">City</option>
-                  {cityOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
+                  <option value="">{loadingCountries ? 'Loading countries…' : 'Country'}</option>
+                  {countries.map((c) => (
+                    <option key={c.name} value={c.name}>
+                      {c.flag} {c.name}
                     </option>
                   ))}
                 </select>

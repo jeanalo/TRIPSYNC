@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { motion } from 'motion/react';
 
-
 import PageHeader from '@/components/PageHeader/PageHeader';
 
 import TripsFilters from '@/components/admin/TripsFilters/TripsFilters';
@@ -10,16 +9,10 @@ import TripsTable from '@/components/admin/TripsTable/TripsTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
-import { useAdmin } from '@/providers/AdminProvider';
-import {
-  mockCountryOptions,
-  mockCategoryOptions,
-} from '@/services/admin.mock';
+import { useAdmin } from '@/context/AdminProvider';
+import { mockCountryOptions, mockCategoryOptions } from '@/services/admin.mock';
 
-import type {
-  AdminTripFilters,
-  CreateExperienceFormData,
-} from '@/types/admin.types';
+import type { AdminTripFilters, CreateExperienceFormData } from '@/types/admin.types';
 
 interface AdminLayoutOutletContext {
   isCreateModalRequested: boolean;
@@ -51,15 +44,16 @@ export default function AdminTrips() {
   };
 
   const filteredTrips = trips.filter((trip) => {
-    const matchesSearch = 
+    const matchesSearch =
       trip.travelerName.toLowerCase().includes(filters.search.toLowerCase()) ||
       trip.id.toLowerCase().includes(filters.search.toLowerCase());
-    
-    const matchesCountry = !filters.country ||
+
+    const matchesCountry =
+      !filters.country ||
       trip.destinationCountry.toLowerCase() === filters.country.toLowerCase();
 
-    const matchesDate = !filters.date ||
-      trip.startDate >= filters.date || trip.endDate >= filters.date;
+    const matchesDate =
+      !filters.date || trip.startDate >= filters.date || trip.endDate >= filters.date;
 
     return matchesSearch && matchesCountry && matchesDate;
   });
@@ -72,18 +66,14 @@ export default function AdminTrips() {
         className="mb-7"
       />
 
-
-
       <div className="bg-[#F5F7FA] rounded-3xl p-1">
         <TripsFilters
           filters={filters}
           onFilterChange={setFilters}
           countryOptions={mockCountryOptions}
         />
-        
-        <TripsTable
-          trips={filteredTrips}
-        />
+
+        <TripsTable trips={filteredTrips} />
       </div>
 
       <CreateExperienceModal

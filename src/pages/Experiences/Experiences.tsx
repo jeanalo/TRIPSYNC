@@ -3,39 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import { MapPin, Bookmark, BookmarkCheck, Leaf } from 'lucide-react';
 import { motion } from 'motion/react';
 import PageHeader from '../../components/PageHeader/PageHeader';
-import { EXPERIENCES } from '../../data/experiences';
-import { useTravel } from '../../context/TravelContext';
+import { useExperiences } from '@/hooks/useExperience';
+import { useTravel } from '../../providers/TravelProvider';
 
 const FILTERS = ['All', 'Chill', 'Adventure', 'Cultural', 'Free Tour', 'Saved'] as const;
 type Filter = (typeof FILTERS)[number];
 
 const Experiences = () => {
   const navigate = useNavigate();
+  const { experiences, savedIds, toggleSave, loading } = useExperiences();
   const { tripDetails } = useTravel();
   const [activeFilter, setActiveFilter] = useState<Filter>('All');
-  const [saved, setSaved] = useState<Set<number>>(new Set([1]));
 
   const availableExperiences = tripDetails?.destinationCountry
-    ? EXPERIENCES.filter(
+    ? experiences.filter(
         (exp) =>
           exp.country.toLowerCase() === tripDetails.destinationCountry.toLowerCase()
       )
-    : EXPERIENCES;
+    : experiences;
 
   const visible = availableExperiences.filter((exp) => {
-    if (activeFilter === 'Saved') return saved.has(exp.id);
+    if (activeFilter === 'Saved') return savedIds.has(exp.id);
     if (activeFilter === 'All') return true;
     return exp.category === activeFilter;
   });
 
-  const toggleSave = (id: number) => {
-    setSaved((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  if (loading) {
+    return <p className="p-10">Loading...</p>;
+  }
 
   return (
     <div>
@@ -85,7 +80,7 @@ const Experiences = () => {
                   onClick={() => toggleSave(exp.id)}
                   className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow hover:bg-white transition-colors cursor-pointer border-none"
                 >
-                  {saved.has(exp.id) ? (
+                  {savedIds.has(exp.id) ? (
                     <BookmarkCheck size={16} className="text-[#0066D2]" />
                   ) : (
                     <Bookmark size={16} className="text-[#0066D2]" />

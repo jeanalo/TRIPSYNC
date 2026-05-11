@@ -9,11 +9,9 @@ import TripsTable from '@/components/admin/TripsTable/TripsTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
+import { useAdmin } from '@/providers/AdminProvider';
 import {
-  mockAdminTrips,
-  mockAdminTripsStats,
   mockCountryOptions,
-  mockCityOptions,
   mockCategoryOptions,
 } from '@/services/admin.mock';
 
@@ -28,6 +26,7 @@ interface AdminLayoutOutletContext {
 }
 
 export default function AdminTrips() {
+  const { trips, tripsStats } = useAdmin();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [filters, setFilters] = useState<AdminTripFilters>({
@@ -47,12 +46,11 @@ export default function AdminTrips() {
   }, [outletContext?.isCreateModalRequested]);
 
   const handleCreateSubmit = (data: CreateExperienceFormData) => {
-    console.log('Experience created:', data);
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
 
-  const filteredTrips = mockAdminTrips.filter((trip) => {
+  const filteredTrips = trips.filter((trip) => {
     const matchesSearch = 
       trip.travelerName.toLowerCase().includes(filters.search.toLowerCase()) ||
       trip.id.toLowerCase().includes(filters.search.toLowerCase());
@@ -70,7 +68,6 @@ export default function AdminTrips() {
 
   return (
     <div className="flex flex-col">
-      {/* Page Header */}
       <motion.div
         className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7"
         initial={{ opacity: 0, y: 20 }}
@@ -87,35 +84,33 @@ export default function AdminTrips() {
         </div>
       </motion.div>
 
-      {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
         <StatsCard
           icon={<Plane size={22} />}
           label="Total trips"
-          value={mockAdminTripsStats.totalTrips}
+          value={tripsStats.totalTrips}
           delay={0.1}
         />
         <StatsCard
           icon={<CheckCircle2 size={22} />}
           label="Active trips"
-          value={mockAdminTripsStats.activeTrips}
+          value={tripsStats.activeTrips}
           delay={0.2}
         />
         <StatsCard
           icon={<History size={22} />}
           label="Completed trips"
-          value={mockAdminTripsStats.completedTrips}
+          value={tripsStats.completedTrips}
           delay={0.3}
         />
         <StatsCard
           icon={<MapPin size={22} />}
           label="Top destination"
-          value={mockAdminTripsStats.topDestination}
+          value={tripsStats.topDestination}
           delay={0.4}
         />
       </div>
 
-      {/* Main Content Card */}
       <div className="bg-[#F5F7FA] rounded-3xl p-1">
         <TripsFilters
           filters={filters}
@@ -125,19 +120,16 @@ export default function AdminTrips() {
         
         <TripsTable
           trips={filteredTrips}
-          onEdit={(id) => console.log('Edit', id)}
-          onDelete={(id) => console.log('Delete', id)}
-          onView={(id) => console.log('View', id)}
+          onEdit={() => {}}
+          onDelete={() => {}}
+          onView={() => {}}
         />
       </div>
 
-      {/* Modals (Still need them because sidebar button might trigger them) */}
       <CreateExperienceModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        countryOptions={mockCountryOptions}
-        cityOptions={mockCityOptions}
         categoryOptions={mockCategoryOptions}
       />
 

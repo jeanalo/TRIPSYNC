@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronDown, Search, Image as ImageIcon, Loader2 } from 'lucide-react';
 import type { CreateExperienceFormData, SelectOption, UnsplashImage } from '@/types/admin.types';
 import { searchUnsplashImages } from '@/services/unsplash.service';
+import { realtimeService } from '@/services/realtime.service';
+import { useCountries } from '@/hooks/useCountries';
 
 interface CreateExperienceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: CreateExperienceFormData) => void;
-  countryOptions: SelectOption[];
-  cityOptions: SelectOption[];
   categoryOptions: SelectOption[];
 }
 
@@ -18,17 +18,15 @@ export default function CreateExperienceModal({
   isOpen,
   onClose,
   onSubmit,
-  countryOptions,
-  cityOptions,
   categoryOptions,
 }: CreateExperienceModalProps) {
+  const { countries, loading: loadingCountries } = useCountries();
   const {
     register,
     handleSubmit,
     reset,
     setValue,
     watch,
-    formState: { errors },
   } = useForm<CreateExperienceFormData>();
 
   const [imageQuery, setImageQuery] = useState('');
@@ -77,6 +75,21 @@ export default function CreateExperienceModal({
   }, [isOpen, onClose]);
 
   const handleFormSubmit = (data: CreateExperienceFormData) => {
+    onSubmit(data);
+  };
+
+  const handleSendRecommendation = (data: CreateExperienceFormData) => {
+    realtimeService.sendRecommendation(data.country, {
+      id: Math.random().toString(36).substring(7),
+      country: data.country,
+      category: data.category,
+      activityName: data.activityName,
+      location: data.location,
+      date: data.date,
+      time: data.time,
+      details: data.details,
+      imageUrl: data.imageUrl,
+    });
     onSubmit(data);
   };
 
@@ -132,31 +145,12 @@ export default function CreateExperienceModal({
                   id="create-exp-country"
                   {...register('country', { required: true })}
                   className={selectClasses}
+                  disabled={loadingCountries}
                 >
-                  <option value="">Country</option>
-                  {countryOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={16}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-                />
-              </div>
-
-             
-              <div className="relative">
-                <select
-                  id="create-exp-city"
-                  {...register('city', { required: true })}
-                  className={selectClasses}
-                >
-                  <option value="">City</option>
-                  {cityOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
+                  <option value="">{loadingCountries ? 'Loading countries…' : 'Country'}</option>
+                  {countries.map((c) => (
+                    <option key={c.name} value={c.name}>
+                      {c.flag} {c.name}
                     </option>
                   ))}
                 </select>
@@ -294,12 +288,19 @@ export default function CreateExperienceModal({
             </div>
           </div>
 
-              <div className="px-7 pb-7 pt-2">
+              <div className="px-7 pb-7 pt-2 flex flex-col gap-3">
                 <button
                   type="submit"
                   className="w-full rounded-xl bg-[#1CA698] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md mt-1"
                 >
                   Create Experience
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit(handleSendRecommendation)}
+                  className="w-full rounded-xl bg-[#eafaf1] px-4 py-3 text-[15px] font-semibold text-[#27ae60] border border-[#27ae60] cursor-pointer transition-all duration-200 hover:bg-[#27ae60] hover:text-white hover:shadow-md"
+                >
+                  Send as Recommendation
                 </button>
               </div>
             </form>

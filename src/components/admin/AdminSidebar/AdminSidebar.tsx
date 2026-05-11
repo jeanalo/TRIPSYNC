@@ -10,6 +10,7 @@ import {
   User,
   X,
 } from 'lucide-react';
+import { useAuth } from '../../../providers/AuthProvider';
 
 const adminNavItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -31,6 +32,7 @@ export default function AdminSidebar({
   onCreateExperience,
 }: AdminSidebarProps) {
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     onMobileClose();
@@ -103,21 +105,34 @@ export default function AdminSidebar({
           </button>
         </div>
 
-        <div className="flex items-center gap-3 px-5 py-4 border-t border-[#e0e0e0]">
-          <div className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-[#1CA698]">
+        <Link 
+          to="/admin/profile"
+          className={`flex items-center gap-3 px-5 py-4 border-t border-[#e0e0e0] no-underline transition-all duration-200 ${
+            location.pathname === '/admin/profile' 
+              ? 'bg-[#1CA698]/8 text-[#1CA698]' 
+              : 'hover:bg-[#1CA698]/5'
+          }`}
+        >
+          <div className={`flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full transition-colors duration-200 ${
+            location.pathname === '/admin/profile' ? 'bg-[#1CA698]' : 'bg-[#1CA698]'
+          }`}>
             <User size={18} className="text-white" />
           </div>
 
           <div className="flex flex-col min-w-0">
-            <span className="text-[13px] font-medium leading-tight text-[#0066D2] truncate">
-              Admin User
+            <span className={`text-[13px] font-medium leading-tight truncate transition-colors duration-200 ${
+              location.pathname === '/admin/profile' ? 'text-[#1CA698]' : 'text-[#0066D2]'
+            }`}>
+              {user?.name || 'Admin User'}
             </span>
 
-            <span className="text-[11px] leading-tight text-[#0066D2]/60 truncate">
-              admin@tripsync.com
+            <span className={`text-[11px] leading-tight truncate transition-colors duration-200 ${
+              location.pathname === '/admin/profile' ? 'text-[#1CA698]/70' : 'text-[#0066D2]/60'
+            }`}>
+              {user?.email || 'admin@tripsync.com'}
             </span>
           </div>
-        </div>
+        </Link>
       </aside>
     </>
   );

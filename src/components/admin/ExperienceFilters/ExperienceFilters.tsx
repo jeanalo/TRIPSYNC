@@ -5,14 +5,12 @@ interface ExperienceFiltersProps {
   filters: AdminExperienceFilters;
   onFilterChange: (filters: AdminExperienceFilters) => void;
   categoryOptions: SelectOption[];
-  cityOptions: SelectOption[];
 }
 
 export default function ExperienceFilters({
   filters,
   onFilterChange,
   categoryOptions,
-  cityOptions,
 }: ExperienceFiltersProps) {
   const handleChange = (field: keyof AdminExperienceFilters, value: string) => {
     onFilterChange({ ...filters, [field]: value });
@@ -39,7 +37,7 @@ export default function ExperienceFilters({
       </div>
 
       {/* Filters Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
         <div className="relative">
           <select
             value={filters.category}
@@ -48,25 +46,6 @@ export default function ExperienceFilters({
           >
             <option value="">Category</option>
             {categoryOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            size={16}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-          />
-        </div>
-
-        <div className="relative">
-          <select
-            value={filters.city}
-            onChange={(e) => handleChange('city', e.target.value)}
-            className={selectClasses}
-          >
-            <option value="">City</option>
-            {cityOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Tag, Pencil, CalendarDays, CheckCircle, DollarSign, AlertTriangle } from 'lucide-react';
 
-import { useTravel } from '../../context/TravelContext';
+import { useTravel } from '../../providers/TravelProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import AlertModal from '../../components/AlertModal/AlertModal';
 import FormCard from '../../components/FormCard/FormCard';
@@ -38,13 +38,13 @@ export default function AddExpense() {
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remaining = totalBudget - totalSpent;
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     const amount = parseFloat(data.amount) || 0;
     if (totalBudget > 0 && amount > remaining) {
       setShowOverBudgetModal(true);
       return;
     }
-    addExpense({
+    await addExpense({
       category: data.category,
       notes: data.notes,
       amount,

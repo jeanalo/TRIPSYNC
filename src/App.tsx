@@ -1,8 +1,11 @@
 import { Routes, Route } from 'react-router-dom';
-import { TravelProvider } from './context/TravelContext';
+import { AppProviders } from './providers/AppProviders';
 
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
+import AuthSelector from './pages/Auth/AuthSelector';
+import AdminLogin from './pages/AdminLogin/AdminLogin';
+import AdminRegister from './pages/AdminRegister/AdminRegister';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Budget from './pages/Budget/Budget';
 import AddExpense from './pages/AddExpense/AddExpense';
@@ -19,13 +22,20 @@ import AdminLayout from './components/admin/AdminLayout/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import AdminExperiences from './pages/AdminExperiences/AdminExperiences';
 import AdminTrips from './pages/AdminTrips/AdminTrips';
+import AdminUsers from './pages/AdminUsers/AdminUsers';
+import AdminAnalytics from './pages/AdminAnalytics/AdminAnalytics';
+import AdminProfile from './pages/AdminProfile/AdminProfile';
 
 function App() {
   return (
-    <TravelProvider>
+    <AppProviders>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<AuthSelector />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
 
         <Route path="/app" element={<Layout />}>
           <Route index element={<Dashboard />} />
@@ -44,9 +54,12 @@ function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="experiences" element={<AdminExperiences />} />
           <Route path="trips" element={<AdminTrips />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
       </Routes>
-    </TravelProvider>
+    </AppProviders>
   );
 }
 

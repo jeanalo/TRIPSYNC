@@ -5,18 +5,15 @@ import type { SearchTripsFilters, SelectOption } from '@/types/admin.types';
 
 interface SearchTripsCardProps {
   countryOptions: SelectOption[];
-  cityOptions: SelectOption[];
   onSearch?: (filters: SearchTripsFilters) => void;
 }
 
 export default function SearchTripsCard({
   countryOptions,
-  cityOptions,
   onSearch,
 }: SearchTripsCardProps) {
   const [filters, setFilters] = useState<SearchTripsFilters>({
     country: '',
-    city: '',
     travelDate: '',
   });
 
@@ -63,28 +60,6 @@ export default function SearchTripsCard({
           />
         </div>
 
-        
-        <div className="relative">
-          <select
-            id="admin-search-city"
-            value={filters.city}
-            onChange={(e) => handleChange('city', e.target.value)}
-            className="w-full appearance-none rounded-xl border border-[#e0e0e0] bg-white px-4 py-2.5 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#1CA698] cursor-pointer"
-          >
-            <option value="">City</option>
-            {cityOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            size={16}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-          />
-        </div>
-
-        
         <input
           id="admin-search-date"
           type="date"

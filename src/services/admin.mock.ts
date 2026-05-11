@@ -1,11 +1,15 @@
 import type {
   AdminStats,
-  VisitedCity,
+  VisitedCountry,
   SelectOption,
   AdminExperience,
   AdminExperiencesStats,
   AdminTrip,
   AdminTripsStats,
+  AdminUser,
+  AdminUserStats,
+  AdminFullProfile,
+  AdminAccountActivity,
 } from '@/types/admin.types';
 
 export const mockAdminStats: AdminStats = {
@@ -13,6 +17,120 @@ export const mockAdminStats: AdminStats = {
   activeTrips: 12,
   topDestination: 'Bali, Indonesia',
 };
+
+export const mockAdminFullProfile: AdminFullProfile = {
+  id: 'admin-001',
+  name: 'Juanita Pérez',
+  email: 'juanita@tripsync.com',
+  avatar: 'https://i.pravatar.cc/150?u=juanita',
+  role: 'Platform Administrator',
+  status: 'active',
+  phone: '+1 (555) 123-4567',
+  location: 'Bogotá, Colombia',
+  joinedDate: '2023-10-01',
+  preferences: {
+    language: 'English',
+    timezone: 'UTC -5 (Colombia)',
+    emailNotifications: true,
+    dashboardView: 'standard',
+  },
+  security: {
+    passwordStatus: 'Last changed 3 months ago',
+    twoFactorEnabled: true,
+    lastLogin: '2024-03-24 10:15 AM',
+  },
+};
+
+export const mockAdminAccountActivity: AdminAccountActivity[] = [
+  {
+    id: 'act-001',
+    action: 'Created new experience',
+    section: 'Experiences',
+    date: '2024-03-24 09:30 AM',
+    status: 'success',
+  },
+  {
+    id: 'act-002',
+    action: 'Reviewed trip report',
+    section: 'Trips',
+    date: '2024-03-23 04:45 PM',
+    status: 'info',
+  },
+  {
+    id: 'act-003',
+    action: 'Updated user status',
+    section: 'Users',
+    date: '2024-03-22 11:20 AM',
+    status: 'warning',
+  },
+  {
+    id: 'act-004',
+    action: 'Checked analytics dashboard',
+    section: 'Analytics',
+    date: '2024-03-21 02:15 PM',
+    status: 'info',
+  },
+];
+
+export const mockAdminUserStats: AdminUserStats = {
+  totalUsers: 1240,
+  activeUsers: 856,
+  newThisMonth: 124,
+  topCountry: 'USA',
+};
+
+export const mockAdminUsers: AdminUser[] = [
+  {
+    id: 'usr-001',
+    name: 'Emily Carter',
+    email: 'emily.carter@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=emily',
+    country: 'USA',
+    joinDate: '2024-01-15',
+    tripCount: 4,
+    status: 'premium',
+  },
+  {
+    id: 'usr-002',
+    name: 'Daniel Smith',
+    email: 'daniel.smith@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=daniel',
+    country: 'UK',
+    joinDate: '2024-02-10',
+    tripCount: 2,
+    status: 'active',
+  },
+  {
+    id: 'usr-003',
+    name: 'Sofia Martinez',
+    email: 'sofia.martinez@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=sofia',
+    country: 'Spain',
+    joinDate: '2024-03-05',
+    tripCount: 1,
+    status: 'active',
+  },
+  {
+    id: 'usr-004',
+    name: 'Liam Johnson',
+    email: 'liam.johnson@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=liam',
+    country: 'Canada',
+    joinDate: '2023-12-20',
+    tripCount: 0,
+    status: 'inactive',
+  },
+  {
+    id: 'usr-005',
+    name: 'Isabella Silva',
+    email: 'isabella.silva@email.com',
+    avatar: 'https://i.pravatar.cc/150?u=isabella',
+    country: 'Brazil',
+    joinDate: '2024-01-20',
+    tripCount: 3,
+    status: 'premium',
+  },
+];
 
 export const mockAdminTripsStats: AdminTripsStats = {
   totalTrips: 245,
@@ -95,7 +213,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-001',
     name: 'Eiffel Tower Tour',
-    city: 'Paris',
+    country: 'France',
     category: 'Cultural',
     price: 45,
     rating: 4.8,
@@ -106,7 +224,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-002',
     name: 'Amazon Rainforest Trek',
-    city: 'Manaus',
+    country: 'Brazil',
     category: 'Adventure',
     price: 120,
     rating: 4.9,
@@ -117,7 +235,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-003',
     name: 'Sushi Making Workshop',
-    city: 'Tokyo',
+    country: 'Japan',
     category: 'Gastronomy',
     price: 65,
     rating: 4.7,
@@ -128,7 +246,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-004',
     name: 'London Bridge Walking Tour',
-    city: 'London',
+    country: 'United Kingdom',
     category: 'Cultural',
     price: 0,
     rating: 4.5,
@@ -139,7 +257,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-005',
     name: 'Bali Surf School',
-    city: 'Bali',
+    country: 'Indonesia',
     category: 'Adventure',
     price: 35,
     rating: 4.9,
@@ -149,12 +267,12 @@ export const mockAdminExperiences: AdminExperience[] = [
   },
 ];
 
-export const mockVisitedCities: VisitedCity[] = [
-  { rank: 1, name: 'Paris', country: 'France', visitors: 5 },
-  { rank: 2, name: 'London', country: 'UK', visitors: 2 },
-  { rank: 3, name: 'Madrid', country: 'Spain', visitors: 1 },
-  { rank: 4, name: 'Cali', country: 'Colombia', visitors: 1 },
-  { rank: 5, name: 'Rio', country: 'Brazil', visitors: 1 },
+export const mockVisitedCountries: VisitedCountry[] = [
+  { rank: 1, country: 'France', visitors: 5 },
+  { rank: 2, country: 'United Kingdom', visitors: 2 },
+  { rank: 3, country: 'Spain', visitors: 1 },
+  { rank: 4, country: 'Colombia', visitors: 1 },
+  { rank: 5, country: 'Brazil', visitors: 1 },
 ];
 
 
@@ -170,16 +288,6 @@ export const mockCountryOptions: SelectOption[] = [
 ];
 
 
-export const mockCityOptions: SelectOption[] = [
-  { value: 'paris', label: 'Paris' },
-  { value: 'london', label: 'London' },
-  { value: 'madrid', label: 'Madrid' },
-  { value: 'cali', label: 'Cali' },
-  { value: 'rio', label: 'Rio de Janeiro' },
-  { value: 'bali', label: 'Bali' },
-  { value: 'tokyo', label: 'Tokyo' },
-  { value: 'new-york', label: 'New York' },
-];
 
 
 export const mockCategoryOptions: SelectOption[] = [

@@ -21,7 +21,7 @@ export default function TripsFilters({
 
   return (
     <div className="flex flex-col lg:flex-row items-center gap-4 mb-6">
-      {/* Search */}
+      
       <div className="relative w-full lg:flex-1">
         <Search
           size={18}
@@ -36,7 +36,7 @@ export default function TripsFilters({
         />
       </div>
 
-      {/* Filters Grid */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto">
         <div className="relative">
           <select

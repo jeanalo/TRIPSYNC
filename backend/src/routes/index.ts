@@ -9,13 +9,6 @@ import { jetlagRouter } from '../features/jetlag/jetlag.router';
 
 const router = Router();
 
-router.get('/status', (req, res) => {
-  res.json({
-    status: 'ok',
-    message: 'TripSync backend running'
-  });
-});
-
 router.use('/auth', authRouter);
 router.use('/users', usersRouter);
 router.use('/trips', tripsRouter);

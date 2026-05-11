@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, ShieldAlert, KeyRound } from 'lucide-react';
 import { useAuth } from '../../providers/AuthProvider';
 import FormField from '../../components/FormField/FormField';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
-import AdminAccountCreatedModal from '../../components/admin/AdminAccountCreatedModal/AdminAccountCreatedModal';
 
 const ADMIN_ACCESS_CODE = import.meta.env.VITE_ADMIN_ACCESS_CODE ?? 'TRIPSYNC-ADMIN';
 
 const AdminRegister = () => {
   const { registerAdmin } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +18,6 @@ const AdminRegister = () => {
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const handleRegister = async (e: { preventDefault(): void }) => {
     e.preventDefault();
@@ -37,7 +36,7 @@ const AdminRegister = () => {
     setIsLoading(true);
     try {
       await registerAdmin(email, name, password);
-      setIsSuccessModalOpen(true);
+      navigate('/admin/login');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error al crear la cuenta de administrador.');
     } finally {
@@ -164,10 +163,6 @@ const AdminRegister = () => {
         </div>
       </div>
 
-      <AdminAccountCreatedModal
-        isOpen={isSuccessModalOpen}
-        onClose={() => setIsSuccessModalOpen(false)}
-      />
     </div>
   );
 };

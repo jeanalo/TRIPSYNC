@@ -1,18 +1,12 @@
-import { Edit2, Trash2, Eye, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import type { AdminUser } from '@/types/admin.types';
 
 interface UsersTableProps {
   users: AdminUser[];
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-  onView: (id: string) => void;
 }
 
 export default function UsersTable({
   users,
-  onEdit,
-  onDelete,
-  onView,
 }: UsersTableProps) {
   if (users.length === 0) {
     return (
@@ -26,18 +20,7 @@ export default function UsersTable({
     );
   }
 
-  const getStatusClasses = (status: AdminUser['status']) => {
-    switch (status) {
-      case 'active':
-        return 'bg-[#eafaf1] text-[#27ae60] border-[#27ae60]/10';
-      case 'premium':
-        return 'bg-[#ebf5ff] text-[#0066D2] border-[#0066D2]/10';
-      case 'inactive':
-        return 'bg-[#f5f7fa] text-[#666] border-[#666]/10';
-      default:
-        return 'bg-[#f5f7fa] text-[#666] border-[#666]/10';
-    }
-  };
+
 
   return (
     <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-sm">
@@ -46,12 +29,11 @@ export default function UsersTable({
           <thead>
             <tr className="bg-[#f5f7fa] border-bottom border-[#e0e0e0]">
               <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">User</th>
-              <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Country</th>
+              <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Name</th>
               <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Email</th>
               <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Join Date</th>
               <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Trips</th>
-              <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider text-right">Actions</th>
+
             </tr>
           </thead>
           <tbody className="divide-y divide-[#e0e0e0]">
@@ -59,8 +41,8 @@ export default function UsersTable({
               <tr key={user.id} className="hover:bg-[#fcfcfc] transition-colors duration-150 group">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full overflow-hidden bg-[#eee] flex-shrink-0">
-                      <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
+                    <div className="h-10 w-10 rounded-full bg-[#eee] flex-shrink-0 flex items-center justify-center">
+                      <User size={20} className="text-[#999]" />
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-[14px] font-bold text-[#333] truncate">{user.name}</span>
@@ -69,7 +51,7 @@ export default function UsersTable({
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-[14px] text-[#666]">{user.country}</span>
+                  <span className="text-[14px] text-[#666]">{user.name}</span>
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-[14px] text-[#333]">{user.email}</span>
@@ -82,36 +64,7 @@ export default function UsersTable({
                     {user.tripCount}
                   </span>
                 </td>
-                <td className="px-6 py-4">
-                  <span className={`px-2.5 py-1 rounded-full text-[12px] font-medium border ${getStatusClasses(user.status)}`}>
-                    {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <button
-                      onClick={() => onView(user.id)}
-                      className="p-1.5 text-[#0066D2] hover:bg-[#0066D2]/5 rounded-lg transition-colors"
-                      title="View Details"
-                    >
-                      <Eye size={18} />
-                    </button>
-                    <button
-                      onClick={() => onEdit(user.id)}
-                      className="p-1.5 text-[#1CA698] hover:bg-[#1CA698]/5 rounded-lg transition-colors"
-                      title="Edit"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    <button
-                      onClick={() => onDelete(user.id)}
-                      className="p-1.5 text-[#e74c3c] hover:bg-[#e74c3c]/5 rounded-lg transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </td>
+
               </tr>
             ))}
           </tbody>

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { Users, UserPlus, TrendingUp, Globe } from 'lucide-react';
 
-import StatsCard from '@/components/admin/StatsCard/StatsCard';
+import PageHeader from '@/components/PageHeader/PageHeader';
+
 import UserFilters from '@/components/admin/UserFilters/UserFilters';
 import UsersTable from '@/components/admin/UsersTable/UsersTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
@@ -26,7 +25,7 @@ interface AdminLayoutOutletContext {
 }
 
 export default function AdminUsers() {
-  const { users, usersStats } = useAdmin();
+  const { users } = useAdmin();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [filters, setFilters] = useState<AdminUserFilters>({
@@ -65,48 +64,11 @@ export default function AdminUsers() {
 
   return (
     <div className="flex flex-col">
-      <motion.div
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div>
-          <h1 className="text-[26px] font-bold text-[#0066D2] leading-tight">
-            Users
-          </h1>
-          <p className="text-[14px] text-[#0066D2]/60 mt-1">
-            Manage travelers and platform members
-          </p>
-        </div>
-      </motion.div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
-        <StatsCard
-          icon={<Users size={22} />}
-          label="Total users"
-          value={usersStats.totalUsers}
-          delay={0.1}
-        />
-        <StatsCard
-          icon={<TrendingUp size={22} />}
-          label="Active users"
-          value={usersStats.activeUsers}
-          delay={0.2}
-        />
-        <StatsCard
-          icon={<UserPlus size={22} />}
-          label="New this month"
-          value={usersStats.newThisMonth}
-          delay={0.3}
-        />
-        <StatsCard
-          icon={<Globe size={22} />}
-          label="Top country"
-          value={usersStats.topCountry}
-          delay={0.4}
-        />
-      </div>
+      <PageHeader
+        title="Users"
+        subtitle="Manage travelers and platform members"
+        className="mb-7"
+      />
 
       <div className="bg-[#F5F7FA] rounded-3xl p-1">
         <UserFilters
@@ -117,9 +79,6 @@ export default function AdminUsers() {
         
         <UsersTable
           users={filteredUsers}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          onView={() => {}}
         />
       </div>
 

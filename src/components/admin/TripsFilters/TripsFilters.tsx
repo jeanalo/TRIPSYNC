@@ -37,7 +37,7 @@ export default function TripsFilters({
       </div>
 
       
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
         <div className="relative">
           <select
             value={filters.country}
@@ -50,24 +50,6 @@ export default function TripsFilters({
                 {opt.label}
               </option>
             ))}
-          </select>
-          <ChevronDown
-            size={16}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-          />
-        </div>
-
-        <div className="relative">
-          <select
-            value={filters.status}
-            onChange={(e) => handleChange('status', e.target.value)}
-            className={selectClasses}
-          >
-            <option value="">Status</option>
-            <option value="active">Active</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
           </select>
           <ChevronDown
             size={16}

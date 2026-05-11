@@ -4,7 +4,7 @@ import {
   calculateTimeDifference,
   CountryData,
 } from '../../services/api';
-import { useTravel } from '../../providers/TravelProvider';
+import { useTrip } from '../../context/TripProvider';
 import { MapPin, Clock, CalendarClock, Moon } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -27,7 +27,7 @@ type Recommendation = {
 };
 
 export default function JetLag() {
-  const { tripDetails, jetLagPlan, setJetLagPlan } = useTravel();
+  const { tripDetails, jetLagPlan, setJetLagPlan } = useTrip();
 
   const [formData, setFormData] = useState<JetLagFormData>({
     departureTime: jetLagPlan?.departureTime || '',
@@ -70,9 +70,9 @@ export default function JetLag() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.departureTime || !formData.arrivalTime) return;
-    
+
     setLoading(true);
 
     try {
@@ -108,25 +108,32 @@ export default function JetLag() {
       const depMins = parseTime(formData.departureTime);
       const arrMins = parseTime(formData.arrivalTime);
 
-      let flightDurationMins = arrMins - depMins - (timeDiff * 60);
+      let flightDurationMins = arrMins - depMins - timeDiff * 60;
       if (flightDurationMins <= 0) flightDurationMins += 24 * 60;
 
-      // Previous validations 
-      const flightDurationHours = Math.max(1, Math.min(Math.round(flightDurationMins / 60) || 1, 48));
+      // Previous validations
+      const flightDurationHours = Math.max(
+        1,
+        Math.min(Math.round(flightDurationMins / 60) || 1, 48)
+      );
 
       const arrivalHour = parseInt(formData.arrivalTime.split(':')[0], 10);
-      const perceivedArrivalHour = Math.floor(((arrivalHour - timeDiff) % 24 + 24) % 24);
+      const perceivedArrivalHour = Math.floor(
+        (((arrivalHour - timeDiff) % 24) + 24) % 24
+      );
 
       const recs: Recommendation[] = [
         {
           title: 'Morning Light',
-          desc: perceivedArrivalHour < 12 
-            ? `Your body perceives it as morning (${perceivedArrivalHour}:00). Get 30 mins of sunlight immediately to reset your clock.`
-            : `Your body feels like it's later in the day (${perceivedArrivalHour}:00). Avoid bright light and prioritize getting morning sun the next day.`,
+          desc:
+            perceivedArrivalHour < 12
+              ? `Your body perceives it as morning (${perceivedArrivalHour}:00). Get 30 mins of sunlight immediately to reset your clock.`
+              : `Your body feels like it's later in the day (${perceivedArrivalHour}:00). Avoid bright light and prioritize getting morning sun the next day.`,
         },
         {
           title: 'Caffeine Curfew',
-          desc: perceivedArrivalHour >= 18
+          desc:
+            perceivedArrivalHour >= 18
               ? `Your body feels like evening. Avoid caffeine during your ${flightDurationHours}-hour flight so you can sleep upon arrival.`
               : `To stay alert, you can have caffeine on the flight, but stop by 2:00 PM ${destination?.name || 'destination'} time.`,
         },
@@ -142,15 +149,16 @@ export default function JetLag() {
         {
           title: 'Hydration',
           desc: `Drink plenty of water during your ${flightDurationHours}-hour flight. Aim for at least 8oz every hour in the air.`,
-        }
+        },
       ];
 
       if (absTimeDiff >= 3) {
         recs.push({
           title: 'Melatonin',
-          desc: direction === 'ahead'
-            ? 'Traveling East: Consider 0.5mg - 3mg of melatonin 30 minutes before your new bedtime to help you fall asleep earlier.'
-            : 'Traveling West: Consider melatonin only if you wake up in the middle of the night and cannot fall back asleep.'
+          desc:
+            direction === 'ahead'
+              ? 'Traveling East: Consider 0.5mg - 3mg of melatonin 30 minutes before your new bedtime to help you fall asleep earlier.'
+              : 'Traveling West: Consider melatonin only if you wake up in the middle of the night and cannot fall back asleep.',
         });
       }
 
@@ -173,7 +181,8 @@ export default function JetLag() {
         title="Jet Lag Assistant"
         subtitle={
           <>
-            Please set up your trip first in <strong>Trip Setup</strong> to use the Jet Lag Assistant.
+            Please set up your trip first in <strong>Trip Setup</strong> to use the Jet
+            Lag Assistant.
           </>
         }
       />
@@ -208,12 +217,13 @@ export default function JetLag() {
         {/* Bottom Section: Flight Details + Recommendations */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-[44px] items-center lg:items-start w-full lg:w-[822px]">
           {/* Flight Details Card */}
-          <DetailCard className="w-full lg:w-[389px] flex-1 lg:flex-none h-auto lg:h-[430px]" delay={0.3} animateFrom="left">
+          <DetailCard
+            className="w-full lg:w-[389px] flex-1 lg:flex-none h-auto lg:h-[430px]"
+            delay={0.3}
+            animateFrom="left"
+          >
             <form onSubmit={handleSubmit} className="flex h-full flex-col gap-[25px]">
-              <CardHeader
-                icon={<CalendarClock size={24} />}
-                title="Flight Details"
-              />
+              <CardHeader icon={<CalendarClock size={24} />} title="Flight Details" />
 
               {/* Departure Time */}
               <FormField
@@ -301,8 +311,8 @@ export default function JetLag() {
                 </div>
 
                 <p className="w-[269px] text-center text-[20px] leading-[24px] text-[#F5F5F5]">
-                  Enter your flight details to get a personalized schedule for
-                  beating jet lag.
+                  Enter your flight details to get a personalized schedule for beating jet
+                  lag.
                 </p>
               </div>
             )}

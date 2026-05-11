@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useTravel } from '../../providers/TravelProvider';
+import { useTrip } from '../../context/TripProvider';
 import type { TripDetails } from '../../types/travel.types';
 import { MapPin, CalendarDays, CheckCircle } from 'lucide-react';
 
@@ -12,7 +12,7 @@ import SubmitButton from '../../components/SubmitButton/SubmitButton';
 import CountrySelect from '../../components/CountrySelect/CountrySelect';
 
 export default function TripSetup() {
-  const { tripDetails, setTripDetails } = useTravel();
+  const { tripDetails, setTripDetails } = useTrip();
   const navigate = useNavigate();
   const { register, handleSubmit, control, reset } = useForm<TripDetails>({
     defaultValues: tripDetails,
@@ -35,9 +35,12 @@ export default function TripSetup() {
       />
 
       <div className="px-4 lg:px-12 flex justify-center lg:block">
-        <FormCard as="form" onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[803px]">
+        <FormCard
+          as="form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full max-w-[803px]"
+        >
           <div className="flex flex-col gap-[45px]">
-          
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-[65px]">
               <FormField label="Departure Country" icon={<MapPin size={24} />}>
                 <Controller
@@ -70,7 +73,6 @@ export default function TripSetup() {
               </FormField>
             </div>
 
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-[65px]">
               <FormField label="Departure Date" icon={<CalendarDays size={24} />}>
                 <input
@@ -91,7 +93,6 @@ export default function TripSetup() {
               </FormField>
             </div>
 
-            
             <SubmitButton icon={<CheckCircle size={24} />}>
               Save Trip Details
             </SubmitButton>

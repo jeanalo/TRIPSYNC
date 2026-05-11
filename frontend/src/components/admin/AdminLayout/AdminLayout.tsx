@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import AdminSidebar from '../AdminSidebar/AdminSidebar';
 import AdminHeader from '../AdminHeader/AdminHeader';
-import { useAuth } from '../../../providers/AuthProvider';
+import { useAuth } from '../../../context/AuthProvider';
 
 export default function AdminLayout() {
   const { user, loading } = useAuth();

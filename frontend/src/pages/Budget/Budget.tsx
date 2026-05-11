@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { useTravel } from '../../providers/TravelProvider';
+import { useTrip } from '../../context/TripProvider';
+import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import {
   PieChart as RechartsPie,
   Pie,
@@ -98,7 +99,8 @@ const THRESHOLD_CONFIG: Record<number, { color: string; bg: string; message: str
 };
 
 const Budget = () => {
-  const { tripDetails, setTripDetails, expenses, deleteExpense } = useTravel();
+  const { tripDetails, setTripDetails } = useTrip();
+  const { expenses, deleteExpense } = useExpenseActivity();
 
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [budgetDraft, setBudgetDraft] = useState('');
@@ -188,31 +190,32 @@ const Budget = () => {
   return (
     <div>
       {/* Budget threshold alert modal */}
-      {activeAlert !== null && (() => {
-        const cfg = THRESHOLD_CONFIG[activeAlert];
-        return (
-          <AlertModal
-            isOpen
-            onClose={() => setActiveAlert(null)}
-            color={cfg.color}
-            bg={cfg.bg}
-            icon={<AlertTriangle size={28} style={{ color: cfg.color }} />}
-          >
-            <div>
-              <p className="text-3xl font-bold" style={{ color: cfg.color }}>
-                {activeAlert}% spent
-              </p>
-              <p className="mt-2 text-sm text-gray-600">{cfg.message}</p>
-            </div>
-            <div className="w-full rounded-full bg-gray-200 h-2">
-              <div
-                className="h-2 rounded-full transition-all"
-                style={{ width: `${activeAlert}%`, backgroundColor: cfg.color }}
-              />
-            </div>
-          </AlertModal>
-        );
-      })()}
+      {activeAlert !== null &&
+        (() => {
+          const cfg = THRESHOLD_CONFIG[activeAlert];
+          return (
+            <AlertModal
+              isOpen
+              onClose={() => setActiveAlert(null)}
+              color={cfg.color}
+              bg={cfg.bg}
+              icon={<AlertTriangle size={28} style={{ color: cfg.color }} />}
+            >
+              <div>
+                <p className="text-3xl font-bold" style={{ color: cfg.color }}>
+                  {activeAlert}% spent
+                </p>
+                <p className="mt-2 text-sm text-gray-600">{cfg.message}</p>
+              </div>
+              <div className="w-full rounded-full bg-gray-200 h-2">
+                <div
+                  className="h-2 rounded-full transition-all"
+                  style={{ width: `${activeAlert}%`, backgroundColor: cfg.color }}
+                />
+              </div>
+            </AlertModal>
+          );
+        })()}
 
       {/* Header */}
       <PageHeader

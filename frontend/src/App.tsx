@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { AppProviders } from './providers/AppProviders';
+import { AppProviders } from './context/AppProviders';
 
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
@@ -33,7 +33,7 @@ function App() {
         <Route path="/" element={<AuthSelector />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
+
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />
 

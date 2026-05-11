@@ -1,15 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  Plane,
-  Users,
-  Star,
-  BarChart3,
-  User,
-  X,
-} from 'lucide-react';
-import { useAuth } from '../../../providers/AuthProvider';
+import { LayoutDashboard, Plane, Users, Star, BarChart3, User, X } from 'lucide-react';
+import { useAuth } from '../../../context/AuthProvider';
 
 const adminNavItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -25,10 +17,7 @@ interface AdminSidebarProps {
   onMobileClose: () => void;
 }
 
-export default function AdminSidebar({
-  isMobileOpen,
-  onMobileClose,
-}: AdminSidebarProps) {
+export default function AdminSidebar({ isMobileOpen, onMobileClose }: AdminSidebarProps) {
   const location = useLocation();
   const { user } = useAuth();
 

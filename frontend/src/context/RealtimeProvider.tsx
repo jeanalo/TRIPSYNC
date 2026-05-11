@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { realtimeService } from '../services/realtime.service';
-import { useTravel } from './TravelProvider';
+import { useTrip } from './TripProvider';
 import type {
   RecommendationNotification,
   RealtimeRecommendationPayload
@@ -14,7 +14,7 @@ interface RealtimeContextType {
 const RealtimeContext = createContext<RealtimeContextType | undefined>(undefined);
 
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
-  const { tripDetails } = useTravel();
+  const { tripDetails } = useTrip();
   const activeCountry = tripDetails.destinationCountry;
   const [latestNotification, setLatestNotification] = useState<RecommendationNotification | null>(null);
 

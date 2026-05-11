@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock } from 'lucide-react';
-import { useAuth } from '../../providers/AuthProvider';
+import { useAuth } from '../../context/AuthProvider';
 import FormField from '../../components/FormField/FormField';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
@@ -22,7 +22,9 @@ const Register = () => {
       await register(email, name, password);
       navigate('/login');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al crear la cuenta. Intenta de nuevo.');
+      setError(
+        err instanceof Error ? err.message : 'Error al crear la cuenta. Intenta de nuevo.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -30,7 +32,6 @@ const Register = () => {
 
   return (
     <div className="flex h-screen w-screen" id="register-page">
-
       <div className="hidden md:block w-1/2 h-full">
         <img
           src="/banner-tripsync.svg"
@@ -39,10 +40,8 @@ const Register = () => {
         />
       </div>
 
-
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white px-6">
         <div className="w-full max-w-[400px]">
-
           <h2
             className="text-center text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-8"
             id="register-heading"

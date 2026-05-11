@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, User, Mail, Lock, Settings, Save, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../../providers/AuthProvider';
+import { useAuth } from '../../context/AuthProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
 import FormCard from '../../components/FormCard/FormCard';

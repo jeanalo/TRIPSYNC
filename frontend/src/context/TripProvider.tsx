@@ -2,31 +2,24 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { useAuth } from './AuthProvider';
 import { supabase } from '../lib/supabase';
 import type {
-  Expense,
-  Activity,
   Experience,
   TripDetails,
-  JetLagPlan
+  JetLagPlan,
 } from '../types/travel.types';
 
-interface TravelContextType {
+interface TripContextType {
   tripDetails: TripDetails;
   setTripDetails: (details: TripDetails) => void;
-  expenses: Expense[];
-  addExpense: (expense: Omit<Expense, 'id'>) => Promise<void>;
-  deleteExpense: (id: string) => Promise<void>;
-  activities: Activity[];
-  addActivity: (activity: Omit<Activity, 'id'>) => Promise<void>;
-  deleteActivity: (id: string) => Promise<void>;
-  experiences: Experience[];
-  toggleSaveExperience: (id: string) => void;
   jetLagPlan: JetLagPlan | null;
   setJetLagPlan: (plan: JetLagPlan | null) => void;
   activeCity: string;
   setActiveCity: (city: string) => void;
+  experiences: Experience[];
+  toggleSaveExperience: (id: string) => void;
+  tripId: string | null;
 }
 
-const TravelContext = createContext<TravelContextType | undefined>(undefined);
+const TripContext = createContext<TripContextType | undefined>(undefined);
 
 const getKey = (key: string, email?: string) => (email ? `${email}:${key}` : key);
 
@@ -73,21 +66,24 @@ const defaultExperiences: Experience[] = [
   },
 ];
 
-export function TravelProvider({ children }: { children: React.ReactNode }) {
+const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
 
   const tripIdRef = useRef<string | null>(null);
   const isLoadedRef = useRef(false);
+
+  const [tripId, setTripIdState] = useState<string | null>(null);
+
+  const setTripId = (id: string | null) => {
+    tripIdRef.current = id;
+    setTripIdState(id);
+  };
 
   const [activeCity, setActiveCity] = useState(() =>
     localStorage.getItem(getKey('activeCity', user?.email)) || 'tokyo'
   );
 
   const [tripDetails, setTripDetailsState] = useState<TripDetails>(defaultTripDetails);
-
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-
-  const [activities, setActivities] = useState<Activity[]>([]);
 
   const [experiences, setExperiences] = useState<Experience[]>(() => {
     const saved = localStorage.getItem(getKey('experiences', user?.email));
@@ -100,7 +96,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user?.id) {
       isLoadedRef.current = false;
-      tripIdRef.current = null;
+      setTripId(null);
       setTripDetailsState(defaultTripDetails);
       setJetLagPlanState(null);
       return;
@@ -116,7 +112,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       if (data) {
-        tripIdRef.current = data.id;
+        setTripId(data.id);
         setTripDetailsState({
           departureCountry: data.departure_country ?? '',
           destinationCountry: data.destination_country ?? '',
@@ -127,44 +123,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
         if (data.jet_lag_plan) {
           try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
         }
-      } else {
-        // Migration: use localStorage data if available
-        const saved = localStorage.getItem(getKey('tripDetails', user.email));
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          setTripDetailsState({ ...parsed, budget: Number(parsed.budget) || 0 });
-        }
-        const savedJetLag = localStorage.getItem(getKey('jetLagPlan', user.email));
-        if (savedJetLag) {
-          try { setJetLagPlanState(JSON.parse(savedJetLag)); } catch { /* invalid JSON */ }
-        }
       }
-
-      const { data: expenseRows } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('user_id', user.id);
-      setExpenses((expenseRows ?? []).map((e) => ({
-        id: e.id,
-        amount: Number(e.amount) || 0,
-        category: e.category,
-        date: e.date,
-        notes: e.notes ?? '',
-      })));
-
-      const { data: activityRows } = await supabase
-        .from('activities')
-        .select('*')
-        .eq('user_id', user.id);
-      setActivities((activityRows ?? []).map((a) => ({
-        id: a.id,
-        name: a.name,
-        date: a.date,
-        time: a.time,
-        location: a.location ?? '',
-        category: a.category,
-        notes: a.notes ?? '',
-      })));
 
       const savedExperiences = localStorage.getItem(getKey('experiences', user.email));
       setExperiences(savedExperiences ? JSON.parse(savedExperiences) : defaultExperiences);
@@ -195,7 +154,7 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
           .eq('id', tripIdRef.current);
       } else {
         const id = crypto.randomUUID();
-        tripIdRef.current = id;
+        setTripId(id);
         await supabase.from('trips').insert({
           id,
           user_id: user.id,
@@ -222,8 +181,6 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
     })();
   }, [jetLagPlan, user?.id]);
 
-
-
   useEffect(() => {
     if (user?.email) {
       localStorage.setItem(getKey('experiences', user.email), JSON.stringify(experiences));
@@ -239,86 +196,35 @@ export function TravelProvider({ children }: { children: React.ReactNode }) {
   const setTripDetails = (details: TripDetails) => setTripDetailsState(details);
   const setJetLagPlan = (plan: JetLagPlan | null) => setJetLagPlanState(plan);
 
-  const addExpense = async (expense: Omit<Expense, 'id'>) => {
-    const id = crypto.randomUUID();
-    const { error } = await supabase.from('expenses').insert({
-      id,
-      trip_id: tripIdRef.current ?? null,
-      user_id: user?.id,
-      amount: expense.amount,
-      category: expense.category,
-      date: expense.date,
-      notes: expense.notes,
-    });
-    if (!error) {
-      setExpenses((prev) => [...prev, { ...expense, id }]);
-    }
-  };
-
-  const deleteExpense = async (id: string) => {
-    const { error } = await supabase.from('expenses').delete().eq('id', id);
-    if (!error) {
-      setExpenses((prev) => prev.filter((e) => e.id !== id));
-    }
-  };
-
-  const addActivity = async (activity: Omit<Activity, 'id'>) => {
-    const id = crypto.randomUUID();
-    const { error } = await supabase.from('activities').insert({
-      id,
-      trip_id: tripIdRef.current ?? null,
-      user_id: user?.id,
-      name: activity.name,
-      date: activity.date,
-      time: activity.time,
-      location: activity.location,
-      category: activity.category,
-      notes: activity.notes,
-    });
-    if (!error) {
-      setActivities((prev) => [...prev, { ...activity, id }]);
-    }
-  };
-
-  const deleteActivity = async (id: string) => {
-    const { error } = await supabase.from('activities').delete().eq('id', id);
-    if (!error) {
-      setActivities((prev) => prev.filter((a) => a.id !== id));
-    }
-  };
-
   const toggleSaveExperience = (id: string) => {
     setExperiences(experiences.map((exp) => (exp.id === id ? { ...exp, saved: !exp.saved } : exp)));
   };
 
   return (
-    <TravelContext.Provider
+    <TripContext.Provider
       value={{
         tripDetails,
         setTripDetails,
-        expenses,
-        addExpense,
-        deleteExpense,
-        activities,
-        addActivity,
-        deleteActivity,
-        experiences,
-        toggleSaveExperience,
         jetLagPlan,
         setJetLagPlan,
         activeCity,
         setActiveCity,
+        experiences,
+        toggleSaveExperience,
+        tripId,
       }}
     >
       {children}
-    </TravelContext.Provider>
+    </TripContext.Provider>
   );
-}
+};
 
-export function useTravel() {
-  const context = useContext(TravelContext);
+export default TripProvider;
+
+export const useTrip = () => {
+  const context = useContext(TripContext);
   if (context === undefined) {
-    throw new Error('useTravel must be used within a TravelProvider');
+    throw new Error('useTrip must be used within a TripProvider');
   }
   return context;
-}
+};

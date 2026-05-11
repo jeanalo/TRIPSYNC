@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Tag, Pencil, CalendarDays, CheckCircle, Clock, MapPin } from 'lucide-react';
-import { useTravel } from '../../providers/TravelProvider';
+import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import FormCard from '../../components/FormCard/FormCard';
 import FormField from '../../components/FormField/FormField';
@@ -27,7 +27,7 @@ const CATEGORIES = [
 ];
 
 export default function AddActivity() {
-  const { addActivity } = useTravel();
+  const { addActivity } = useExpenseActivity();
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<FormValues>({
     defaultValues: {

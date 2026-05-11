@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
-import { useTravel } from '../../providers/TravelProvider';
-import { useAuth } from '../../providers/AuthProvider';
-import { useRealtime } from '../../providers/RealtimeProvider';
+import { useAuth } from '../../context/AuthProvider';
+import { useRealtime } from '../../context/RealtimeProvider';
 import {
   LayoutDashboard,
   Plane,
@@ -12,7 +11,7 @@ import {
   Map,
   User,
   Menu,
-  X
+  X,
 } from 'lucide-react';
 import IconBadge from '../IconBadge/IconBadge';
 import RealtimeRecommendationToast from '../RealtimeRecommendationToast/RealtimeRecommendationToast';
@@ -29,7 +28,6 @@ const navItems = [
 
 const Layout = () => {
   const { user, loading } = useAuth();
-  useTravel();
   const { latestNotification, clearNotification } = useRealtime();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -53,14 +51,16 @@ const Layout = () => {
       </div>
 
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      <aside className={`fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-[#e0e0e0] bg-white transition-transform duration-300 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <button 
+      <aside
+        className={`fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-[#e0e0e0] bg-white transition-transform duration-300 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <button
           className="lg:hidden absolute top-4 right-4 text-[#0066D2] p-2"
           onClick={() => setIsMobileMenuOpen(false)}
         >
@@ -89,9 +89,7 @@ const Layout = () => {
                 key={item.to}
                 to={item.to}
                 className={`flex items-center gap-3 text-[18px] font-medium no-underline transition-colors duration-200 ${
-                  isActive
-                    ? 'text-[#1CA698]'
-                    : 'text-[#0066D2] hover:text-[#1CA698]'
+                  isActive ? 'text-[#1CA698]' : 'text-[#0066D2] hover:text-[#1CA698]'
                 }`}
               >
                 <Icon size={24} strokeWidth={2} />
@@ -122,9 +120,9 @@ const Layout = () => {
         <Outlet />
       </main>
 
-      <RealtimeRecommendationToast 
-        notification={latestNotification} 
-        onClose={clearNotification} 
+      <RealtimeRecommendationToast
+        notification={latestNotification}
+        onClose={clearNotification}
       />
     </div>
   );

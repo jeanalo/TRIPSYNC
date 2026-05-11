@@ -4,7 +4,7 @@ import { MapPin, Bookmark, BookmarkCheck, Leaf } from 'lucide-react';
 import { motion } from 'motion/react';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { useExperiences } from '@/hooks/useExperience';
-import { useTravel } from '../../providers/TravelProvider';
+import { useTrip } from '../../context/TripProvider';
 
 const FILTERS = ['All', 'Chill', 'Adventure', 'Cultural', 'Free Tour', 'Saved'] as const;
 type Filter = (typeof FILTERS)[number];
@@ -12,7 +12,7 @@ type Filter = (typeof FILTERS)[number];
 const Experiences = () => {
   const navigate = useNavigate();
   const { experiences, savedIds, toggleSave, loading } = useExperiences();
-  const { tripDetails } = useTravel();
+  const { tripDetails } = useTrip();
   const [activeFilter, setActiveFilter] = useState<Filter>('All');
 
   const availableExperiences = tripDetails?.destinationCountry

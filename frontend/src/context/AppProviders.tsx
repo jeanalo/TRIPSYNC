@@ -1,22 +1,21 @@
 import React from 'react';
 import { AuthProvider } from './AuthProvider';
 import { AdminProvider } from './AdminProvider';
-import { TravelProvider } from './TravelProvider';
+import TripProvider from './TripProvider';
+import ExpenseActivityProvider from './ExpenseActivityProvider';
 import { RealtimeProvider } from './RealtimeProvider';
-
-interface AppProvidersProps {
-  children: React.ReactNode;
-}
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <AdminProvider>
-        <TravelProvider>
-          <RealtimeProvider>
-            {children}
-          </RealtimeProvider>
-        </TravelProvider>
+        <TripProvider>
+          <ExpenseActivityProvider>
+            <RealtimeProvider>
+              {children}
+            </RealtimeProvider>
+          </ExpenseActivityProvider>
+        </TripProvider>
       </AdminProvider>
     </AuthProvider>
   );

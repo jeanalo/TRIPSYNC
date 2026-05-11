@@ -8,16 +8,10 @@ import UsersTable from '@/components/admin/UsersTable/UsersTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
-import { useAdmin } from '@/providers/AdminProvider';
-import {
-  mockCountryOptions,
-  mockCategoryOptions,
-} from '@/services/admin.mock';
+import { useAdmin } from '@/context/AdminProvider';
+import { mockCountryOptions, mockCategoryOptions } from '@/services/admin.mock';
 
-import type {
-  AdminUserFilters,
-  CreateExperienceFormData,
-} from '@/types/admin.types';
+import type { AdminUserFilters, CreateExperienceFormData } from '@/types/admin.types';
 
 interface AdminLayoutOutletContext {
   isCreateModalRequested: boolean;
@@ -49,14 +43,14 @@ export default function AdminUsers() {
   };
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = 
+    const matchesSearch =
       user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
       user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
       user.id.toLowerCase().includes(filters.search.toLowerCase());
-    
-    const matchesCountry = !filters.country || 
-      user.country.toLowerCase() === filters.country.toLowerCase();
-    
+
+    const matchesCountry =
+      !filters.country || user.country.toLowerCase() === filters.country.toLowerCase();
+
     const matchesStatus = !filters.status || user.status === filters.status;
 
     return matchesSearch && matchesCountry && matchesStatus;
@@ -76,10 +70,8 @@ export default function AdminUsers() {
           onFilterChange={setFilters}
           countryOptions={mockCountryOptions}
         />
-        
-        <UsersTable
-          users={filteredUsers}
-        />
+
+        <UsersTable users={filteredUsers} />
       </div>
 
       <CreateExperienceModal

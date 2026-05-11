@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, ShieldAlert, KeyRound } from 'lucide-react';
-import { useAuth } from '../../providers/AuthProvider';
+import { useAuth } from '../../context/AuthProvider';
 import FormField from '../../components/FormField/FormField';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
@@ -30,7 +30,9 @@ const AdminLogin = () => {
       await loginAdmin(email, password);
       navigate('/admin');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión como administrador.');
+      setError(
+        err instanceof Error ? err.message : 'Error al iniciar sesión como administrador.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -38,7 +40,6 @@ const AdminLogin = () => {
 
   return (
     <div className="flex h-screen w-screen" id="admin-login-page">
-
       <div className="hidden md:block w-1/2 h-full">
         <img
           src="/banner-tripsync.svg"
@@ -47,10 +48,8 @@ const AdminLogin = () => {
         />
       </div>
 
-
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white px-6">
         <div className="w-full max-w-[400px]">
-
           <div className="flex justify-center mb-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1CA698]/10 text-[#1CA698] text-[13px] font-bold uppercase tracking-wide">
               <ShieldAlert size={16} />
@@ -82,7 +81,10 @@ const AdminLogin = () => {
                 id="admin-login-email"
                 type="email"
                 value={email}
-                onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError('');
+                }}
                 placeholder="juanita@gmail.com"
                 required
                 className="flex-1 h-full bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none"
@@ -94,7 +96,10 @@ const AdminLogin = () => {
                 id="admin-login-password"
                 type="password"
                 value={password}
-                onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError('');
+                }}
                 placeholder="••••••••"
                 required
                 className="flex-1 h-full bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none"
@@ -106,7 +111,10 @@ const AdminLogin = () => {
                 id="admin-login-code"
                 type="password"
                 value={accessCode}
-                onChange={(e) => { setAccessCode(e.target.value); setError(''); }}
+                onChange={(e) => {
+                  setAccessCode(e.target.value);
+                  setError('');
+                }}
                 placeholder="Enter access code"
                 required
                 className="flex-1 h-full bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none placeholder:text-[16px]"

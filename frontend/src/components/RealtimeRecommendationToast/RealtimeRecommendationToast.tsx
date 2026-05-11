@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Calendar, MapPin, Sparkles, CheckCircle2 } from 'lucide-react';
-import { useTravel } from '../../providers/TravelProvider';
+import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import type { RecommendationNotification } from '@/types/realtime.types';
 
 interface RealtimeRecommendationToastProps {
@@ -13,7 +13,7 @@ export default function RealtimeRecommendationToast({
   notification,
   onClose,
 }: RealtimeRecommendationToastProps) {
-  const { addActivity } = useTravel();
+  const { addActivity } = useExpenseActivity();
   const [isAdded, setIsAdded] = useState(false);
 
   if (!notification) return null;
@@ -45,11 +45,12 @@ export default function RealtimeRecommendationToast({
           transition={{ type: 'spring', bounce: 0.4, duration: 0.6 }}
           className="w-full max-w-[360px] bg-white rounded-2xl shadow-[0_20px_40px_rgb(0,0,0,0.12)] border border-[#f0f2f5] overflow-hidden"
         >
-          
           <div className="bg-gradient-to-r from-[#0066D2] to-[#1CA698] px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-white">
               <Sparkles size={16} className="animate-pulse" />
-              <span className="text-[14px] font-bold tracking-wide uppercase">New Recommendation</span>
+              <span className="text-[14px] font-bold tracking-wide uppercase">
+                New Recommendation
+              </span>
             </div>
             <button
               onClick={onClose}
@@ -60,14 +61,17 @@ export default function RealtimeRecommendationToast({
             </button>
           </div>
 
-         
           <div className="p-5 flex flex-col gap-3">
             {payload.imageUrl && (
               <div className="w-full h-[120px] rounded-xl overflow-hidden mb-1">
-                <img src={payload.imageUrl} alt={payload.activityName} className="w-full h-full object-cover" />
+                <img
+                  src={payload.imageUrl}
+                  alt={payload.activityName}
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
-            
+
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="px-2 py-0.5 bg-[#eafaf1] text-[#27ae60] text-[11px] font-bold rounded-full uppercase tracking-wider">
@@ -89,20 +93,19 @@ export default function RealtimeRecommendationToast({
               </p>
             )}
 
-           
             <div className="flex items-center gap-2 mt-2 pt-3 border-t border-[#f0f2f5]">
-              <button 
+              <button
                 onClick={onClose}
                 className="flex-1 px-3 py-2.5 rounded-lg bg-[#F5F7FA] text-[#333] text-[13px] font-bold border-none cursor-pointer hover:bg-[#e4e9f0] transition-colors"
               >
                 View details
               </button>
-              <button 
+              <button
                 onClick={handleAddToCalendar}
                 disabled={isAdded}
                 className={`flex-1 px-3 py-2.5 rounded-lg text-white text-[13px] font-bold flex items-center justify-center gap-1.5 border-none cursor-pointer transition-all ${
-                  isAdded 
-                    ? 'bg-[#27ae60] cursor-default' 
+                  isAdded
+                    ? 'bg-[#27ae60] cursor-default'
                     : 'bg-[#0066D2] hover:bg-[#0055b0] hover:shadow-md'
                 }`}
               >

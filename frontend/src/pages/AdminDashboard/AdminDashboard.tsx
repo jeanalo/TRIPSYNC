@@ -11,12 +11,10 @@ import MostVisitedCountriesCard from '@/components/admin/MostVisitedCitiesCard/M
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
-import { useAdmin } from '@/providers/AdminProvider';
-import { useAuth } from '@/providers/AuthProvider';
+import { useAdmin } from '@/context/AdminProvider';
+import { useAuth } from '@/context/AuthProvider';
 import { supabase } from '@/lib/supabase';
-import {
-  mockCategoryOptions,
-} from '@/services/admin.mock';
+import { mockCategoryOptions } from '@/services/admin.mock';
 
 import type { CreateExperienceFormData, SearchTripsFilters } from '@/types/admin.types';
 
@@ -84,26 +82,28 @@ export default function AdminDashboard() {
         }
       }
 
-      const results: TripResult[] = trips.map((t: {
-        id: string;
-        user_id: string;
-        destination_country: string;
-        departure_country: string;
-        departure_date: string;
-        arrival_date: string;
-      }) => {
-        const userData = usersMap.get(t.user_id);
-        return {
-          id: t.id,
-          user_id: t.user_id,
-          destination_country: t.destination_country ?? '',
-          departure_country: t.departure_country ?? '',
-          departure_date: t.departure_date ?? '',
-          arrival_date: t.arrival_date ?? '',
-          user_email: userData?.email ?? t.user_id,
-          user_name: userData?.name ?? 'Unknown User',
-        };
-      });
+      const results: TripResult[] = trips.map(
+        (t: {
+          id: string;
+          user_id: string;
+          destination_country: string;
+          departure_country: string;
+          departure_date: string;
+          arrival_date: string;
+        }) => {
+          const userData = usersMap.get(t.user_id);
+          return {
+            id: t.id,
+            user_id: t.user_id,
+            destination_country: t.destination_country ?? '',
+            departure_country: t.departure_country ?? '',
+            departure_date: t.departure_date ?? '',
+            arrival_date: t.arrival_date ?? '',
+            user_email: userData?.email ?? t.user_id,
+            user_name: userData?.name ?? 'Unknown User',
+          };
+        }
+      );
 
       setSearchResults(results);
     } catch (err) {
@@ -121,7 +121,10 @@ export default function AdminDashboard() {
         subtitle="Here's what's happening with your admin dashboard"
         className="mb-7"
         action={
-          <ActionButton icon={<Plus size={18} />} onClick={() => setIsCreateModalOpen(true)}>
+          <ActionButton
+            icon={<Plus size={18} />}
+            onClick={() => setIsCreateModalOpen(true)}
+          >
             Create Experience
           </ActionButton>
         }
@@ -149,10 +152,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <SearchTripsCard
-          onSearch={handleSearch}
-          loading={searchLoading}
-        />
+        <SearchTripsCard onSearch={handleSearch} loading={searchLoading} />
         <MostVisitedCountriesCard countries={dashboardStats.topCountries} />
       </div>
 
@@ -213,7 +213,9 @@ export default function AdminDashboard() {
                           <Plane size={13} className="text-[#1CA698]" />
                           <span>{result.departure_country || '—'}</span>
                           <span className="text-[#ccc] mx-1">→</span>
-                          <span className="font-medium text-[#0066D2]">{result.destination_country}</span>
+                          <span className="font-medium text-[#0066D2]">
+                            {result.destination_country}
+                          </span>
                         </div>
                         {result.departure_date && (
                           <div className="flex items-center gap-1 text-[12px] text-[#999]">

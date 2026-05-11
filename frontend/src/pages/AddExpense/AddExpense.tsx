@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Tag, Pencil, CalendarDays, CheckCircle, DollarSign, AlertTriangle } from 'lucide-react';
+import {
+  Tag,
+  Pencil,
+  CalendarDays,
+  CheckCircle,
+  DollarSign,
+  AlertTriangle,
+} from 'lucide-react';
 
-import { useTravel } from '../../providers/TravelProvider';
+import { useTrip } from '../../context/TripProvider';
+import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import AlertModal from '../../components/AlertModal/AlertModal';
 import FormCard from '../../components/FormCard/FormCard';
@@ -27,7 +35,8 @@ const CATEGORIES = [
 ];
 
 export default function AddExpense() {
-  const { addExpense, tripDetails, expenses } = useTravel();
+  const { tripDetails } = useTrip();
+  const { addExpense, expenses } = useExpenseActivity();
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<FormValues>({
     defaultValues: { category: 'Food', notes: '', amount: '', date: '' },
@@ -66,7 +75,8 @@ export default function AddExpense() {
           <p className="text-xl font-bold text-[#E53935]">Over Budget</p>
           <p className="mt-2 text-sm text-gray-600">
             You no longer have the budget for this expense. You only have{' '}
-            <span className="font-semibold">${remaining.toLocaleString()}</span> remaining.
+            <span className="font-semibold">${remaining.toLocaleString()}</span>{' '}
+            remaining.
           </p>
         </div>
       </AlertModal>

@@ -6,7 +6,6 @@ export interface AdminStats {
 
 export interface SearchTripsFilters {
   country: string;
-  travelDate: string;
 }
 
 export interface VisitedCountry {
@@ -72,7 +71,6 @@ export interface AdminTripsStats {
 export interface AdminTripFilters {
   search: string;
   country: string;
-  status: string;
   date: string;
 }
 

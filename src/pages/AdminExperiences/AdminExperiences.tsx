@@ -1,36 +1,34 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { BarChart3, CheckCircle2, Clock, Layers } from 'lucide-react';
+import { BarChart3, CheckCircle2, Layers, Search, MapPin, Leaf } from 'lucide-react';
+
+import PageHeader from '@/components/PageHeader/PageHeader';
 
 import StatsCard from '@/components/admin/StatsCard/StatsCard';
-import ExperienceFilters from '@/components/admin/ExperienceFilters/ExperienceFilters';
-import ExperienceTable from '@/components/admin/ExperienceTable/ExperienceTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
-import { useAdmin } from '@/providers/AdminProvider';
+import { useExperiences } from '@/hooks/useExperience';
 import { mockCategoryOptions } from '@/services/admin.mock';
+import { supabase } from '@/lib/supabase';
+import { realtimeService } from '@/services/realtime.service';
 
-import type {
-  AdminExperienceFilters,
-  CreateExperienceFormData,
-} from '@/types/admin.types';
+import type { CreateExperienceFormData } from '@/types/admin.types';
 
 interface AdminLayoutOutletContext {
   isCreateModalRequested: boolean;
   resetCreateModalRequest: () => void;
 }
 
+const CATEGORY_FILTERS = ['All', ...mockCategoryOptions.map((c) => c.label)] as const;
+
 export default function AdminExperiences() {
-  const { experiences, experiencesStats } = useAdmin();
+  const { experiences, loading } = useExperiences();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [filters, setFilters] = useState<AdminExperienceFilters>({
-    search: '',
-    category: '',
-    status: '',
-  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const outletContext = useOutletContext<AdminLayoutOutletContext>();
 
@@ -41,77 +39,198 @@ export default function AdminExperiences() {
     }
   }, [outletContext?.isCreateModalRequested]);
 
-  const handleCreateSubmit = (data: CreateExperienceFormData) => {
+  const handleCreateSubmit = async (data: CreateExperienceFormData) => {
+    const categoryLabel =
+      mockCategoryOptions.find((opt) => opt.value === data.category)?.label ?? data.category;
+
+    const { data: authData } = await supabase.auth.getUser();
+
+    const { error } = await supabase.from('experiences').insert({
+      name: data.activityName,
+      country: data.country,
+      location: data.location,
+      category: categoryLabel,
+      image: data.imageUrl ?? '',
+      description: data.details ?? '',
+      date: data.date,
+      time: data.time,
+      duration: '',
+      difficulty: 'Easy',
+      highlights: [],
+      included: [],
+      tips: [],
+      eco: '',
+      user_id: authData.user?.id,
+    });
+
+    if (error) {
+      console.error('Failed to create experience:', error);
+      return;
+    }
+
+    realtimeService.sendRecommendation(data.country, {
+      id: Math.random().toString(36).substring(7),
+      country: data.country,
+      category: categoryLabel,
+      activityName: data.activityName,
+      location: data.location,
+      date: data.date,
+      time: data.time,
+      details: data.details,
+      imageUrl: data.imageUrl,
+    });
+
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
 
   const filteredExperiences = experiences.filter((exp) => {
-    const matchesSearch = exp.name.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesCategory = !filters.category || exp.category.toLowerCase() === filters.category.toLowerCase();
-    const matchesStatus = !filters.status || exp.status === filters.status;
-    return matchesSearch && matchesCategory && matchesStatus;
+    const matchesSearch = exp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      exp.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      exp.country.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === 'All' || exp.category === activeCategory;
+    return matchesSearch && matchesCategory;
   });
+
+  const categoryCounts: Record<string, number> = {};
+  experiences.forEach((exp) => {
+    categoryCounts[exp.category] = (categoryCounts[exp.category] || 0) + 1;
+  });
+  const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0];
+
+  const uniqueCountries = new Set(experiences.map((e) => e.country));
 
   return (
     <div className="flex flex-col">
-      <motion.div
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div>
-          <h1 className="text-[26px] font-bold text-[#0066D2] leading-tight">
-            Experiences
-          </h1>
-          <p className="text-[14px] text-[#0066D2]/60 mt-1">
-            Manage your platform's catalog and review new proposals
-          </p>
-        </div>
-      </motion.div>
+      <PageHeader
+        title="Experiences"
+        subtitle="Browse and manage your platform's catalog"
+        className="mb-7"
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-7">
         <StatsCard
           icon={<Layers size={22} />}
           label="Total experiences"
-          value={experiencesStats.totalExperiences}
+          value={experiences.length}
           delay={0.1}
         />
         <StatsCard
           icon={<CheckCircle2 size={22} />}
-          label="Active experiences"
-          value={experiencesStats.activeExperiences}
+          label="Countries covered"
+          value={uniqueCountries.size}
           delay={0.2}
         />
         <StatsCard
-          icon={<Clock size={22} />}
-          label="Pending approval"
-          value={experiencesStats.pendingApproval}
-          delay={0.3}
-        />
-        <StatsCard
           icon={<BarChart3 size={22} />}
-          label="Popular category"
-          value={experiencesStats.mostPopularCategory}
-          delay={0.4}
+          label="Top category"
+          value={topCategory ? topCategory[0] : '—'}
+          delay={0.3}
         />
       </div>
 
-      <div className="bg-[#F5F7FA] rounded-3xl p-1">
-        <ExperienceFilters
-          filters={filters}
-          onFilterChange={setFilters}
-          categoryOptions={mockCategoryOptions}
+      <motion.div
+        className="relative mb-5"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+      >
+        <Search
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999]"
         />
-        
-        <ExperienceTable
-          experiences={filteredExperiences}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          onView={() => {}}
+        <input
+          type="text"
+          placeholder="Search by name, location or country..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full rounded-xl border border-[#e0e0e0] bg-white pl-11 pr-4 py-2.5 text-[14px] text-[#333] outline-none transition-all duration-200 focus:border-[#0066D2] focus:ring-2 focus:ring-[#0066D2]/10"
         />
-      </div>
+      </motion.div>
+
+      <motion.div
+        className="flex gap-2 flex-wrap mb-6"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        {CATEGORY_FILTERS.map((filter) => (
+          <button
+            key={filter}
+            onClick={() => setActiveCategory(filter)}
+            className={`px-5 py-2 rounded-full text-[14px] font-semibold transition-colors cursor-pointer border ${
+              activeCategory === filter
+                ? 'bg-[#0066D2] text-white border-[#0066D2]'
+                : 'bg-white text-[#0066D2] border-[#0066D2]/30 hover:border-[#0066D2]'
+            }`}
+          >
+            {filter}
+          </button>
+        ))}
+      </motion.div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="h-8 w-8 rounded-full border-3 border-[#0066D2] border-t-transparent animate-spin" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredExperiences.map((exp, i) => (
+            <motion.div
+              key={exp.id}
+              className="rounded-[15px] overflow-hidden bg-[#0066D2] flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
+            >
+              <div className="relative h-[170px] shrink-0">
+                <img
+                  src={exp.image}
+                  alt={exp.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div className="flex flex-col gap-3 px-4 pt-4 pb-4 flex-1">
+                <p className="text-[18px] font-bold text-white leading-snug">
+                  {exp.name}
+                </p>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    <MapPin size={15} className="text-white shrink-0" />
+                    <span className="text-[13px] text-white">{exp.location}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Leaf size={15} className="text-[#F2B705] shrink-0" />
+                    <span className="text-[13px] text-white">{exp.category}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 mt-auto pt-2">
+                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
+                    {exp.country}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
+                    {exp.duration}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
+                    {exp.difficulty}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {filteredExperiences.length === 0 && (
+            <motion.p
+              className="col-span-full text-center text-[18px] text-[#0066D2]/50 py-16"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              No experiences found.
+            </motion.p>
+          )}
+        </div>
+      )}
 
       <CreateExperienceModal
         isOpen={isCreateModalOpen}

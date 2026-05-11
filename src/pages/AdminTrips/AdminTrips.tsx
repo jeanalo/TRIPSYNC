@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Plane, CheckCircle2, History, MapPin } from 'lucide-react';
 
-import StatsCard from '@/components/admin/StatsCard/StatsCard';
+
+import PageHeader from '@/components/PageHeader/PageHeader';
+
 import TripsFilters from '@/components/admin/TripsFilters/TripsFilters';
 import TripsTable from '@/components/admin/TripsTable/TripsTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
@@ -32,7 +33,6 @@ export default function AdminTrips() {
   const [filters, setFilters] = useState<AdminTripFilters>({
     search: '',
     country: '',
-    status: '',
     date: '',
   });
 
@@ -55,61 +55,24 @@ export default function AdminTrips() {
       trip.travelerName.toLowerCase().includes(filters.search.toLowerCase()) ||
       trip.id.toLowerCase().includes(filters.search.toLowerCase());
     
-    const matchesCountry = !filters.country || 
+    const matchesCountry = !filters.country ||
       trip.destinationCountry.toLowerCase() === filters.country.toLowerCase();
-    
-    const matchesStatus = !filters.status || trip.status === filters.status;
-    
-    const matchesDate = !filters.date || 
+
+    const matchesDate = !filters.date ||
       trip.startDate >= filters.date || trip.endDate >= filters.date;
 
-    return matchesSearch && matchesCountry && matchesStatus && matchesDate;
+    return matchesSearch && matchesCountry && matchesDate;
   });
 
   return (
     <div className="flex flex-col">
-      <motion.div
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div>
-          <h1 className="text-[26px] font-bold text-[#0066D2] leading-tight">
-            Trips
-          </h1>
-          <p className="text-[14px] text-[#0066D2]/60 mt-1">
-            Monitor active trips and traveler itineraries
-          </p>
-        </div>
-      </motion.div>
+      <PageHeader
+        title="Trips"
+        subtitle="Monitor active trips and traveler itineraries"
+        className="mb-7"
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
-        <StatsCard
-          icon={<Plane size={22} />}
-          label="Total trips"
-          value={tripsStats.totalTrips}
-          delay={0.1}
-        />
-        <StatsCard
-          icon={<CheckCircle2 size={22} />}
-          label="Active trips"
-          value={tripsStats.activeTrips}
-          delay={0.2}
-        />
-        <StatsCard
-          icon={<History size={22} />}
-          label="Completed trips"
-          value={tripsStats.completedTrips}
-          delay={0.3}
-        />
-        <StatsCard
-          icon={<MapPin size={22} />}
-          label="Top destination"
-          value={tripsStats.topDestination}
-          delay={0.4}
-        />
-      </div>
+
 
       <div className="bg-[#F5F7FA] rounded-3xl p-1">
         <TripsFilters
@@ -120,9 +83,6 @@ export default function AdminTrips() {
         
         <TripsTable
           trips={filteredTrips}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          onView={() => {}}
         />
       </div>
 

@@ -1,18 +1,12 @@
-import { Edit2, Trash2, Eye, Plane } from 'lucide-react';
+import { Plane } from 'lucide-react';
 import type { AdminTrip } from '@/types/admin.types';
 
 interface TripsTableProps {
   trips: AdminTrip[];
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-  onView: (id: string) => void;
 }
 
 export default function TripsTable({
   trips,
-  onEdit,
-  onDelete,
-  onView,
 }: TripsTableProps) {
   if (trips.length === 0) {
     return (
@@ -26,20 +20,7 @@ export default function TripsTable({
     );
   }
 
-  const getStatusClasses = (status: AdminTrip['status']) => {
-    switch (status) {
-      case 'active':
-        return 'bg-[#eafaf1] text-[#27ae60] border-[#27ae60]/10';
-      case 'upcoming':
-        return 'bg-[#ebf5ff] text-[#0066D2] border-[#0066D2]/10';
-      case 'completed':
-        return 'bg-[#f5f7fa] text-[#666] border-[#666]/10';
-      case 'cancelled':
-        return 'bg-[#fdf2f2] text-[#e74c3c] border-[#e74c3c]/10';
-      default:
-        return 'bg-[#f5f7fa] text-[#666] border-[#666]/10';
-    }
-  };
+
 
   return (
     <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden shadow-sm">
@@ -52,8 +33,7 @@ export default function TripsTable({
               <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Destination</th>
               <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Dates</th>
               <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Budget</th>
-              <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-[13px] font-bold text-[#0066D2] uppercase tracking-wider text-right">Actions</th>
+
             </tr>
           </thead>
           <tbody className="divide-y divide-[#e0e0e0]">
@@ -82,36 +62,7 @@ export default function TripsTable({
                     ${trip.budget.toLocaleString()}
                   </span>
                 </td>
-                <td className="px-6 py-4">
-                  <span className={`px-2.5 py-1 rounded-full text-[12px] font-medium border ${getStatusClasses(trip.status)}`}>
-                    {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <button
-                      onClick={() => onView(trip.id)}
-                      className="p-1.5 text-[#0066D2] hover:bg-[#0066D2]/5 rounded-lg transition-colors"
-                      title="View Details"
-                    >
-                      <Eye size={18} />
-                    </button>
-                    <button
-                      onClick={() => onEdit(trip.id)}
-                      className="p-1.5 text-[#1CA698] hover:bg-[#1CA698]/5 rounded-lg transition-colors"
-                      title="Edit"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    <button
-                      onClick={() => onDelete(trip.id)}
-                      className="p-1.5 text-[#e74c3c] hover:bg-[#e74c3c]/5 rounded-lg transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </td>
+
               </tr>
             ))}
           </tbody>

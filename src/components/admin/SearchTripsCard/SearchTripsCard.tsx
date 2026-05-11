@@ -1,28 +1,24 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Search, ChevronDown } from 'lucide-react';
-import type { SearchTripsFilters, SelectOption } from '@/types/admin.types';
+import { Search, ChevronDown, Loader2 } from 'lucide-react';
+import { useCountries } from '@/hooks/useCountries';
+import type { SearchTripsFilters } from '@/types/admin.types';
 
 interface SearchTripsCardProps {
-  countryOptions: SelectOption[];
   onSearch?: (filters: SearchTripsFilters) => void;
+  loading?: boolean;
 }
 
 export default function SearchTripsCard({
-  countryOptions,
   onSearch,
+  loading = false,
 }: SearchTripsCardProps) {
-  const [filters, setFilters] = useState<SearchTripsFilters>({
-    country: '',
-    travelDate: '',
-  });
-
-  const handleChange = (field: keyof SearchTripsFilters, value: string) => {
-    setFilters((prev) => ({ ...prev, [field]: value }));
-  };
+  const { countries, loading: loadingCountries } = useCountries();
+  const [country, setCountry] = useState('');
 
   const handleSearch = () => {
-    onSearch?.(filters);
+    if (!country) return;
+    onSearch?.({ country });
   };
 
   return (
@@ -43,40 +39,46 @@ export default function SearchTripsCard({
         <div className="relative">
           <select
             id="admin-search-country"
-            value={filters.country}
-            onChange={(e) => handleChange('country', e.target.value)}
-            className="w-full appearance-none rounded-xl border border-[#e0e0e0] bg-white px-4 py-2.5 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#1CA698] cursor-pointer"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            disabled={loadingCountries}
+            className="w-full appearance-none rounded-xl border border-[#e0e0e0] bg-white px-4 py-2.5 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#1CA698] cursor-pointer disabled:opacity-50"
           >
-            <option value="">Country</option>
-            {countryOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
+            <option value="">
+              {loadingCountries ? 'Loading countries...' : 'Select a country'}
+            </option>
+            {countries.map((c) => (
+              <option key={c.name} value={c.name}>
+                {c.flag} {c.name}
               </option>
             ))}
           </select>
-          <ChevronDown
-            size={16}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-          />
+          {loadingCountries ? (
+            <Loader2
+              size={16}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none animate-spin"
+            />
+          ) : (
+            <ChevronDown
+              size={16}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
+            />
+          )}
         </div>
-
-        <input
-          id="admin-search-date"
-          type="date"
-          value={filters.travelDate}
-          onChange={(e) => handleChange('travelDate', e.target.value)}
-          className="w-full rounded-xl border border-[#e0e0e0] bg-white px-4 py-2.5 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#1CA698]"
-          placeholder="Travel Date"
-        />
 
         
         <button
           type="button"
           onClick={handleSearch}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0066D2] px-4 py-2.5 text-[14px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#0055b0] hover:shadow-md mt-1"
+          disabled={!country || loading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0066D2] px-4 py-2.5 text-[14px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#0055b0] hover:shadow-md mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Search size={16} />
-          Search
+          {loading ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : (
+            <Search size={16} />
+          )}
+          {loading ? 'Searching...' : 'Search'}
         </button>
       </div>
     </motion.div>

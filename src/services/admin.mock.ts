@@ -295,8 +295,6 @@ export const mockCategoryOptions: SelectOption[] = [
   { value: 'cultural', label: 'Cultural' },
   { value: 'chill', label: 'Chill' },
   { value: 'free-tour', label: 'Free Tour' },
-  { value: 'gastronomy', label: 'Gastronomy' },
-  { value: 'nature', label: 'Nature' },
 ];
 
 

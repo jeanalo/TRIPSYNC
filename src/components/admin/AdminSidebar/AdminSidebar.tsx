@@ -6,7 +6,6 @@ import {
   Users,
   Star,
   BarChart3,
-  Plus,
   User,
   X,
 } from 'lucide-react';
@@ -18,18 +17,17 @@ const adminNavItems = [
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/experiences', label: 'Experiences', icon: Star },
   { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+  { to: '/admin/profile', label: 'Profile', icon: User },
 ];
 
 interface AdminSidebarProps {
   isMobileOpen: boolean;
   onMobileClose: () => void;
-  onCreateExperience: () => void;
 }
 
 export default function AdminSidebar({
   isMobileOpen,
   onMobileClose,
-  onCreateExperience,
 }: AdminSidebarProps) {
   const location = useLocation();
   const { user } = useAuth();
@@ -92,47 +90,21 @@ export default function AdminSidebar({
           })}
         </nav>
 
-        <div className="mx-4 border-t border-[#e0e0e0]" />
+        <div className="mx-0 border-t border-[#e0e0e0]" />
 
-        <div className="px-4 py-4">
-          <button
-            type="button"
-            onClick={onCreateExperience}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1CA698] px-4 py-2.5 text-[13px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md"
-          >
-            <Plus size={16} strokeWidth={2.5} />
-            Create Experience
-          </button>
-        </div>
-
-        <Link 
-          to="/admin/profile"
-          className={`flex items-center gap-3 px-5 py-4 border-t border-[#e0e0e0] no-underline transition-all duration-200 ${
-            location.pathname === '/admin/profile' 
-              ? 'bg-[#1CA698]/8 text-[#1CA698]' 
-              : 'hover:bg-[#1CA698]/5'
-          }`}
-        >
-          <div className={`flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full transition-colors duration-200 ${
-            location.pathname === '/admin/profile' ? 'bg-[#1CA698]' : 'bg-[#1CA698]'
-          }`}>
+        <div className="flex items-center gap-3 px-5 py-4">
+          <div className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-[#1CA698]">
             <User size={18} className="text-white" />
           </div>
-
           <div className="flex flex-col min-w-0">
-            <span className={`text-[13px] font-medium leading-tight truncate transition-colors duration-200 ${
-              location.pathname === '/admin/profile' ? 'text-[#1CA698]' : 'text-[#0066D2]'
-            }`}>
+            <span className="text-[13px] font-medium leading-tight truncate text-[#0066D2]">
               {user?.name || 'Admin User'}
             </span>
-
-            <span className={`text-[11px] leading-tight truncate transition-colors duration-200 ${
-              location.pathname === '/admin/profile' ? 'text-[#1CA698]/70' : 'text-[#0066D2]/60'
-            }`}>
+            <span className="text-[11px] leading-tight truncate text-[#0066D2]/60">
               {user?.email || 'admin@tripsync.com'}
             </span>
           </div>
-        </Link>
+        </div>
       </aside>
     </>
   );

@@ -5,12 +5,13 @@ interface PageHeaderProps {
   title: string;
   subtitle: string | ReactNode;
   action?: ReactNode;
+  className?: string;
 }
 
-export default function PageHeader({ title, subtitle, action }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, action, className }: PageHeaderProps) {
   return (
     <motion.div
-      className="px-4 lg:px-12 pt-8 lg:pt-[73px] pb-8 lg:pb-[42px]"
+      className={className ?? "px-4 lg:px-12 pt-8 lg:pt-[73px] pb-8 lg:pb-[42px]"}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

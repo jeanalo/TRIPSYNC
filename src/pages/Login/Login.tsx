@@ -10,16 +10,26 @@ const Login = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: { preventDefault(): void }) => {
     e.preventDefault();
-    login(email);
-    navigate('/app');
+    setError('');
+    setIsLoading(true);
+    try {
+      await login(email, password);
+      navigate('/app');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al iniciar sesión. Verifica tus credenciales.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex h-screen w-screen" id="login-page">
-      
+
       <div className="hidden md:block w-1/2 h-full">
         <img
           src="/banner-tripsync.svg"
@@ -28,10 +38,10 @@ const Login = () => {
         />
       </div>
 
-      
+
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white px-6">
         <div className="w-full max-w-[400px]">
-          
+
           <h2
             className="text-center text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-8"
             id="login-heading"
@@ -40,7 +50,12 @@ const Login = () => {
           </h2>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-5">
-            
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[14px] text-center font-medium">
+                {error}
+              </div>
+            )}
+
             <FormField label="Email Address" icon={<Mail size={24} />}>
               <input
                 id="login-email"
@@ -53,7 +68,6 @@ const Login = () => {
               />
             </FormField>
 
-            
             <FormField label="Password" icon={<Lock size={24} />}>
               <input
                 id="login-password"
@@ -66,10 +80,11 @@ const Login = () => {
               />
             </FormField>
 
-            <SubmitButton>Sign In</SubmitButton>
+            <SubmitButton disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </SubmitButton>
           </form>
 
-          
           <p className="mt-6 text-center text-[16px] text-[#171717]">
             New to TripSync?{' '}
             <Link

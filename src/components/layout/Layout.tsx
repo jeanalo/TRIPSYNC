@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
 import { useTravel } from '../../providers/TravelProvider';
 import { useAuth } from '../../providers/AuthProvider';
 import { useRealtime } from '../../providers/RealtimeProvider';
@@ -29,8 +29,11 @@ const navItems = [
 ];
 
 const Layout = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { activeCity, setActiveCity } = useTravel();
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
   const { latestNotification, clearNotification } = useRealtime();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

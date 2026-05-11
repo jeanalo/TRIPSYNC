@@ -11,16 +11,26 @@ const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: { preventDefault(): void }) => {
     e.preventDefault();
-    register(email, name);
-    navigate('/login');
+    setError('');
+    setIsLoading(true);
+    try {
+      await register(email, name, password);
+      navigate('/login');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al crear la cuenta. Intenta de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex h-screen w-screen" id="register-page">
-      
+
       <div className="hidden md:block w-1/2 h-full">
         <img
           src="/banner-tripsync.svg"
@@ -29,10 +39,10 @@ const Register = () => {
         />
       </div>
 
-      
+
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white px-6">
         <div className="w-full max-w-[400px]">
-          
+
           <h2
             className="text-center text-[36px] md:text-[48px] font-bold text-[#0066D2] mb-8"
             id="register-heading"
@@ -41,7 +51,12 @@ const Register = () => {
           </h2>
 
           <form onSubmit={handleRegister} className="flex flex-col gap-5">
-            
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[14px] text-center font-medium">
+                {error}
+              </div>
+            )}
+
             <FormField label="Full Name" icon={<User size={24} />}>
               <input
                 id="register-name"
@@ -54,7 +69,6 @@ const Register = () => {
               />
             </FormField>
 
-            
             <FormField label="Email Address" icon={<Mail size={24} />}>
               <input
                 id="register-email"
@@ -67,7 +81,6 @@ const Register = () => {
               />
             </FormField>
 
-            
             <FormField label="Password" icon={<Lock size={24} />}>
               <input
                 id="register-password"
@@ -80,10 +93,11 @@ const Register = () => {
               />
             </FormField>
 
-            <SubmitButton>Sign Up</SubmitButton>
+            <SubmitButton disabled={isLoading}>
+              {isLoading ? 'Creating Account...' : 'Sign Up'}
+            </SubmitButton>
           </form>
 
-          
           <p className="mt-6 text-center text-[16px] text-[#171717]">
             Already have an account?{' '}
             <Link

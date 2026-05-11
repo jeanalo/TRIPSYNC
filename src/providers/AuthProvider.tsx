@@ -1,60 +1,101 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface User {
+  id: string;
   name: string;
   email: string;
+  role: 'user' | 'admin';
 }
 
 interface AuthContextType {
   user: User | null;
-  register: (email: string, name: string) => void;
-  login: (email: string) => void;
-  logout: () => void;
-  updateUser: (name: string) => void;
+  loading: boolean;
+  register: (email: string, name: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  registerAdmin: (email: string, name: string, password: string) => Promise<void>;
+  loginAdmin: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  updateUser: (name: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function toAppUser(supabaseUser: { id: string; email?: string; user_metadata?: Record<string, string> }): User {
+  return {
+    id: supabaseUser.id,
+    email: supabaseUser.email ?? '',
+    name: supabaseUser.user_metadata?.name ?? supabaseUser.email ?? '',
+    role: supabaseUser.user_metadata?.role === 'admin' ? 'admin' : 'user',
+  };
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('user');
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? toAppUser(session.user) : null);
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ? toAppUser(session.user) : null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const register = async (email: string, name: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name, role: 'user' } },
+    });
+    if (error) throw error;
+  };
+
+  const login = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    if (data.user?.user_metadata?.role === 'admin') {
+      await supabase.auth.signOut();
+      throw new Error('Esta cuenta es de administrador. Usa el acceso de administrador.');
     }
-  }, [user]);
-
-  const register = (email: string, name: string) => {
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
-    registeredUsers[email] = { name, email };
-    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
   };
 
-  const login = (email: string) => {
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
-    const registered = registeredUsers[email];
-    setUser({ name: registered?.name || email, email });
+  const registerAdmin = async (email: string, name: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name, role: 'admin' } },
+    });
+    if (error) throw error;
   };
 
-  const logout = () => {
-    setUser(null);
+  const loginAdmin = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    if (data.user?.user_metadata?.role !== 'admin') {
+      await supabase.auth.signOut();
+      throw new Error('No tienes permisos de administrador.');
+    }
   };
 
-  const updateUser = (name: string) => {
-    if (!user) return;
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
-    registeredUsers[user.email] = { ...registeredUsers[user.email], name };
-    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-    setUser({ ...user, name });
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  };
+
+  const updateUser = async (name: string) => {
+    const { data, error } = await supabase.auth.updateUser({ data: { name } });
+    if (error) throw error;
+    if (data.user) setUser(toAppUser(data.user));
   };
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, register, login, registerAdmin, loginAdmin, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

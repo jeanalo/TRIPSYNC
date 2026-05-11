@@ -5,16 +5,15 @@ import { Users, Plane, MapPin } from 'lucide-react';
 
 import StatsCard from '@/components/admin/StatsCard/StatsCard';
 import SearchTripsCard from '@/components/admin/SearchTripsCard/SearchTripsCard';
-import MostVisitedCitiesCard from '@/components/admin/MostVisitedCitiesCard/MostVisitedCitiesCard';
+import MostVisitedCountriesCard from '@/components/admin/MostVisitedCitiesCard/MostVisitedCitiesCard';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useAdmin } from '@/providers/AdminProvider';
 import { useAuth } from '@/providers/AuthProvider';
 import {
-  mockVisitedCities,
+  mockVisitedCountries,
   mockCountryOptions,
-  mockCityOptions,
   mockCategoryOptions,
 } from '@/services/admin.mock';
 
@@ -90,10 +89,9 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <SearchTripsCard
           countryOptions={mockCountryOptions}
-          cityOptions={mockCityOptions}
           onSearch={handleSearch}
         />
-        <MostVisitedCitiesCard cities={mockVisitedCities} />
+        <MostVisitedCountriesCard countries={mockVisitedCountries} />
       </div>
 
       <CreateExperienceModal

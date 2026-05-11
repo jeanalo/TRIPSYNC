@@ -6,7 +6,7 @@ const startServer = () => {
   const httpServer = http.createServer(app);
 
   httpServer.listen(PORT, () => {
-    console.log(`TripSync backend running in ${NODE_ENV} mode on port ${PORT}`);
+    console.log(`Server URL: http://localhost:${PORT}`);
   });
 };
 

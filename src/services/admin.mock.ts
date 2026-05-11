@@ -1,6 +1,6 @@
 import type {
   AdminStats,
-  VisitedCity,
+  VisitedCountry,
   SelectOption,
   AdminExperience,
   AdminExperiencesStats,
@@ -213,7 +213,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-001',
     name: 'Eiffel Tower Tour',
-    city: 'Paris',
+    country: 'France',
     category: 'Cultural',
     price: 45,
     rating: 4.8,
@@ -224,7 +224,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-002',
     name: 'Amazon Rainforest Trek',
-    city: 'Manaus',
+    country: 'Brazil',
     category: 'Adventure',
     price: 120,
     rating: 4.9,
@@ -235,7 +235,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-003',
     name: 'Sushi Making Workshop',
-    city: 'Tokyo',
+    country: 'Japan',
     category: 'Gastronomy',
     price: 65,
     rating: 4.7,
@@ -246,7 +246,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-004',
     name: 'London Bridge Walking Tour',
-    city: 'London',
+    country: 'United Kingdom',
     category: 'Cultural',
     price: 0,
     rating: 4.5,
@@ -257,7 +257,7 @@ export const mockAdminExperiences: AdminExperience[] = [
   {
     id: 'exp-005',
     name: 'Bali Surf School',
-    city: 'Bali',
+    country: 'Indonesia',
     category: 'Adventure',
     price: 35,
     rating: 4.9,
@@ -267,12 +267,12 @@ export const mockAdminExperiences: AdminExperience[] = [
   },
 ];
 
-export const mockVisitedCities: VisitedCity[] = [
-  { rank: 1, name: 'Paris', country: 'France', visitors: 5 },
-  { rank: 2, name: 'London', country: 'UK', visitors: 2 },
-  { rank: 3, name: 'Madrid', country: 'Spain', visitors: 1 },
-  { rank: 4, name: 'Cali', country: 'Colombia', visitors: 1 },
-  { rank: 5, name: 'Rio', country: 'Brazil', visitors: 1 },
+export const mockVisitedCountries: VisitedCountry[] = [
+  { rank: 1, country: 'France', visitors: 5 },
+  { rank: 2, country: 'United Kingdom', visitors: 2 },
+  { rank: 3, country: 'Spain', visitors: 1 },
+  { rank: 4, country: 'Colombia', visitors: 1 },
+  { rank: 5, country: 'Brazil', visitors: 1 },
 ];
 
 
@@ -288,16 +288,6 @@ export const mockCountryOptions: SelectOption[] = [
 ];
 
 
-export const mockCityOptions: SelectOption[] = [
-  { value: 'paris', label: 'Paris' },
-  { value: 'london', label: 'London' },
-  { value: 'madrid', label: 'Madrid' },
-  { value: 'cali', label: 'Cali' },
-  { value: 'rio', label: 'Rio de Janeiro' },
-  { value: 'bali', label: 'Bali' },
-  { value: 'tokyo', label: 'Tokyo' },
-  { value: 'new-york', label: 'New York' },
-];
 
 
 export const mockCategoryOptions: SelectOption[] = [

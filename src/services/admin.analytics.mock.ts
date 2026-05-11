@@ -8,7 +8,7 @@ import type {
 
 export const mockAnalyticsStats: AdminAnalyticsStats = {
   totalBookings: 4820,
-  mostVisitedCity: 'Paris',
+  mostVisitedCountry: 'France',
   activeTravelers: 1248,
   revenueThisMonth: 84500,
 };
@@ -29,11 +29,11 @@ export const mockMonthlyBookings: MonthlyBooking[] = [
 ];
 
 export const mockTopDestinations: TopDestination[] = [
-  { city: 'Paris', bookings: 850 },
-  { city: 'Tokyo', bookings: 720 },
-  { city: 'London', bookings: 640 },
-  { city: 'Rio de Janeiro', bookings: 510 },
-  { city: 'New York', bookings: 480 },
+  { country: 'France', bookings: 850 },
+  { country: 'Japan', bookings: 720 },
+  { country: 'United Kingdom', bookings: 640 },
+  { country: 'Brazil', bookings: 510 },
+  { country: 'United States', bookings: 480 },
 ];
 
 export const mockTravelCategories: TravelCategoryMetric[] = [

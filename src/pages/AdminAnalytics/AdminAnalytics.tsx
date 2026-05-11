@@ -43,8 +43,8 @@ export default function AdminAnalytics() {
         />
         <StatsCard
           icon={<Globe size={22} />}
-          label="Most visited city"
-          value={mockAnalyticsStats.mostVisitedCity}
+          label="Most visited country"
+          value={mockAnalyticsStats.mostVisitedCountry}
           delay={0.2}
         />
         <StatsCard

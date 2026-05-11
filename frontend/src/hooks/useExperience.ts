@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/providers/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import type { Experience } from '../data/types';
 
 export const useExperiences = () => {
@@ -90,7 +90,7 @@ export const useExperiences = () => {
         }
       }
     },
-    [user?.id, savedIds],
+    [user?.id, savedIds]
   );
 
   return { experiences, savedIds, toggleSave, loading };

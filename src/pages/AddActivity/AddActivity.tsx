@@ -40,8 +40,8 @@ export default function AddActivity() {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    addActivity(data);
+  const onSubmit = async (data: FormValues) => {
+    await addActivity(data);
     navigate('/app/schedule');
   };
 

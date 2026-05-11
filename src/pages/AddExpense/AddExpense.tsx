@@ -38,13 +38,13 @@ export default function AddExpense() {
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remaining = totalBudget - totalSpent;
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     const amount = parseFloat(data.amount) || 0;
     if (totalBudget > 0 && amount > remaining) {
       setShowOverBudgetModal(true);
       return;
     }
-    addExpense({
+    await addExpense({
       category: data.category,
       notes: data.notes,
       amount,

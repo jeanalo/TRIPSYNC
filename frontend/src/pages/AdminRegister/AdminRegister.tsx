@@ -45,9 +45,9 @@ const AdminRegister = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-screen" id="admin-register-page">
+    <div className="flex h-screen w-screen" id="admin-register-page">
 
-      <div className="hidden md:block w-1/2 h-full fixed left-0 top-0">
+      <div className="hidden md:block w-1/2 h-full">
         <img
           src="/banner-tripsync.svg"
           alt="TripSync Banner"
@@ -56,7 +56,7 @@ const AdminRegister = () => {
       </div>
 
 
-      <div className="flex w-full md:w-1/2 md:ml-auto items-center justify-center bg-white px-6 py-12">
+      <div className="flex w-full md:w-1/2 items-center justify-center bg-white px-6 py-12 overflow-y-auto">
         <div className="w-full max-w-[400px]">
 
           <div className="flex justify-center mb-6">

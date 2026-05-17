@@ -125,6 +125,15 @@ const Schedule = () => {
                             <span className="font-semibold text-[16px]">
                               {activity.name}
                             </span>
+                            <div className="flex items-center gap-2">
+                              <CalendarDays
+                                size={16}
+                                className="text-[#0066D2] shrink-0"
+                              />
+                              <span>
+                                {formatDate(activity.date)} &middot; {activity.time}
+                              </span>
+                            </div>
                           </motion.div>
                         )}
                       </div>

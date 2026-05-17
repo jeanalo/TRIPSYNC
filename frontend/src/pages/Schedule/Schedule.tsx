@@ -146,6 +146,15 @@ const Schedule = () => {
                                 <span>{activity.category}</span>
                               </div>
                             )}
+                            {activity.notes && (
+                              <div className="flex items-start gap-2">
+                                <FileText
+                                  size={16}
+                                  className="text-[#0066D2] shrink-0 mt-0.5"
+                                />
+                                <span>{activity.notes}</span>
+                              </div>
+                            )}
                           </motion.div>
                         )}
                       </div>

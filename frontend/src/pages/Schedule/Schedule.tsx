@@ -140,6 +140,12 @@ const Schedule = () => {
                                 <span>{activity.location}</span>
                               </div>
                             )}
+                            {activity.category && (
+                              <div className="flex items-center gap-2">
+                                <Tag size={16} className="text-[#F2B705] shrink-0" />
+                                <span>{activity.category}</span>
+                              </div>
+                            )}
                           </motion.div>
                         )}
                       </div>

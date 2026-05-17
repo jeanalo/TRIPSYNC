@@ -116,6 +116,17 @@ const Schedule = () => {
                             {selectedId === activity.id ? 'Close' : 'Details'}
                           </button>
                         </div>
+                        {selectedId === activity.id && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="border-t border-[#0066D2]/15 pt-4 pb-5 flex flex-col gap-3 text-[14px] text-[#0066D2] overflow-hidden"
+                          >
+                            <span className="font-semibold text-[16px]">
+                              {activity.name}
+                            </span>
+                          </motion.div>
+                        )}
                       </div>
                     ))}
                 </div>

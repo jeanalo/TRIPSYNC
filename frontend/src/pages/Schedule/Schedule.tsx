@@ -134,6 +134,12 @@ const Schedule = () => {
                                 {formatDate(activity.date)} &middot; {activity.time}
                               </span>
                             </div>
+                            {activity.location && (
+                              <div className="flex items-center gap-2">
+                                <MapPin size={16} className="text-[#0066D2] shrink-0" />
+                                <span>{activity.location}</span>
+                              </div>
+                            )}
                           </motion.div>
                         )}
                       </div>

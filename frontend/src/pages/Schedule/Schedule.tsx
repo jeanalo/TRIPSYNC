@@ -32,6 +32,7 @@ function groupByDate(activities: Activity[]): Record<string, Activity[]> {
 const Schedule = () => {
   const navigate = useNavigate();
   const { activities } = useExpenseActivity();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const grouped = groupByDate(activities);
   const sortedDates = Object.keys(grouped).sort();

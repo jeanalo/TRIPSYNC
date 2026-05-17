@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, CalendarDays, MapPin, Tag } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Tag, FileText } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import type { Activity } from '../../types/travel.types';
 import PageHeader from '../../components/PageHeader/PageHeader';

@@ -70,47 +70,52 @@ const Schedule = () => {
                     .map((activity, index) => (
                       <div
                         key={activity.id}
-                        className={`flex items-center justify-between py-5 ${
-                          index > 0 ? 'border-t border-[#0066D2]/15' : ''
-                        }`}
+                        className={index > 0 ? 'border-t border-[#0066D2]/15' : ''}
                       >
-                        <div className="flex items-center gap-[45px]">
-                          <span className="text-[22px] font-bold text-[#0066D2] min-w-[64px]">
-                            {activity.time}
-                          </span>
-                          <div className="flex flex-col gap-1">
-                            <span className="text-[22px] font-bold text-[#0066D2]">
-                              {activity.name}
+                        <div className="flex items-center justify-between py-5">
+                          <div className="flex items-center gap-[45px]">
+                            <span className="text-[22px] font-bold text-[#0066D2] min-w-[64px]">
+                              {activity.time}
                             </span>
-                            <div className="flex items-center gap-3">
-                              {activity.location && (
-                                <div className="flex items-center gap-1.5">
-                                  <MapPin size={20} className="text-[#0066D2]" />
-                                  <span className="text-[18px] text-[#0066D2]">
-                                    {activity.location}
-                                  </span>
-                                </div>
-                              )}
-                              {activity.location && activity.category && (
-                                <div className="h-[23px] w-px bg-[#0066D2]/30" />
-                              )}
-                              {activity.category && (
-                                <div className="flex items-center gap-1.5">
-                                  <Tag size={20} className="text-[#F2B705]" />
-                                  <span className="text-[18px] text-[#0066D2]">
-                                    {activity.category}
-                                  </span>
-                                </div>
-                              )}
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[22px] font-bold text-[#0066D2]">
+                                {activity.name}
+                              </span>
+                              <div className="flex items-center gap-3">
+                                {activity.location && (
+                                  <div className="flex items-center gap-1.5">
+                                    <MapPin size={20} className="text-[#0066D2]" />
+                                    <span className="text-[18px] text-[#0066D2]">
+                                      {activity.location}
+                                    </span>
+                                  </div>
+                                )}
+                                {activity.location && activity.category && (
+                                  <div className="h-[23px] w-px bg-[#0066D2]/30" />
+                                )}
+                                {activity.category && (
+                                  <div className="flex items-center gap-1.5">
+                                    <Tag size={20} className="text-[#F2B705]" />
+                                    <span className="text-[18px] text-[#0066D2]">
+                                      {activity.category}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
+                          <button
+                            type="button"
+                            className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors shrink-0"
+                            onClick={() =>
+                              setSelectedId(
+                                selectedId === activity.id ? null : activity.id
+                              )
+                            }
+                          >
+                            {selectedId === activity.id ? 'Close' : 'Details'}
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors shrink-0"
-                        >
-                          Details
-                        </button>
                       </div>
                     ))}
                 </div>

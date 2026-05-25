@@ -1,11 +1,12 @@
-import { Router } from 'express';
-import { getTrips, updateBudget, updateCountries } from './trips.controller';
-import { authMiddleware } from '../../middlewares/auth.middleware';
+import { Router, RequestHandler } from 'express';
+import { getMyTrip, upsertTrip } from './trips.controller';
+import { authMiddleware } from '../../middlewares/authMiddleware';
+import { invitesRouter } from '../invites/invites.router';
 
 const router = Router();
 
-router.get('/', authMiddleware as any, getTrips);
-router.patch('/:id/budget', authMiddleware as any, updateBudget);
-router.patch('/:id/countries', authMiddleware as any, updateCountries);
+router.get('/me', authMiddleware as RequestHandler, getMyTrip as RequestHandler);
+router.put('/me', authMiddleware as RequestHandler, upsertTrip as RequestHandler);
+router.use('/', invitesRouter);
 
 export const tripsRouter = router;

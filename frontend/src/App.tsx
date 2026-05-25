@@ -25,6 +25,7 @@ import AdminTrips from './pages/AdminTrips/AdminTrips';
 import AdminUsers from './pages/AdminUsers/AdminUsers';
 import AdminAnalytics from './pages/AdminAnalytics/AdminAnalytics';
 import AdminProfile from './pages/AdminProfile/AdminProfile';
+import JoinTrip from './pages/JoinTrip/JoinTrip';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<AuthSelector />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/join-trip" element={<JoinTrip />} />
 
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />

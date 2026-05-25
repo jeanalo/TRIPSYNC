@@ -5,7 +5,7 @@ import { AuthRequest } from '../../shared/types';
 export const getMyTrip = async (req: AuthRequest, res: Response) => {
   try {
     const trip = await getTripByUserService(req.user!.id);
-    if (!trip) return res.status(404).json({ message: 'No trip found' });
+    if (!trip) return res.status(204).send();
     res.json(trip);
   } catch {
     res.status(500).json({ message: 'Internal server error' });

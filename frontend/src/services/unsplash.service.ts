@@ -1,5 +1,11 @@
 import type { UnsplashImage } from '@/types/admin.types';
 
+interface UnsplashApiResult {
+  id: string;
+  urls: { regular: string; thumb: string };
+  alt_description: string | null;
+}
+
 const ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 const BASE_URL = 'https://api.unsplash.com/search/photos';
 
@@ -80,7 +86,7 @@ export async function searchUnsplashImages(query: string): Promise<UnsplashImage
 
     const data = await response.json();
     
-    return data.results.map((img: any) => ({
+    return data.results.map((img: UnsplashApiResult) => ({
       id: img.id,
       url: img.urls.regular,
       thumb: img.urls.thumb,

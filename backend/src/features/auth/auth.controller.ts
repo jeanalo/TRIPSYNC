@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import Boom from '@hapi/boom';
+import { Request, Response, NextFunction } from "express";
 import { supabase } from "../../config/supabase";
 import { AuthRequest } from "../../shared/types";
 
@@ -6,7 +7,7 @@ export const getAuth = (req: AuthRequest, res: Response) => {
   res.json({ user: req.user });
 };
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, name } = req.body;
 
@@ -19,7 +20,7 @@ export const register = async (req: Request, res: Response) => {
     });
 
     if (error) {
-      return res.status(400).json({ message: error.message });
+      return next(Boom.badRequest(error.message));
     }
 
     res.status(201).json({
@@ -30,12 +31,12 @@ export const register = async (req: Request, res: Response) => {
         role: "user",
       },
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error registrando usuario" });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
@@ -45,7 +46,7 @@ export const login = async (req: Request, res: Response) => {
     });
 
     if (error || !data.user || !data.session) {
-      return res.status(401).json({ message: "Credenciales inválidas" });
+      return next(Boom.unauthorized("Credenciales inválidas"));
     }
 
     const { data: profile } = await supabase
@@ -63,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
         role: profile?.role ?? "user",
       },
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error en login" });
+  } catch (err) {
+    next(err);
   }
 };

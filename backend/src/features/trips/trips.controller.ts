@@ -1,23 +1,24 @@
-import { Response } from 'express';
+import Boom from '@hapi/boom';
+import { Response, NextFunction } from 'express';
 import { getTripByUserService, upsertTripService } from './trips.service';
 import { AuthRequest } from '../../shared/types';
 
-export const getMyTrip = async (req: AuthRequest, res: Response) => {
+export const getMyTrip = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const trip = await getTripByUserService(req.user!.id);
     if (!trip) return res.status(204).send();
     res.json(trip);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const upsertTrip = async (req: AuthRequest, res: Response) => {
+export const upsertTrip = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id, departure_country, destination_country, departure_date, arrival_date, budget, jet_lag_plan } = req.body;
 
     if (!departure_country || !destination_country || !departure_date || !arrival_date) {
-      return res.status(400).json({ message: 'Missing required fields: departure_country, destination_country, departure_date, arrival_date' });
+      return next(Boom.badRequest('Missing required fields: departure_country, destination_country, departure_date, arrival_date'));
     }
 
     const trip = await upsertTripService(req.user!.id, {
@@ -31,7 +32,7 @@ export const upsertTrip = async (req: AuthRequest, res: Response) => {
     });
 
     res.json(trip);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };

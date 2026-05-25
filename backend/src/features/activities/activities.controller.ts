@@ -1,22 +1,23 @@
-import { Response } from 'express';
+import Boom from '@hapi/boom';
+import { Response, NextFunction } from 'express';
 import { getActivitiesByUserService, createActivityService, deleteActivityService } from './activities.service';
 import { AuthRequest } from '../../shared/types';
 
-export const getActivities = async (req: AuthRequest, res: Response) => {
+export const getActivities = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const activities = await getActivitiesByUserService(req.user!.id);
     res.json(activities);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const createActivity = async (req: AuthRequest, res: Response) => {
+export const createActivity = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { name, date, time, location, category, notes, trip_id } = req.body;
 
     if (!name || !date || !time) {
-      return res.status(400).json({ message: 'Missing required fields: name, date, time' });
+      return next(Boom.badRequest('Missing required fields: name, date, time'));
     }
 
     const activity = await createActivityService(req.user!.id, {
@@ -29,18 +30,17 @@ export const createActivity = async (req: AuthRequest, res: Response) => {
       trip_id: trip_id ?? null,
     });
     res.status(201).json(activity);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const deleteActivity = async (req: AuthRequest, res: Response) => {
+export const deleteActivity = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const success = await deleteActivityService(id, req.user!.id);
-    if (!success) return res.status(404).json({ message: 'Activity not found' });
+    await deleteActivityService(id, req.user!.id);
     res.json({ message: 'Activity deleted' });
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };

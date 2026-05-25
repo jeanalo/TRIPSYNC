@@ -1,3 +1,4 @@
+import Boom from '@hapi/boom';
 import { supabase } from '../../config/supabase';
 import { Activity, CreateActivityRequest } from './activities.types';
 
@@ -44,7 +45,7 @@ export const createActivityService = async (userId: string, data: CreateActivity
   return inserted;
 };
 
-export const deleteActivityService = async (id: string, userId: string): Promise<boolean> => {
+export const deleteActivityService = async (id: string, userId: string): Promise<void> => {
   const { error, count } = await supabase
     .from('activities')
     .delete({ count: 'exact' })
@@ -52,5 +53,5 @@ export const deleteActivityService = async (id: string, userId: string): Promise
     .eq('user_id', userId);
 
   if (error) throw error;
-  return (count ?? 0) > 0;
+  if ((count ?? 0) === 0) throw Boom.notFound('Activity not found');
 };

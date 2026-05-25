@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { getExperiences, createExperience } from './experiences.controller';
-import { authMiddleware } from '../../middlewares/auth.middleware';
-import { requireRole } from '../../middlewares/role.middleware';
+import { authMiddleware } from '../../middlewares/authMiddleware';
+import { requireRole } from '../../middlewares/roleMiddleware';
 
 const router = Router();
 

@@ -1,22 +1,23 @@
-import { Response } from 'express';
+import Boom from '@hapi/boom';
+import { Response, NextFunction } from 'express';
 import { getExpensesByUserService, createExpenseService, deleteExpenseService } from './expenses.service';
 import { AuthRequest } from '../../shared/types';
 
-export const getExpenses = async (req: AuthRequest, res: Response) => {
+export const getExpenses = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const expenses = await getExpensesByUserService(req.user!.id);
     res.json(expenses);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const createExpense = async (req: AuthRequest, res: Response) => {
+export const createExpense = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { amount, category, date, notes, trip_id } = req.body;
 
     if (!amount || !category || !date) {
-      return res.status(400).json({ message: 'Missing required fields: amount, category, date' });
+      return next(Boom.badRequest('Missing required fields: amount, category, date'));
     }
 
     const expense = await createExpenseService(req.user!.id, {
@@ -27,18 +28,17 @@ export const createExpense = async (req: AuthRequest, res: Response) => {
       trip_id: trip_id ?? null,
     });
     res.status(201).json(expense);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const deleteExpense = async (req: AuthRequest, res: Response) => {
+export const deleteExpense = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const success = await deleteExpenseService(id, req.user!.id);
-    if (!success) return res.status(404).json({ message: 'Expense not found' });
+    await deleteExpenseService(id, req.user!.id);
     res.json({ message: 'Expense deleted' });
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (err) {
+    next(err);
   }
 };

@@ -42,6 +42,17 @@ const JoinTrip = () => {
   const [pageState, setPageState] = useState<PageState>('loading');
   const [errorMsg, setErrorMsg] = useState('');
 
+  async function loadInviteTripInfo() {
+    try {
+      const data = await apiClient.get<TripInfo>(`/api/trips/join?token=${token}`);
+      setTripInfo(data);
+      setPageState('ready');
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Invalid or expired invite link.');
+      setPageState('error');
+    }
+  }
+
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
@@ -49,17 +60,7 @@ const JoinTrip = () => {
       return;
     }
     if (!token) return;
-
-    (async () => {
-      try {
-        const data = await apiClient.get<TripInfo>(`/api/trips/join?token=${token}`);
-        setTripInfo(data);
-        setPageState('ready');
-      } catch (err: unknown) {
-        setErrorMsg(err instanceof Error ? err.message : 'Invalid or expired invite link.');
-        setPageState('error');
-      }
-    })();
+    loadInviteTripInfo();
   }, [user, authLoading, navigate, token]);
 
   const handleJoin = async () => {

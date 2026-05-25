@@ -60,44 +60,45 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  async function loadAdminDashboardData() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [tripsData, usersData] = await Promise.all([
+        getAdminTripsService(),
+        getAdminUsersService(),
+      ]);
+
+      setTrips(tripsData.trips);
+      setTripsStats(tripsData.stats);
+      setDashboardStats({
+        activeTrips: tripsData.stats.totalTrips,
+        activeUsers: usersData.stats.activeUsers,
+        topCountries: tripsData.topCountries,
+      });
+
+      setUsers(usersData.users);
+      setUsersStats((prev) => ({
+        ...prev,
+        totalUsers: usersData.stats.totalUsers,
+        activeUsers: usersData.stats.activeUsers,
+      }));
+    } catch (err) {
+      console.error('Error fetching admin dashboard data:', err);
+      setError(err instanceof Error ? err.message : 'Error loading admin data');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (authLoading) return;
     if (user?.role !== 'admin') {
       setLoading(false);
       return;
     }
-
-    (async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const [tripsData, usersData] = await Promise.all([
-          getAdminTripsService(),
-          getAdminUsersService(),
-        ]);
-
-        setTrips(tripsData.trips);
-        setTripsStats(tripsData.stats);
-        setDashboardStats({
-          activeTrips: tripsData.stats.totalTrips,
-          activeUsers: usersData.stats.activeUsers,
-          topCountries: tripsData.topCountries,
-        });
-
-        setUsers(usersData.users);
-        setUsersStats((prev) => ({
-          ...prev,
-          totalUsers: usersData.stats.totalUsers,
-          activeUsers: usersData.stats.activeUsers,
-        }));
-      } catch (err) {
-        console.error('Error fetching admin dashboard data:', err);
-        setError(err instanceof Error ? err.message : 'Error loading admin data');
-      } finally {
-        setLoading(false);
-      }
-    })();
+    loadAdminDashboardData();
   }, [user, authLoading]);
 
   return (

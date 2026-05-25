@@ -22,6 +22,22 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
 
+  async function loadExpensesAndActivities() {
+    try {
+      const expenseRows = await apiClient.get<Expense[]>('/api/expenses');
+      setExpenses(expenseRows);
+    } catch (err) {
+      console.error('Error loading expenses:', err);
+    }
+
+    try {
+      const activityRows = await apiClient.get<Activity[]>('/api/activities');
+      setActivities(activityRows);
+    } catch (err) {
+      console.error('Error loading activities:', err);
+    }
+  }
+
   // Load expenses and activities from backend on user change
   useEffect(() => {
     if (!user?.id) {
@@ -29,22 +45,7 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
       setActivities([]);
       return;
     }
-
-    (async () => {
-      try {
-        const expenseRows = await apiClient.get<Expense[]>('/api/expenses');
-        setExpenses(expenseRows);
-      } catch (err) {
-        console.error('Error loading expenses:', err);
-      }
-
-      try {
-        const activityRows = await apiClient.get<Activity[]>('/api/activities');
-        setActivities(activityRows);
-      } catch (err) {
-        console.error('Error loading activities:', err);
-      }
-    })();
+    loadExpensesAndActivities();
   }, [user?.id]);
 
   const addExpense = async (expense: Omit<Expense, 'id'>) => {

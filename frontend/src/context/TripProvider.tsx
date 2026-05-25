@@ -97,6 +97,35 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [jetLagPlan, setJetLagPlanState] = useState<JetLagPlan | null>(null);
 
+  async function loadUserTrip() {
+    try {
+      const data = await apiClient.get<BackendTrip | undefined>('/api/trips/me');
+      if (data) {
+        setTripId(data.id);
+        setTripDetailsState({
+          departureCountry: data.departure_country ?? '',
+          destinationCountry: data.destination_country ?? '',
+          departureDate: data.departure_date ?? '',
+          arrivalDate: data.arrival_date ?? '',
+          budget: Number(data.budget) || 0,
+        });
+        if (data.jet_lag_plan) {
+          try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
+        }
+      }
+    } catch {
+      // network or server error
+    }
+
+    const savedExperiences = localStorage.getItem(getKey('experiences', user!.email));
+    setExperiences(savedExperiences ? JSON.parse(savedExperiences) : defaultExperiences);
+
+    const savedActiveCity = localStorage.getItem(getKey('activeCity', user!.email));
+    setActiveCity(savedActiveCity || 'tokyo');
+
+    isLoadedRef.current = true;
+  }
+
   // Load trip from backend on user change
   useEffect(() => {
     if (!user?.id) {
@@ -108,78 +137,52 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     isLoadedRef.current = false;
-
-    (async () => {
-      try {
-        const data = await apiClient.get<BackendTrip | undefined>('/api/trips/me');
-        if (data) {
-          setTripId(data.id);
-          setTripDetailsState({
-            departureCountry: data.departure_country ?? '',
-            destinationCountry: data.destination_country ?? '',
-            departureDate: data.departure_date ?? '',
-            arrivalDate: data.arrival_date ?? '',
-            budget: Number(data.budget) || 0,
-          });
-          if (data.jet_lag_plan) {
-            try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
-          }
-        }
-      } catch {
-        // network or server error
-      }
-
-      const savedExperiences = localStorage.getItem(getKey('experiences', user.email));
-      setExperiences(savedExperiences ? JSON.parse(savedExperiences) : defaultExperiences);
-
-      const savedActiveCity = localStorage.getItem(getKey('activeCity', user.email));
-      setActiveCity(savedActiveCity || 'tokyo');
-
-      isLoadedRef.current = true;
-    })();
+    loadUserTrip();
   }, [user?.id]);
+
+  async function syncTripDetailsToBackend() {
+    try {
+      const data = await apiClient.put<BackendTrip>('/api/trips/me', {
+        id: tripIdRef.current ?? undefined,
+        departure_country: tripDetails.departureCountry,
+        destination_country: tripDetails.destinationCountry,
+        departure_date: tripDetails.departureDate,
+        arrival_date: tripDetails.arrivalDate,
+        budget: tripDetails.budget,
+      });
+      if (!tripIdRef.current) setTripId(data.id);
+    } catch (err) {
+      console.error('Error syncing trip details:', err);
+    }
+  }
 
   // Sync trip details to backend
   useEffect(() => {
     if (!isLoadedRef.current || !user?.id) return;
     if (!tripDetails.departureCountry && !tripDetails.destinationCountry) return;
-
-    (async () => {
-      try {
-        const data = await apiClient.put<BackendTrip>('/api/trips/me', {
-          id: tripIdRef.current ?? undefined,
-          departure_country: tripDetails.departureCountry,
-          destination_country: tripDetails.destinationCountry,
-          departure_date: tripDetails.departureDate,
-          arrival_date: tripDetails.arrivalDate,
-          budget: tripDetails.budget,
-        });
-        if (!tripIdRef.current) setTripId(data.id);
-      } catch (err) {
-        console.error('Error syncing trip details:', err);
-      }
-    })();
+    syncTripDetailsToBackend();
   }, [tripDetails, user?.id]);
+
+  async function syncJetLagPlanToBackend() {
+    try {
+      await apiClient.put<BackendTrip>('/api/trips/me', {
+        id: tripIdRef.current,
+        departure_country: tripDetails.departureCountry,
+        destination_country: tripDetails.destinationCountry,
+        departure_date: tripDetails.departureDate,
+        arrival_date: tripDetails.arrivalDate,
+        budget: tripDetails.budget,
+        jet_lag_plan: jetLagPlan ? JSON.stringify(jetLagPlan) : null,
+      });
+    } catch (err) {
+      console.error('Error syncing jet lag plan:', err);
+    }
+  }
 
   // Sync jet lag plan to backend
   useEffect(() => {
     if (!isLoadedRef.current || !user?.id || !tripIdRef.current) return;
-
-    (async () => {
-      try {
-        await apiClient.put<BackendTrip>('/api/trips/me', {
-          id: tripIdRef.current,
-          departure_country: tripDetails.departureCountry,
-          destination_country: tripDetails.destinationCountry,
-          departure_date: tripDetails.departureDate,
-          arrival_date: tripDetails.arrivalDate,
-          budget: tripDetails.budget,
-          jet_lag_plan: jetLagPlan ? JSON.stringify(jetLagPlan) : null,
-        });
-      } catch (err) {
-        console.error('Error syncing jet lag plan:', err);
-      }
-    })();
+    syncJetLagPlanToBackend();
   }, [jetLagPlan, user?.id]);
 
   useEffect(() => {

@@ -29,6 +29,11 @@ const categoryBg: Record<string, string> = {
   'Free Tour': '#6CD9CE',
 };
 
+function resolveHighlightIcon(iconKey: string) {
+  const Icon = iconsMap[iconKey as keyof typeof iconsMap];
+  return Icon ? <Icon size={22} className="text-[#0066D2] shrink-0" /> : null;
+}
+
 const ExperienceDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -115,13 +120,7 @@ const ExperienceDetail = () => {
                       key={i}
                       className="flex items-center gap-3 p-3 bg-[#F5F5F5] rounded-[10px]"
                     >
-                      {(() => {
-                        const Icon = iconsMap[h.icon as keyof typeof iconsMap];
-
-                        return Icon ? (
-                          <Icon size={22} className="text-[#0066D2] shrink-0" />
-                        ) : null;
-                      })()}
+                      {resolveHighlightIcon(h.icon)}
                       <span className="text-[15px] font-medium text-[#0066D2]">
                         {h.text}
                       </span>

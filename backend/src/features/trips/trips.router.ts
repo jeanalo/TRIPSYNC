@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import { getTrips, updateBudget, updateCountries } from './trips.controller';
+import { getMyTrip, upsertTrip } from './trips.controller';
 import { authMiddleware } from '../../middlewares/auth.middleware';
 
 const router = Router();
 
-router.get('/', authMiddleware as any, getTrips);
-router.patch('/:id/budget', authMiddleware as any, updateBudget);
-router.patch('/:id/countries', authMiddleware as any, updateCountries);
+router.get('/me', authMiddleware as any, getMyTrip as any);
+router.put('/me', authMiddleware as any, upsertTrip as any);
 
 export const tripsRouter = router;

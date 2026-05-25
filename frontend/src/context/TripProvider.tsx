@@ -1,11 +1,18 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthProvider';
-import { supabase } from '../lib/supabase';
-import type {
-  Experience,
-  TripDetails,
-  JetLagPlan,
-} from '../types/travel.types';
+import { apiClient } from '../lib/apiClient';
+import type { Experience, TripDetails, JetLagPlan } from '../types/travel.types';
+
+interface BackendTrip {
+  id: string;
+  user_id: string;
+  departure_country: string;
+  destination_country: string;
+  departure_date: string;
+  arrival_date: string;
+  budget: number;
+  jet_lag_plan?: string | null;
+}
 
 interface TripContextType {
   tripDetails: TripDetails;
@@ -84,15 +91,13 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const [tripDetails, setTripDetailsState] = useState<TripDetails>(defaultTripDetails);
-
   const [experiences, setExperiences] = useState<Experience[]>(() => {
     const saved = localStorage.getItem(getKey('experiences', user?.email));
     return saved ? JSON.parse(saved) : defaultExperiences;
   });
-
   const [jetLagPlan, setJetLagPlanState] = useState<JetLagPlan | null>(null);
 
-  // Load trip + jet lag plan from Supabase on user change
+  // Load trip from backend on user change
   useEffect(() => {
     if (!user?.id) {
       isLoadedRef.current = false;
@@ -105,13 +110,8 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     isLoadedRef.current = false;
 
     (async () => {
-      const { data } = await supabase
-        .from('trips')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (data) {
+      try {
+        const data = await apiClient.get<BackendTrip>('/api/trips/me');
         setTripId(data.id);
         setTripDetailsState({
           departureCountry: data.departure_country ?? '',
@@ -123,6 +123,8 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
         if (data.jet_lag_plan) {
           try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
         }
+      } catch {
+        // 404 means no trip yet — that's fine
       }
 
       const savedExperiences = localStorage.getItem(getKey('experiences', user.email));
@@ -135,49 +137,46 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     })();
   }, [user?.id]);
 
-  // Sync trip details to Supabase
+  // Sync trip details to backend
   useEffect(() => {
     if (!isLoadedRef.current || !user?.id) return;
     if (!tripDetails.departureCountry && !tripDetails.destinationCountry) return;
 
     (async () => {
-      if (tripIdRef.current) {
-        await supabase
-          .from('trips')
-          .update({
-            departure_country: tripDetails.departureCountry,
-            destination_country: tripDetails.destinationCountry,
-            departure_date: tripDetails.departureDate,
-            arrival_date: tripDetails.arrivalDate,
-            budget: String(tripDetails.budget),
-          })
-          .eq('id', tripIdRef.current);
-      } else {
-        const id = crypto.randomUUID();
-        setTripId(id);
-        await supabase.from('trips').insert({
-          id,
-          user_id: user.id,
+      try {
+        const data = await apiClient.put<BackendTrip>('/api/trips/me', {
+          id: tripIdRef.current ?? undefined,
           departure_country: tripDetails.departureCountry,
           destination_country: tripDetails.destinationCountry,
           departure_date: tripDetails.departureDate,
           arrival_date: tripDetails.arrivalDate,
-          budget: String(tripDetails.budget),
-          created_at: new Date().toISOString(),
+          budget: tripDetails.budget,
         });
+        if (!tripIdRef.current) setTripId(data.id);
+      } catch (err) {
+        console.error('Error syncing trip details:', err);
       }
     })();
   }, [tripDetails, user?.id]);
 
-  // Sync jet lag plan to Supabase
+  // Sync jet lag plan to backend
   useEffect(() => {
     if (!isLoadedRef.current || !user?.id || !tripIdRef.current) return;
 
     (async () => {
-      await supabase
-        .from('trips')
-        .update({ jet_lag_plan: jetLagPlan ? JSON.stringify(jetLagPlan) : null })
-        .eq('id', tripIdRef.current!);
+      try {
+        await apiClient.put<BackendTrip>('/api/trips/me', {
+          id: tripIdRef.current,
+          departure_country: tripDetails.departureCountry,
+          destination_country: tripDetails.destinationCountry,
+          departure_date: tripDetails.departureDate,
+          arrival_date: tripDetails.arrivalDate,
+          budget: tripDetails.budget,
+          jet_lag_plan: jetLagPlan ? JSON.stringify(jetLagPlan) : null,
+        });
+      } catch (err) {
+        console.error('Error syncing jet lag plan:', err);
+      }
     })();
   }, [jetLagPlan, user?.id]);
 

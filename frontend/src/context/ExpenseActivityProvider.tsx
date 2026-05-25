@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { useTrip } from './TripProvider';
-import { supabase } from '../lib/supabase';
+import { apiClient } from '../lib/apiClient';
 import type { Expense, Activity } from '../types/travel.types';
 
 interface ExpenseActivityContextType {
@@ -22,7 +22,7 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
 
-  // Load expenses and activities from Supabase on user change
+  // Load expenses and activities from backend on user change
   useEffect(() => {
     if (!user?.id) {
       setExpenses([]);
@@ -31,67 +31,41 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
     }
 
     (async () => {
-      const { data: expenseRows } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('user_id', user.id);
-      setExpenses(
-        (expenseRows ?? []).map((e) => ({
-          id: e.id,
-          amount: Number(e.amount) || 0,
-          category: e.category,
-          date: e.date,
-          notes: e.notes ?? '',
-        }))
-      );
+      try {
+        const expenseRows = await apiClient.get<Expense[]>('/api/expenses');
+        setExpenses(expenseRows);
+      } catch (err) {
+        console.error('Error loading expenses:', err);
+      }
 
-      const { data: activityRows } = await supabase
-        .from('activities')
-        .select('*')
-        .eq('user_id', user.id);
-      setActivities(
-        (activityRows ?? []).map((a) => ({
-          id: a.id,
-          name: a.name,
-          date: a.date,
-          time: a.time,
-          location: a.location ?? '',
-          category: a.category,
-          notes: a.notes ?? '',
-        }))
-      );
+      try {
+        const activityRows = await apiClient.get<Activity[]>('/api/activities');
+        setActivities(activityRows);
+      } catch (err) {
+        console.error('Error loading activities:', err);
+      }
     })();
   }, [user?.id]);
 
   const addExpense = async (expense: Omit<Expense, 'id'>) => {
-    const id = crypto.randomUUID();
-    const { error } = await supabase.from('expenses').insert({
-      id,
+    const created = await apiClient.post<Expense>('/api/expenses', {
       trip_id: tripId ?? null,
-      user_id: user?.id,
       amount: expense.amount,
       category: expense.category,
       date: expense.date,
       notes: expense.notes,
     });
-    if (!error) {
-      setExpenses((prev) => [...prev, { ...expense, id }]);
-    }
+    setExpenses((prev) => [...prev, created]);
   };
 
   const deleteExpense = async (id: string) => {
-    const { error } = await supabase.from('expenses').delete().eq('id', id);
-    if (!error) {
-      setExpenses((prev) => prev.filter((e) => e.id !== id));
-    }
+    await apiClient.delete(`/api/expenses/${id}`);
+    setExpenses((prev) => prev.filter((e) => e.id !== id));
   };
 
   const addActivity = async (activity: Omit<Activity, 'id'>) => {
-    const id = crypto.randomUUID();
-    const { error } = await supabase.from('activities').insert({
-      id,
+    const created = await apiClient.post<Activity>('/api/activities', {
       trip_id: tripId ?? null,
-      user_id: user?.id,
       name: activity.name,
       date: activity.date,
       time: activity.time,
@@ -99,16 +73,12 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
       category: activity.category,
       notes: activity.notes,
     });
-    if (!error) {
-      setActivities((prev) => [...prev, { ...activity, id }]);
-    }
+    setActivities((prev) => [...prev, created]);
   };
 
   const deleteActivity = async (id: string) => {
-    const { error } = await supabase.from('activities').delete().eq('id', id);
-    if (!error) {
-      setActivities((prev) => prev.filter((a) => a.id !== id));
-    }
+    await apiClient.delete(`/api/activities/${id}`);
+    setActivities((prev) => prev.filter((a) => a.id !== id));
   };
 
   return (

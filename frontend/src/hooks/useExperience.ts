@@ -8,6 +8,9 @@ export const useExperiences = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
+
+  const refetch = useCallback(() => setRefetchTrigger((n) => n + 1), []);
 
   useEffect(() => {
     const fetchExperiences = async () => {
@@ -21,7 +24,7 @@ export const useExperiences = () => {
     };
 
     fetchExperiences();
-  }, []);
+  }, [refetchTrigger]);
 
   useEffect(() => {
     if (!user?.id) {
@@ -93,5 +96,5 @@ export const useExperiences = () => {
     [user?.id, savedIds]
   );
 
-  return { experiences, savedIds, toggleSave, loading };
+  return { experiences, savedIds, toggleSave, loading, refetch };
 };

@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import PageHeader from '@/components/PageHeader/PageHeader';
-
 import UserFilters from '@/components/admin/UserFilters/UserFilters';
 import UsersTable from '@/components/admin/UsersTable/UsersTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useAdmin } from '@/context/AdminProvider';
-import { mockCountryOptions, mockCategoryOptions } from '@/services/admin.mock';
+import { CATEGORY_OPTIONS } from '@/constants/experiences';
 
 import type { AdminUserFilters, CreateExperienceFormData } from '@/types/admin.types';
 
@@ -37,7 +36,12 @@ export default function AdminUsers() {
     }
   }, [outletContext?.isCreateModalRequested]);
 
-  const handleCreateSubmit = (data: CreateExperienceFormData) => {
+  const countryOptions = useMemo(() => {
+    const unique = [...new Set(users.map((u) => u.country).filter(Boolean))].sort();
+    return unique.map((c) => ({ value: c.toLowerCase(), label: c }));
+  }, [users]);
+
+  const handleCreateSubmit = (_data: CreateExperienceFormData) => {
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
@@ -47,12 +51,9 @@ export default function AdminUsers() {
       user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
       user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
       user.id.toLowerCase().includes(filters.search.toLowerCase());
-
     const matchesCountry =
       !filters.country || user.country.toLowerCase() === filters.country.toLowerCase();
-
     const matchesStatus = !filters.status || user.status === filters.status;
-
     return matchesSearch && matchesCountry && matchesStatus;
   });
 
@@ -68,9 +69,8 @@ export default function AdminUsers() {
         <UserFilters
           filters={filters}
           onFilterChange={setFilters}
-          countryOptions={mockCountryOptions}
+          countryOptions={countryOptions}
         />
-
         <UsersTable users={filteredUsers} />
       </div>
 
@@ -78,7 +78,7 @@ export default function AdminUsers() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        categoryOptions={mockCategoryOptions}
+        categoryOptions={CATEGORY_OPTIONS}
       />
 
       <SuccessModal

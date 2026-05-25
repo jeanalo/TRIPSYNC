@@ -10,8 +10,8 @@ import CreateExperienceModal from '@/components/admin/CreateExperienceModal/Crea
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useExperiences } from '@/hooks/useExperience';
-import { mockCategoryOptions } from '@/services/admin.mock';
-import { supabase } from '@/lib/supabase';
+import { CATEGORY_OPTIONS } from '@/constants/experiences';
+import { apiClient } from '@/lib/apiClient';
 import { realtimeService } from '@/services/realtime.service';
 
 import type { CreateExperienceFormData } from '@/types/admin.types';
@@ -21,10 +21,10 @@ interface AdminLayoutOutletContext {
   resetCreateModalRequest: () => void;
 }
 
-const CATEGORY_FILTERS = ['All', ...mockCategoryOptions.map((c) => c.label)] as const;
+const CATEGORY_FILTERS = ['All', ...CATEGORY_OPTIONS.map((c) => c.label)] as const;
 
 export default function AdminExperiences() {
-  const { experiences, loading } = useExperiences();
+  const { experiences, loading, refetch } = useExperiences();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,30 +41,28 @@ export default function AdminExperiences() {
 
   const handleCreateSubmit = async (data: CreateExperienceFormData) => {
     const categoryLabel =
-      mockCategoryOptions.find((opt) => opt.value === data.category)?.label ?? data.category;
+      CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
 
-    const { data: authData } = await supabase.auth.getUser();
+    const toLines = (raw: string) =>
+      raw.split('\n').map((s) => s.trim()).filter(Boolean);
 
-    const { error } = await supabase.from('experiences').insert({
-      name: data.activityName,
-      country: data.country,
-      location: data.location,
-      category: categoryLabel,
-      image: data.imageUrl ?? '',
-      description: data.details ?? '',
-      date: data.date,
-      time: data.time,
-      duration: '',
-      difficulty: 'Easy',
-      highlights: [],
-      included: [],
-      tips: [],
-      eco: '',
-      user_id: authData.user?.id,
-    });
-
-    if (error) {
-      console.error('Failed to create experience:', error);
+    try {
+      await apiClient.post('/api/experiences', {
+        name: data.name,
+        country: data.country,
+        location: data.location,
+        category: categoryLabel,
+        image: data.imageUrl ?? '',
+        description: data.description,
+        duration: data.duration,
+        difficulty: data.difficulty,
+        eco: data.eco ?? '',
+        highlights: toLines(data.highlights ?? '').map((text) => ({ icon: 'Star', text })),
+        included: toLines(data.included ?? ''),
+        tips: toLines(data.tips ?? ''),
+      });
+    } catch (err) {
+      console.error('Failed to create experience:', err);
       return;
     }
 
@@ -72,14 +70,13 @@ export default function AdminExperiences() {
       id: Math.random().toString(36).substring(7),
       country: data.country,
       category: categoryLabel,
-      activityName: data.activityName,
+      name: data.name,
       location: data.location,
-      date: data.date,
-      time: data.time,
-      details: data.details,
+      description: data.description,
       imageUrl: data.imageUrl,
     });
 
+    refetch();
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
@@ -236,7 +233,7 @@ export default function AdminExperiences() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        categoryOptions={mockCategoryOptions}
+        categoryOptions={CATEGORY_OPTIONS}
       />
 
       <SuccessModal

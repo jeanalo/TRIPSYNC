@@ -41,7 +41,7 @@ const defaultTripDetails: TripDetails = {
 const defaultExperiences: Experience[] = [
   {
     id: '1',
-    title: 'Sunset Kayaking',
+    name: 'Sunset Kayaking',
     location: 'Blue Bay',
     category: 'Adventure',
     image: 'https://images.unsplash.com/photo-1595368062405-e4d7840cba14?w=600&q=80',
@@ -49,7 +49,7 @@ const defaultExperiences: Experience[] = [
   },
   {
     id: '2',
-    title: 'Ancient Temple Visit',
+    name: 'Ancient Temple Visit',
     location: 'Old Town',
     category: 'Cultural',
     image: 'https://images.unsplash.com/photo-1598177183224-b3cec6da6b04?w=600&q=80',
@@ -57,7 +57,7 @@ const defaultExperiences: Experience[] = [
   },
   {
     id: '3',
-    title: 'Street Food Tour',
+    name: 'Street Food Tour',
     location: 'Night Market',
     category: 'Chill',
     image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
@@ -65,7 +65,7 @@ const defaultExperiences: Experience[] = [
   },
   {
     id: '4',
-    title: 'Hidden Waterfall Hike',
+    name: 'Hidden Waterfall Hike',
     location: 'National Park',
     category: 'Free Tour',
     image: 'https://images.unsplash.com/photo-1594671733084-66a82cc4304a?w=600&q=80',

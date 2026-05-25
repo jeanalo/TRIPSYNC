@@ -14,7 +14,7 @@ import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 import { useAdmin } from '@/context/AdminProvider';
 import { useAuth } from '@/context/AuthProvider';
 import { supabase } from '@/lib/supabase';
-import { mockCategoryOptions } from '@/services/admin.mock';
+import { CATEGORY_OPTIONS } from '@/constants/experiences';
 
 import type { CreateExperienceFormData, SearchTripsFilters } from '@/types/admin.types';
 
@@ -237,7 +237,7 @@ export default function AdminDashboard() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        categoryOptions={mockCategoryOptions}
+        categoryOptions={CATEGORY_OPTIONS}
       />
 
       <SuccessModal

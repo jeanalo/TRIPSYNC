@@ -1,39 +1,37 @@
-import { Request, Response } from 'express';
-import { getTripsService, updateTripBudgetService, updateTripCountriesService } from './trips.service';
+import { Response } from 'express';
+import { getTripByUserService, upsertTripService } from './trips.service';
+import { AuthRequest } from '../../shared/types';
 
-export const getTrips = (req: Request, res: Response) => {
-  const trips = getTripsService();
-  res.json(trips);
+export const getMyTrip = async (req: AuthRequest, res: Response) => {
+  try {
+    const trip = await getTripByUserService(req.user!.id);
+    if (!trip) return res.status(404).json({ message: 'No trip found' });
+    res.json(trip);
+  } catch {
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
-export const updateBudget = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { budget } = req.body;
-  
-  if (typeof budget !== 'number') {
-    return res.status(400).json({ message: 'Budget must be a number' });
-  }
+export const upsertTrip = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id, departure_country, destination_country, departure_date, arrival_date, budget, jet_lag_plan } = req.body;
 
-  const updatedTrip = updateTripBudgetService(id, { budget });
-  if (!updatedTrip) {
-    return res.status(404).json({ message: 'Trip not found' });
-  }
-  
-  res.json({ message: 'Budget updated', trip: updatedTrip });
-};
+    if (!departure_country || !destination_country || !departure_date || !arrival_date) {
+      return res.status(400).json({ message: 'Missing required fields: departure_country, destination_country, departure_date, arrival_date' });
+    }
 
-export const updateCountries = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { originCountry, destinationCountry } = req.body;
-  
-  if (!originCountry || !destinationCountry) {
-    return res.status(400).json({ message: 'Missing country data' });
-  }
+    const trip = await upsertTripService(req.user!.id, {
+      id,
+      departure_country,
+      destination_country,
+      departure_date,
+      arrival_date,
+      budget: Number(budget) || 0,
+      jet_lag_plan,
+    });
 
-  const updatedTrip = updateTripCountriesService(id, { originCountry, destinationCountry });
-  if (!updatedTrip) {
-    return res.status(404).json({ message: 'Trip not found' });
+    res.json(trip);
+  } catch {
+    res.status(500).json({ message: 'Internal server error' });
   }
-  
-  res.json({ message: 'Countries updated', trip: updatedTrip });
 };

@@ -1,9 +1,12 @@
+import http from 'http';
 import app from './app';
-import { config } from './config';
+import { PORT, NODE_ENV } from './config';
 
 const startServer = () => {
-  app.listen(config.port, () => {
-    console.log(`TripSync backend running in ${config.nodeEnv} mode on port ${config.port}`);
+  const httpServer = http.createServer(app);
+
+  httpServer.listen(PORT, () => {
+    console.log(`Server URL: http://localhost:${PORT}`);
   });
 };
 

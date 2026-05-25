@@ -6,14 +6,14 @@ export const getAdminTripsService = async (): Promise<AdminTripsResponse> => {
     supabase
       .from('trips')
       .select('id, user_id, departure_country, destination_country, departure_date, arrival_date, budget'),
-    supabase.from('profiles').select('id, full_name'),
+    supabase.from('profiles').select('id, name'),
   ]);
 
   if (tripsError) throw tripsError;
 
   const profileMap: Record<string, string> = {};
   for (const p of profilesData ?? []) {
-    profileMap[p.id] = p.full_name ?? `User ${String(p.id).slice(0, 8)}`;
+    profileMap[p.id] = p.name ?? `User ${String(p.id).slice(0, 8)}`;
   }
 
   const today = new Date().toISOString().split('T')[0];
@@ -61,7 +61,7 @@ export const getAdminTripsService = async (): Promise<AdminTripsResponse> => {
 
 export const getAdminUsersService = async (): Promise<AdminUsersResponse> => {
   const [{ data: profilesData, error }, { data: allTrips }] = await Promise.all([
-    supabase.from('profiles').select('id, full_name, email, avatar_url, country, created_at, role'),
+    supabase.from('profiles').select('id, name, email, avatar_url, created_at, role'),
     supabase.from('trips').select('user_id'),
   ]);
 
@@ -74,13 +74,13 @@ export const getAdminUsersService = async (): Promise<AdminUsersResponse> => {
 
   const users = (profilesData ?? []).map((p) => ({
     id: p.id,
-    name: p.full_name ?? `User ${String(p.id).slice(0, 8)}`,
+    name: p.name ?? `User ${String(p.id).slice(0, 8)}`,
     email: p.email ?? '',
     avatar: p.avatar_url ?? `https://i.pravatar.cc/150?u=${p.id}`,
-    country: p.country ?? '',
+    country: '',
     joinDate: p.created_at ? String(p.created_at).slice(0, 10) : '',
     tripCount: tripCountByUser[p.id] ?? 0,
-    status: (p.role === 'admin' ? 'active' : 'active') as 'active' | 'inactive',
+    status: 'active' as 'active' | 'inactive',
   }));
 
   const nonAdminUsers = users.filter((_, i) => (profilesData ?? [])[i]?.role !== 'admin');

@@ -17,11 +17,17 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
       return res.status(401).json({ message: 'Invalid token' });
     }
 
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
     req.user = {
       id: user.id,
       email: user.email ?? '',
-      name: (user.user_metadata?.name as string) ?? user.email ?? '',
-      role: (user.user_metadata?.role as UserRole) ?? 'user',
+      name: (user.user_metadata?.full_name as string) ?? user.email ?? '',
+      role: (profile?.role as UserRole) ?? 'user',
     };
 
     next();

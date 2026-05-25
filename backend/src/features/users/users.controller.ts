@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
 import { getUsersService, updateUserService } from './users.service';
 import { AuthRequest } from '../../shared/types';
 
-export const getUsers = (req: Request, res: Response) => {
-  const users = getUsersService();
-  res.json(users);
+export const getUsers = async (_req: Request, res: Response) => {
+  try {
+    const users = await getUsersService();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error obteniendo usuarios' });
+  }
 };
 
 export const updateUser = async (req: AuthRequest, res: Response) => {
@@ -16,15 +19,7 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
     return res.status(403).json({ message: 'Forbidden' });
   }
 
-  let hashedPassword;
-  if (password) {
-    hashedPassword = await bcrypt.hash(password, 10);
-  }
-
-  const updatedUser = updateUserService(id, {
-    fullName,
-    password: hashedPassword
-  });
+  const updatedUser = await updateUserService(id, { fullName, password });
 
   if (!updatedUser) {
     return res.status(404).json({ message: 'User not found' });

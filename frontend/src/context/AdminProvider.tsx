@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiClient } from '../lib/apiClient';
-import {
-  mockAdminExperiences,
-  mockAdminExperiencesStats,
-  mockAdminUserStats,
-  mockAdminTripsStats,
-} from '../services/admin.mock';
+import { getAdminTripsService, getAdminUsersService } from '../services/admin.service';
+import { mockAdminExperiences, mockAdminExperiencesStats } from '../services/admin.mock';
 import type {
   AdminTrip,
   AdminTripsStats,
@@ -15,17 +10,6 @@ import type {
   AdminUserStats,
   VisitedCountry,
 } from '../types/admin.types';
-
-interface BackendTripsResponse {
-  trips: AdminTrip[];
-  stats: AdminTripsStats;
-  topCountries: VisitedCountry[];
-}
-
-interface BackendUsersResponse {
-  users: AdminUser[];
-  stats: { totalUsers: number; activeUsers: number };
-}
 
 interface DashboardStats {
   activeUsers: number;
@@ -41,27 +25,48 @@ interface AdminContextType {
   users: AdminUser[];
   usersStats: AdminUserStats;
   dashboardStats: DashboardStats;
+  loading: boolean;
+  error: string | null;
 }
+
+const emptyTripsStats: AdminTripsStats = {
+  totalTrips: 0,
+  activeTrips: 0,
+  completedTrips: 0,
+  topDestination: '—',
+};
+
+const emptyUserStats: AdminUserStats = {
+  totalUsers: 0,
+  activeUsers: 0,
+  newThisMonth: 0,
+  topCountry: '—',
+};
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [trips, setTrips] = useState<AdminTrip[]>([]);
-  const [tripsStats, setTripsStats] = useState<AdminTripsStats>(mockAdminTripsStats);
+  const [tripsStats, setTripsStats] = useState<AdminTripsStats>(emptyTripsStats);
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [usersStats, setUsersStats] = useState<AdminUserStats>(mockAdminUserStats);
+  const [usersStats, setUsersStats] = useState<AdminUserStats>(emptyUserStats);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     activeUsers: 0,
     activeTrips: 0,
     topCountries: [],
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const [tripsData, usersData] = await Promise.all([
-          apiClient.get<BackendTripsResponse>('/api/admin/trips'),
-          apiClient.get<BackendUsersResponse>('/api/admin/users'),
+          getAdminTripsService(),
+          getAdminUsersService(),
         ]);
 
         setTrips(tripsData.trips);
@@ -80,6 +85,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         }));
       } catch (err) {
         console.error('Error fetching admin dashboard data:', err);
+        setError(err instanceof Error ? err.message : 'Error loading admin data');
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
@@ -94,6 +102,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         users,
         usersStats,
         dashboardStats,
+        loading,
+        error,
       }}
     >
       {children}

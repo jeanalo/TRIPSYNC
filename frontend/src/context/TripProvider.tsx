@@ -111,20 +111,22 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
 
     (async () => {
       try {
-        const data = await apiClient.get<BackendTrip>('/api/trips/me');
-        setTripId(data.id);
-        setTripDetailsState({
-          departureCountry: data.departure_country ?? '',
-          destinationCountry: data.destination_country ?? '',
-          departureDate: data.departure_date ?? '',
-          arrivalDate: data.arrival_date ?? '',
-          budget: Number(data.budget) || 0,
-        });
-        if (data.jet_lag_plan) {
-          try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
+        const data = await apiClient.get<BackendTrip | undefined>('/api/trips/me');
+        if (data) {
+          setTripId(data.id);
+          setTripDetailsState({
+            departureCountry: data.departure_country ?? '',
+            destinationCountry: data.destination_country ?? '',
+            departureDate: data.departure_date ?? '',
+            arrivalDate: data.arrival_date ?? '',
+            budget: Number(data.budget) || 0,
+          });
+          if (data.jet_lag_plan) {
+            try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
+          }
         }
       } catch {
-        // 404 means no trip yet — that's fine
+        // network or server error
       }
 
       const savedExperiences = localStorage.getItem(getKey('experiences', user.email));

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getAdminTripsService, getAdminUsersService } from '../services/admin.service';
 import { mockAdminExperiences, mockAdminExperiencesStats } from '../services/admin.mock';
+import { useAuth } from './AuthProvider';
 import type {
   AdminTrip,
   AdminTripsStats,
@@ -46,6 +47,7 @@ const emptyUserStats: AdminUserStats = {
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {
+  const { user, loading: authLoading } = useAuth();
   const [trips, setTrips] = useState<AdminTrip[]>([]);
   const [tripsStats, setTripsStats] = useState<AdminTripsStats>(emptyTripsStats);
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -59,6 +61,12 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
+    if (user?.role !== 'admin') {
+      setLoading(false);
+      return;
+    }
+
     (async () => {
       try {
         setLoading(true);
@@ -90,7 +98,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [user, authLoading]);
 
   return (
     <AdminContext.Provider

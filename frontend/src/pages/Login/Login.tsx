@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
 import FormField from '../../components/FormField/FormField';
@@ -7,6 +7,7 @@ import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +20,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(email, password);
-      navigate('/app');
+      navigate(searchParams.get('redirect') ?? '/app');
     } catch (err: unknown) {
       setError(
         err instanceof Error

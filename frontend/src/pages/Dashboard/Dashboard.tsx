@@ -1,18 +1,47 @@
+import { useState } from 'react';
 import { useTrip } from '../../context/TripProvider';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import { useAuth } from '../../context/AuthProvider';
-import { Plane, Moon, CalendarDays, Share2, Map, PieChart } from 'lucide-react';
+import { Plane, Moon, CalendarDays, Share2, Map, PieChart, AlertCircle } from 'lucide-react';
+import { apiClient } from '../../lib/apiClient';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
 import SummaryCard from '../../components/SummaryCard/SummaryCard';
+import ShareTripModal from '../../components/ShareTripModal/ShareTripModal';
+import AlertModal from '../../components/AlertModal/AlertModal';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { tripDetails } = useTrip();
+  const { tripDetails, tripId } = useTrip();
   const { expenses, activities } = useExpenseActivity();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState('');
+  const [sharing, setSharing] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+
+  const handleShareTrip = async () => {
+    if (!tripId) {
+      setAlertMsg('Set up your trip first before sharing it.');
+      return;
+    }
+    setSharing(true);
+    try {
+      const { token } = await apiClient.post<{ token: string }>(
+        `/api/trips/${tripId}/invite`,
+        {}
+      );
+      setInviteUrl(`https://tripsync-xoxn.vercel.app/join-trip?token=${token}`);
+      setModalOpen(true);
+    } catch (err) {
+      setAlertMsg(err instanceof Error ? err.message : 'Could not generate invite link.');
+    } finally {
+      setSharing(false);
+    }
+  };
 
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remainingBudget = (Number(tripDetails.budget) || 0) - totalSpent;
@@ -52,8 +81,29 @@ const Dashboard = () => {
             {tripDetails.destinationCountry || 'your next destination'}.
           </>
         }
-        action={<ActionButton icon={<Share2 size={20} />}>Share Trip</ActionButton>}
+        action={
+          <ActionButton icon={<Share2 size={20} />} onClick={handleShareTrip} disabled={sharing}>
+            {sharing ? 'Generating...' : 'Share Trip'}
+          </ActionButton>
+        }
       />
+
+      <ShareTripModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        inviteUrl={inviteUrl}
+      />
+
+      <AlertModal
+        isOpen={!!alertMsg}
+        onClose={() => setAlertMsg('')}
+        color="#0066D2"
+        bg="#f0f6ff"
+        icon={<AlertCircle size={28} color="#0066D2" />}
+        actionLabel="Got it"
+      >
+        <p className="text-[15px] font-semibold text-[#0066D2]">{alertMsg}</p>
+      </AlertModal>
 
       {/* Content area */}
       <div className="flex flex-col gap-[30px] px-4 lg:px-12">

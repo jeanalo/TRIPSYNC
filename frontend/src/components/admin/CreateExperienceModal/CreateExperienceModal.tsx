@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronDown, Search, Image as ImageIcon, Loader2 } from 'lucide-react';
@@ -28,6 +28,15 @@ export default function CreateExperienceModal({
   const { countries, loading: loadingCountries } = useCountries();
   const { register, handleSubmit, reset, setValue, watch } = useForm<CreateExperienceFormData>();
 
+  const [countrySearch, setCountrySearch] = useState('');
+  const [countryOpen, setCountryOpen] = useState(false);
+  const countryRef = useRef<HTMLDivElement>(null);
+
+  const filteredCountries = useMemo(() => {
+    const q = countrySearch.toLowerCase();
+    return q ? countries.filter((c) => c.name.toLowerCase().includes(q)) : countries;
+  }, [countries, countrySearch]);
+
   const [imageQuery, setImageQuery] = useState('');
   const [imageResults, setImageResults] = useState<UnsplashImage[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -48,10 +57,20 @@ export default function CreateExperienceModal({
   };
 
   useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!countryRef.current?.contains(e.target as Node)) setCountryOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       reset();
       setImageQuery('');
       setImageResults([]);
+      setCountrySearch('');
+      setCountryOpen(false);
     }
   }, [isOpen, reset]);
 
@@ -122,23 +141,48 @@ export default function CreateExperienceModal({
                 />
 
                 {/* Country */}
-                <div className="relative">
-                  <select
-                    {...register('country', { required: true })}
-                    className={selectClasses}
+                <input type="hidden" {...register('country', { required: true })} />
+                <div ref={countryRef} className="relative">
+                  <input
+                    type="text"
+                    value={countrySearch}
+                    onFocus={() => { setCountryOpen(true); setCountrySearch(''); }}
+                    onChange={(e) => {
+                      setCountrySearch(e.target.value);
+                      setCountryOpen(true);
+                      if (!e.target.value) setValue('country', '');
+                    }}
+                    placeholder={loadingCountries ? 'Loading countries…' : 'Country'}
                     disabled={loadingCountries}
-                  >
-                    <option value="">{loadingCountries ? 'Loading countries…' : 'Country'}</option>
-                    {countries.map((c) => (
-                      <option key={c.name} value={c.name}>
-                        {c.flag} {c.name}
-                      </option>
-                    ))}
-                  </select>
+                    className={inputClasses}
+                  />
                   <ChevronDown
                     size={16}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
                   />
+                  {countryOpen && (
+                    <div className="absolute left-0 top-full z-50 mt-1 max-h-[220px] w-full overflow-y-auto rounded-xl border border-[#daa520]/50 bg-white shadow-lg custom-scrollbar">
+                      {loadingCountries ? (
+                        <p className="p-3 text-center text-[14px] text-[#999]">Loading...</p>
+                      ) : filteredCountries.length === 0 ? (
+                        <p className="p-3 text-center text-[14px] text-[#999]">No results</p>
+                      ) : filteredCountries.map((c) => (
+                        <button
+                          key={c.name}
+                          type="button"
+                          onClick={() => {
+                            setValue('country', c.name, { shouldValidate: true });
+                            setCountrySearch(c.name);
+                            setCountryOpen(false);
+                          }}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#1CA698]/10"
+                        >
+                          <span className="text-lg">{c.flag}</span>
+                          <span className="text-[14px] text-gray-800">{c.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Location */}

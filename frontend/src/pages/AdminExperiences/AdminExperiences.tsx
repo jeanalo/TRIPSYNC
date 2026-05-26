@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { BarChart3, CheckCircle2, Layers, Search, MapPin, Leaf } from 'lucide-react';
 
@@ -10,8 +10,8 @@ import CreateExperienceModal from '@/components/admin/CreateExperienceModal/Crea
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useExperiences } from '@/hooks/useExperience';
-import { mockCategoryOptions } from '@/services/admin.mock';
-import { supabase } from '@/lib/supabase';
+import { CATEGORY_OPTIONS } from '@/constants/experiences';
+import { apiClient } from '@/lib/apiClient';
 import { realtimeService } from '@/services/realtime.service';
 
 import type { CreateExperienceFormData } from '@/types/admin.types';
@@ -21,12 +21,15 @@ interface AdminLayoutOutletContext {
   resetCreateModalRequest: () => void;
 }
 
-const CATEGORY_FILTERS = ['All', ...mockCategoryOptions.map((c) => c.label)] as const;
+const CATEGORY_FILTERS = ['All', ...CATEGORY_OPTIONS.map((c) => c.label)] as const;
 
 export default function AdminExperiences() {
-  const { experiences, loading } = useExperiences();
+  const navigate = useNavigate();
+  const { experiences, loading, refetch } = useExperiences();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -41,30 +44,31 @@ export default function AdminExperiences() {
 
   const handleCreateSubmit = async (data: CreateExperienceFormData) => {
     const categoryLabel =
-      mockCategoryOptions.find((opt) => opt.value === data.category)?.label ?? data.category;
+      CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
 
-    const { data: authData } = await supabase.auth.getUser();
+    const toLines = (raw: string) =>
+      raw.split('\n').map((s) => s.trim()).filter(Boolean);
 
-    const { error } = await supabase.from('experiences').insert({
-      name: data.activityName,
-      country: data.country,
-      location: data.location,
-      category: categoryLabel,
-      image: data.imageUrl ?? '',
-      description: data.details ?? '',
-      date: data.date,
-      time: data.time,
-      duration: '',
-      difficulty: 'Easy',
-      highlights: [],
-      included: [],
-      tips: [],
-      eco: '',
-      user_id: authData.user?.id,
-    });
-
-    if (error) {
-      console.error('Failed to create experience:', error);
+    setIsCreating(true);
+    setCreateError(null);
+    try {
+      await apiClient.post('/api/experiences', {
+        name: data.name,
+        country: data.country,
+        location: data.location,
+        category: categoryLabel,
+        image: data.imageUrl ?? '',
+        description: data.description,
+        duration: data.duration,
+        difficulty: data.difficulty,
+        eco: data.eco ?? '',
+        highlights: toLines(data.highlights ?? '').map((text) => ({ icon: 'Star', text })),
+        included: toLines(data.included ?? ''),
+        tips: toLines(data.tips ?? ''),
+      });
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'Failed to create experience');
+      setIsCreating(false);
       return;
     }
 
@@ -72,14 +76,14 @@ export default function AdminExperiences() {
       id: Math.random().toString(36).substring(7),
       country: data.country,
       category: categoryLabel,
-      activityName: data.activityName,
+      name: data.name,
       location: data.location,
-      date: data.date,
-      time: data.time,
-      details: data.details,
+      description: data.description,
       imageUrl: data.imageUrl,
     });
 
+    refetch();
+    setIsCreating(false);
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
@@ -205,17 +209,12 @@ export default function AdminExperiences() {
                     <span className="text-[13px] text-white">{exp.category}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 mt-auto pt-2">
-                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
-                    {exp.country}
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
-                    {exp.duration}
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
-                    {exp.difficulty}
-                  </span>
-                </div>
+                <button
+                  onClick={() => navigate(`/admin/experiences/${exp.id}`)}
+                  className="mt-auto w-full bg-[#F2B705] text-black font-semibold text-[15px] py-2.5 rounded-[10px] hover:bg-[#e0a800] transition-colors cursor-pointer border-none"
+                >
+                  View More
+                </button>
               </div>
             </motion.div>
           ))}
@@ -236,7 +235,9 @@ export default function AdminExperiences() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        categoryOptions={mockCategoryOptions}
+        categoryOptions={CATEGORY_OPTIONS}
+        isSubmitting={isCreating}
+        submitError={createError}
       />
 
       <SuccessModal

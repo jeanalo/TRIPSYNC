@@ -55,6 +55,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="experiences" element={<AdminExperiences />} />
+          <Route path="experiences/:id" element={<ExperienceDetail />} />
           <Route path="trips" element={<AdminTrips />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="analytics" element={<AdminAnalytics />} />

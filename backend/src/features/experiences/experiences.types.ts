@@ -1,21 +1,30 @@
 export interface Experience {
   id: string;
-  title: string;
+  name: string;
+  country: string;
   location: string;
   category: string;
-  description?: string;
-  country?: string;
-  city?: string;
-  price?: number;
-  imageUrl?: string;
+  image: string;
+  duration: string;
+  difficulty: string;
+  description: string;
+  eco: string;
+  highlights: { icon: string; text: string }[];
+  included: string[];
+  tips: string[];
 }
 
 export interface CreateExperienceRequest {
-  title: string;
-  description: string;
+  name: string;
   country: string;
-  city: string;
-  price: number;
+  location: string;
   category: string;
-  imageUrl: string;
+  image: string;
+  duration: string;
+  difficulty: string;
+  description: string;
+  eco: string;
+  highlights: { icon: string; text: string }[];
+  included: string[];
+  tips: string[];
 }

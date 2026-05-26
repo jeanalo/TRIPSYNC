@@ -1,19 +1,18 @@
+import { supabase } from '../../config/supabase';
 import { Experience, CreateExperienceRequest } from './experiences.types';
 
-const experiencesMock: Experience[] = [
-  { id: "1", title: "Sunset Kayaking", location: "Blue Bay", category: "Adventure" }
-];
-
-export const getExperiencesService = (): Experience[] => {
-  return experiencesMock;
+export const getExperiencesService = async (): Promise<Experience[]> => {
+  const { data, error } = await supabase.from('experiences').select('*');
+  if (error) throw error;
+  return data as Experience[];
 };
 
-export const createExperienceService = (data: CreateExperienceRequest): Experience => {
-  const newExp: Experience = {
-    id: Math.random().toString(36).substring(7),
-    ...data,
-    location: `${data.city}, ${data.country}`
-  };
-  experiencesMock.push(newExp);
-  return newExp;
+export const createExperienceService = async (payload: CreateExperienceRequest): Promise<Experience> => {
+  const { data, error } = await supabase
+    .from('experiences')
+    .insert(payload)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Experience;
 };

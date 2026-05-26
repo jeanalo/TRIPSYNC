@@ -22,12 +22,12 @@ export default function RealtimeRecommendationToast({
 
   const handleAddToCalendar = () => {
     addActivity({
-      name: payload.activityName,
-      date: payload.date,
-      time: payload.time,
+      name: payload.name,
+      date: new Date().toISOString().split('T')[0],
+      time: '',
       location: payload.location,
       category: payload.category,
-      notes: payload.details || '',
+      notes: payload.description || '',
     });
     setIsAdded(true);
     setTimeout(() => {
@@ -66,7 +66,7 @@ export default function RealtimeRecommendationToast({
               <div className="w-full h-[120px] rounded-xl overflow-hidden mb-1">
                 <img
                   src={payload.imageUrl}
-                  alt={payload.activityName}
+                  alt={payload.name}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -79,7 +79,7 @@ export default function RealtimeRecommendationToast({
                 </span>
               </div>
               <h3 className="text-[18px] font-bold text-[#333] leading-tight">
-                {payload.activityName}
+                {payload.name}
               </h3>
               <p className="text-[13px] text-[#666] flex items-center gap-1.5 mt-1.5 font-medium">
                 <MapPin size={14} className="text-[#1CA698]" />
@@ -87,9 +87,9 @@ export default function RealtimeRecommendationToast({
               </p>
             </div>
 
-            {payload.details && (
+            {payload.description && (
               <p className="text-[13px] text-[#555] line-clamp-2 leading-relaxed">
-                {payload.details}
+                {payload.description}
               </p>
             )}
 

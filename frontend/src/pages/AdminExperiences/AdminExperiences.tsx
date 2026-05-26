@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { BarChart3, CheckCircle2, Layers, Search, MapPin, Leaf } from 'lucide-react';
 
@@ -24,6 +24,7 @@ interface AdminLayoutOutletContext {
 const CATEGORY_FILTERS = ['All', ...CATEGORY_OPTIONS.map((c) => c.label)] as const;
 
 export default function AdminExperiences() {
+  const navigate = useNavigate();
   const { experiences, loading, refetch } = useExperiences();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -208,17 +209,12 @@ export default function AdminExperiences() {
                     <span className="text-[13px] text-white">{exp.category}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 mt-auto pt-2">
-                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
-                    {exp.country}
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
-                    {exp.duration}
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-white/20 text-[12px] text-white font-medium">
-                    {exp.difficulty}
-                  </span>
-                </div>
+                <button
+                  onClick={() => navigate(`/admin/experiences/${exp.id}`)}
+                  className="mt-auto w-full bg-[#F2B705] text-black font-semibold text-[15px] py-2.5 rounded-[10px] hover:bg-[#e0a800] transition-colors cursor-pointer border-none"
+                >
+                  View More
+                </button>
               </div>
             </motion.div>
           ))}

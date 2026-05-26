@@ -14,6 +14,7 @@ import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 import { useAdmin } from '@/context/AdminProvider';
 import { useAuth } from '@/context/AuthProvider';
 import { supabase } from '@/lib/supabase';
+import { apiClient } from '@/lib/apiClient';
 import { CATEGORY_OPTIONS } from '@/constants/experiences';
 
 import type { CreateExperienceFormData, SearchTripsFilters } from '@/types/admin.types';
@@ -34,14 +35,43 @@ export default function AdminDashboard() {
   const { user } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<TripResult[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchedCountry, setSearchedCountry] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleCreateSubmit = (data: CreateExperienceFormData) => {
-    setIsCreateModalOpen(false);
-    setIsSuccessModalOpen(true);
+  const handleCreateSubmit = async (data: CreateExperienceFormData) => {
+    const categoryLabel =
+      CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
+    const toLines = (raw: string) =>
+      raw.split('\n').map((s) => s.trim()).filter(Boolean);
+
+    setIsCreating(true);
+    setCreateError(null);
+    try {
+      await apiClient.post('/api/experiences', {
+        name: data.name,
+        country: data.country,
+        location: data.location,
+        category: categoryLabel,
+        image: data.imageUrl ?? '',
+        description: data.description,
+        duration: data.duration,
+        difficulty: data.difficulty,
+        eco: data.eco ?? '',
+        highlights: toLines(data.highlights ?? '').map((text) => ({ icon: 'Star', text })),
+        included: toLines(data.included ?? ''),
+        tips: toLines(data.tips ?? ''),
+      });
+      setIsCreateModalOpen(false);
+      setIsSuccessModalOpen(true);
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'Failed to create experience');
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleSearch = async (filters: SearchTripsFilters) => {
@@ -238,6 +268,8 @@ export default function AdminDashboard() {
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
         categoryOptions={CATEGORY_OPTIONS}
+        isSubmitting={isCreating}
+        submitError={createError}
       />
 
       <SuccessModal

@@ -27,6 +27,8 @@ export default function AdminExperiences() {
   const { experiences, loading, refetch } = useExperiences();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -46,6 +48,8 @@ export default function AdminExperiences() {
     const toLines = (raw: string) =>
       raw.split('\n').map((s) => s.trim()).filter(Boolean);
 
+    setIsCreating(true);
+    setCreateError(null);
     try {
       await apiClient.post('/api/experiences', {
         name: data.name,
@@ -62,7 +66,8 @@ export default function AdminExperiences() {
         tips: toLines(data.tips ?? ''),
       });
     } catch (err) {
-      console.error('Failed to create experience:', err);
+      setCreateError(err instanceof Error ? err.message : 'Failed to create experience');
+      setIsCreating(false);
       return;
     }
 
@@ -77,6 +82,7 @@ export default function AdminExperiences() {
     });
 
     refetch();
+    setIsCreating(false);
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
@@ -234,6 +240,8 @@ export default function AdminExperiences() {
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
         categoryOptions={CATEGORY_OPTIONS}
+        isSubmitting={isCreating}
+        submitError={createError}
       />
 
       <SuccessModal

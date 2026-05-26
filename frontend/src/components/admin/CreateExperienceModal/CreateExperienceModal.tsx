@@ -9,8 +9,10 @@ import { useCountries } from '@/hooks/useCountries';
 interface CreateExperienceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateExperienceFormData) => void;
+  onSubmit: (data: CreateExperienceFormData) => void | Promise<void>;
   categoryOptions: SelectOption[];
+  isSubmitting?: boolean;
+  submitError?: string | null;
 }
 
 const DIFFICULTY_OPTIONS = ['Easy', 'Moderate', 'Challenging'] as const;
@@ -20,6 +22,8 @@ export default function CreateExperienceModal({
   onClose,
   onSubmit,
   categoryOptions,
+  isSubmitting = false,
+  submitError = null,
 }: CreateExperienceModalProps) {
   const { countries, loading: loadingCountries } = useCountries();
   const { register, handleSubmit, reset, setValue, watch } = useForm<CreateExperienceFormData>();
@@ -291,12 +295,23 @@ export default function CreateExperienceModal({
                 </div>
               </div>
 
-              <div className="px-7 pb-7 pt-2">
+              <div className="px-7 pb-7 pt-2 flex flex-col gap-2">
+                {submitError && (
+                  <p className="text-[13px] text-red-500 text-center">{submitError}</p>
+                )}
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-[#1CA698] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md mt-1"
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl bg-[#1CA698] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md mt-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Create Experience
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    'Create Experience'
+                  )}
                 </button>
               </div>
             </form>

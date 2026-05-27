@@ -18,6 +18,10 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function formatTime(timeStr: string): string {
+  return timeStr.slice(0, 5);
+}
+
 function groupByDate(activities: Activity[]): Record<string, Activity[]> {
   return activities.reduce(
     (acc, act) => {

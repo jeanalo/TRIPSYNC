@@ -10,6 +10,7 @@ import {
   Lightbulb,
   Calendar,
 } from 'lucide-react';
+import SaveButton from '../../components/SaveButton/SaveButton';
 import { motion } from 'motion/react';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
@@ -37,7 +38,7 @@ function resolveHighlightIcon(iconKey: string) {
 const ExperienceDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { experiences, loading } = useExperiences();
+  const { experiences, savedIds, toggleSave, loading } = useExperiences();
 
   const exp = experiences.find((e) => e.id === Number(id));
 
@@ -70,9 +71,17 @@ const ExperienceDetail = () => {
         </button>
 
         <div className="flex flex-col gap-2">
-          <h1 className="text-[30px] font-bold leading-[36px] text-[#0066D2]">
-            {exp.name}
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-[30px] font-bold leading-[36px] text-[#0066D2]">
+              {exp.name}
+            </h1>
+            <SaveButton
+              experienceId={exp.id}
+              savedIds={savedIds}
+              onToggle={toggleSave}
+              variant="detail"
+            />
+          </div>
           <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-1.5">
               <MapPin size={16} className="text-[#0066D2]" />

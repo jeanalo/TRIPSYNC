@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Bookmark, BookmarkCheck, Leaf } from 'lucide-react';
+import { MapPin, Leaf } from 'lucide-react';
+import SaveButton from '../../components/SaveButton/SaveButton';
 import { motion } from 'motion/react';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { useExperiences } from '@/hooks/useExperience';
@@ -76,16 +77,12 @@ const Experiences = () => {
                   alt={exp.name}
                   className="w-full h-full object-cover"
                 />
-                <button
-                  onClick={() => toggleSave(exp.id)}
-                  className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow hover:bg-white transition-colors cursor-pointer border-none"
-                >
-                  {savedIds.has(exp.id) ? (
-                    <BookmarkCheck size={16} className="text-[#0066D2]" />
-                  ) : (
-                    <Bookmark size={16} className="text-[#0066D2]" />
-                  )}
-                </button>
+                <SaveButton
+                  experienceId={exp.id}
+                  savedIds={savedIds}
+                  onToggle={toggleSave}
+                  variant="card"
+                />
               </div>
 
               <div className="flex flex-col gap-3 px-4 pt-4 pb-4 flex-1">

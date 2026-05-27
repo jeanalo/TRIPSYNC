@@ -79,7 +79,7 @@ const Schedule = () => {
                         <div className="flex items-center justify-between py-5">
                           <div className="flex items-center gap-[45px]">
                             <span className="text-[22px] font-bold text-[#0066D2] min-w-[64px]">
-                              {activity.time}
+                              {formatTime(activity.time)}
                             </span>
                             <div className="flex flex-col gap-1">
                               <span className="text-[22px] font-bold text-[#0066D2]">

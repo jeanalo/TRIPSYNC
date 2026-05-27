@@ -12,7 +12,6 @@ import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 import { useExperiences } from '@/hooks/useExperience';
 import { CATEGORY_OPTIONS } from '@/constants/experiences';
 import { apiClient } from '@/lib/apiClient';
-import { realtimeService } from '@/services/realtime.service';
 
 import type { CreateExperienceFormData } from '@/types/admin.types';
 
@@ -71,16 +70,6 @@ export default function AdminExperiences() {
       setIsCreating(false);
       return;
     }
-
-    realtimeService.sendRecommendation(data.country, {
-      id: Math.random().toString(36).substring(7),
-      country: data.country,
-      category: categoryLabel,
-      name: data.name,
-      location: data.location,
-      description: data.description,
-      imageUrl: data.imageUrl,
-    });
 
     refetch();
     setIsCreating(false);

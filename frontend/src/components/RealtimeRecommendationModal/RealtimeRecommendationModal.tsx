@@ -51,7 +51,7 @@ export default function RealtimeRecommendationModal({
                 <Sparkles size={18} />
               </IconBadge>
               <span className="text-[15px] font-bold text-[#0066D2]">
-                Nueva recomendación
+                Nueva experiencia
               </span>
             </div>
             <button
@@ -75,19 +75,21 @@ export default function RealtimeRecommendationModal({
 
           <div className="p-5 flex flex-col gap-3">
             <div>
-              <div className="flex items-center gap-1.5">
-                <Leaf size={14} className="text-[#F2B705] shrink-0" />
-                <span className="text-[13px] font-semibold text-[#0066D2]/70">
-                  {payload.category}
-                </span>
-              </div>
-              <h3 className="mt-2 text-[20px] font-bold text-[#0066D2] leading-tight">
+              <h3 className="text-[20px] font-bold text-[#0066D2] leading-tight">
                 {payload.name}
               </h3>
-              <p className="flex items-center gap-1.5 mt-1.5 text-[13px] text-[#0066D2]/60 font-medium">
-                <MapPin size={14} className="text-[#1CA698] shrink-0" />
-                {payload.location}, {payload.country}
-              </p>
+              <div className="flex items-center gap-3 mt-1.5">
+                <p className="flex items-center gap-1.5 text-[13px] text-[#0066D2]/60 font-medium">
+                  <MapPin size={14} className="text-[#1CA698] shrink-0" />
+                  {payload.location}, {payload.country}
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <Leaf size={13} className="text-[#F2B705] shrink-0" />
+                  <span className="text-[13px] font-semibold text-[#0066D2]/70">
+                    {payload.category}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {payload.description && (

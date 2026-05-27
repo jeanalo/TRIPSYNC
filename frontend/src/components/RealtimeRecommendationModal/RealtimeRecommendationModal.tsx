@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, MapPin, Sparkles } from 'lucide-react';
+import { X, MapPin, Leaf, Sparkles } from 'lucide-react';
 import type { RecommendationNotification } from '@/types/realtime.types';
+import IconBadge from '../IconBadge/IconBadge';
 
 interface RealtimeRecommendationModalProps {
   notification: RecommendationNotification | null;
@@ -37,23 +38,25 @@ export default function RealtimeRecommendationModal({
         />
 
         <motion.div
-          className="relative w-full max-w-[420px] bg-white rounded-2xl shadow-2xl overflow-hidden"
+          className="relative w-full max-w-[420px] bg-white rounded-2xl shadow-xl overflow-hidden"
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 20 }}
           transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="bg-gradient-to-r from-[#0066D2] to-[#1CA698] px-5 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-white">
-              <Sparkles size={17} className="animate-pulse" />
-              <span className="text-[13px] font-bold tracking-widest uppercase">
-                New Recommendation
+          <div className="px-5 py-4 flex items-center justify-between border-b border-[#0066D2]/10">
+            <div className="flex items-center gap-3">
+              <IconBadge color="blue" size="md">
+                <Sparkles size={18} />
+              </IconBadge>
+              <span className="text-[15px] font-bold text-[#0066D2]">
+                Nueva recomendación
               </span>
             </div>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-1 rounded-full"
+              className="text-gray-400 hover:text-gray-600 transition-colors bg-transparent border-none cursor-pointer p-1"
               aria-label="Close"
             >
               <X size={18} />
@@ -72,34 +75,37 @@ export default function RealtimeRecommendationModal({
 
           <div className="p-5 flex flex-col gap-3">
             <div>
-              <span className="px-2.5 py-0.5 bg-[#eafaf1] text-[#27ae60] text-[11px] font-bold rounded-full uppercase tracking-wider">
-                {payload.category}
-              </span>
-              <h3 className="mt-2 text-[20px] font-bold text-[#1a1a1a] leading-tight">
+              <div className="flex items-center gap-1.5">
+                <Leaf size={14} className="text-[#F2B705] shrink-0" />
+                <span className="text-[13px] font-semibold text-[#0066D2]/70">
+                  {payload.category}
+                </span>
+              </div>
+              <h3 className="mt-2 text-[20px] font-bold text-[#0066D2] leading-tight">
                 {payload.name}
               </h3>
-              <p className="flex items-center gap-1.5 mt-1.5 text-[13px] text-[#666] font-medium">
+              <p className="flex items-center gap-1.5 mt-1.5 text-[13px] text-[#0066D2]/60 font-medium">
                 <MapPin size={14} className="text-[#1CA698] shrink-0" />
                 {payload.location}, {payload.country}
               </p>
             </div>
 
             {payload.description && (
-              <p className="text-[13px] text-[#555] line-clamp-3 leading-relaxed">
+              <p className="text-[13px] text-[#0066D2]/60 line-clamp-3 leading-relaxed">
                 {payload.description}
               </p>
             )}
 
-            <div className="flex items-center gap-3 mt-1 pt-4 border-t border-[#f0f2f5]">
+            <div className="flex items-center gap-3 mt-1 pt-4 border-t border-[#0066D2]/10">
               <button
                 onClick={onClose}
-                className="flex-1 py-2.5 rounded-xl bg-[#f5f7fa] text-[#555] text-[13px] font-semibold border-none cursor-pointer hover:bg-[#e8ecf2] transition-colors"
+                className="flex-1 py-2.5 rounded-xl bg-[#0066D2]/5 text-[#0066D2] text-[13px] font-semibold border border-[#0066D2]/20 cursor-pointer hover:bg-[#0066D2]/10 transition-colors"
               >
-                Dismiss
+                Descartar
               </button>
               <button
                 onClick={handleViewMore}
-                className="flex-1 py-2.5 rounded-xl bg-[#0066D2] text-white text-[13px] font-semibold border-none cursor-pointer hover:bg-[#0055b0] transition-colors shadow-sm"
+                className="flex-1 py-2.5 rounded-xl bg-[#0066D2] text-white text-[13px] font-semibold border-none cursor-pointer hover:opacity-90 transition-opacity"
               >
                 Ver más
               </button>

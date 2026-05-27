@@ -135,7 +135,7 @@ const Schedule = () => {
                                 className="text-[#0066D2] shrink-0"
                               />
                               <span>
-                                {formatDate(activity.date)} &middot; {activity.time}
+                                {formatDate(activity.date)} &middot; {formatTime(activity.time)}
                               </span>
                             </div>
                             {activity.location && (

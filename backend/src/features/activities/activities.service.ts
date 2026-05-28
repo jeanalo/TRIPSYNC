@@ -23,6 +23,57 @@ export const getActivitiesByUserService = async (userId: string): Promise<Activi
   }));
 };
 
+export const getActivitiesByTripService = async (tripId: string, userId: string): Promise<Activity[]> => {
+ 
+  const { data: trip, error: tripError } = await supabase
+    .from('trips')
+    .select('id, user_id')
+    .eq('id', tripId)
+    .maybeSingle();
+
+  if (tripError) throw tripError;
+  if (!trip) throw Boom.notFound('Trip not found');
+
+  const isOwner = trip.user_id === userId;
+
+  let isMember = false;
+  if (!isOwner) {
+    const { data: member, error: memberError } = await supabase
+      .from('trip_members')
+      .select('id')
+      .eq('trip_id', tripId)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (memberError) throw memberError;
+    if (member) isMember = true;
+  }
+
+  if (!isOwner && !isMember) {
+    throw Boom.forbidden('Access denied to this trip');
+  }
+
+  
+  const { data, error } = await supabase
+    .from('activities')
+    .select('*')
+    .eq('trip_id', tripId)
+    .order('date', { ascending: true });
+
+  if (error) throw error;
+  return (data ?? []).map((a) => ({
+    id: a.id,
+    user_id: a.user_id,
+    trip_id: a.trip_id ?? null,
+    name: a.name,
+    date: a.date,
+    time: a.time,
+    location: a.location ?? '',
+    category: a.category ?? '',
+    notes: a.notes ?? '',
+  }));
+};
+
 export const createActivityService = async (userId: string, data: CreateActivityRequest): Promise<Activity> => {
   const id = crypto.randomUUID();
   const { data: inserted, error } = await supabase

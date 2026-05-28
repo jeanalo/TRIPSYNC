@@ -31,6 +31,7 @@ export type TripDetails = {
   departureDate: string;
   arrivalDate: string;
   budget: number;
+  userIdOwner?: string;
 };
 
 export type Recommendation = {

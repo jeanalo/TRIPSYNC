@@ -1,11 +1,17 @@
 import Boom from '@hapi/boom';
 import { Response, NextFunction } from 'express';
-import { getActivitiesByUserService, createActivityService, updateActivityService, deleteActivityService } from './activities.service';
+import { getActivitiesByUserService, getActivitiesByTripService, createActivityService, updateActivityService, deleteActivityService } from './activities.service';
 import { AuthRequest } from '../../shared/types';
 
 export const getActivities = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const activities = await getActivitiesByUserService(req.user!.id);
+    const { tripId } = req.query;
+    let activities;
+    if (tripId && typeof tripId === 'string') {
+      activities = await getActivitiesByTripService(tripId, req.user!.id);
+    } else {
+      activities = await getActivitiesByUserService(req.user!.id);
+    }
     res.json(activities);
   } catch (err) {
     next(err);

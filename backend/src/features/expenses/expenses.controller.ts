@@ -1,11 +1,17 @@
 import Boom from '@hapi/boom';
 import { Response, NextFunction } from 'express';
-import { getExpensesByUserService, createExpenseService, deleteExpenseService } from './expenses.service';
+import { getExpensesByUserService, getExpensesByTripService, createExpenseService, deleteExpenseService } from './expenses.service';
 import { AuthRequest } from '../../shared/types';
 
 export const getExpenses = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const expenses = await getExpensesByUserService(req.user!.id);
+    const { tripId } = req.query;
+    let expenses;
+    if (tripId && typeof tripId === 'string') {
+      expenses = await getExpensesByTripService(tripId, req.user!.id);
+    } else {
+      expenses = await getExpensesByUserService(req.user!.id);
+    }
     res.json(expenses);
   } catch (err) {
     next(err);

@@ -25,21 +25,23 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
 
   async function loadExpensesAndActivities() {
     try {
-      const expenseRows = await apiClient.get<Expense[]>('/api/expenses');
+      const url = tripId ? `/api/expenses?tripId=${tripId}` : '/api/expenses';
+      const expenseRows = await apiClient.get<Expense[]>(url);
       setExpenses(expenseRows);
     } catch (err) {
       console.error('Error loading expenses:', err);
     }
 
     try {
-      const activityRows = await apiClient.get<Activity[]>('/api/activities');
+      const url = tripId ? `/api/activities?tripId=${tripId}` : '/api/activities';
+      const activityRows = await apiClient.get<Activity[]>(url);
       setActivities(activityRows);
     } catch (err) {
       console.error('Error loading activities:', err);
     }
   }
 
-  // Load expenses and activities from backend on user change
+  // Load expenses and activities from backend on user change or trip change
   useEffect(() => {
     if (!user?.id) {
       setExpenses([]);
@@ -47,7 +49,7 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
       return;
     }
     loadExpensesAndActivities();
-  }, [user?.id]);
+  }, [user?.id, tripId]);
 
   const addExpense = async (expense: Omit<Expense, 'id'>) => {
     const created = await apiClient.post<Expense>('/api/expenses', {

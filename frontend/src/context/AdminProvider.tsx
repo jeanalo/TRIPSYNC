@@ -75,7 +75,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       const [tripsData, usersData, expResult] = await Promise.all([
         getAdminTripsService(),
         getAdminUsersService(),
-        supabase.from('experiences').select('id, name, country, location, category, duration, difficulty, image'),
+        supabase
+          .from('experiences')
+          .select('id, name, country, location, category, duration, difficulty, image'),
       ]);
 
       setTrips(tripsData.trips);

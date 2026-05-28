@@ -1,6 +1,6 @@
 import Boom from '@hapi/boom';
 import { Response, NextFunction } from 'express';
-import { getActivitiesByUserService, getActivitiesByTripService, createActivityService, deleteActivityService } from './activities.service';
+import { getActivitiesByUserService, getActivitiesByTripService, createActivityService, updateActivityService, deleteActivityService } from './activities.service';
 import { AuthRequest } from '../../shared/types';
 
 export const getActivities = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -36,6 +36,30 @@ export const createActivity = async (req: AuthRequest, res: Response, next: Next
       trip_id: trip_id ?? null,
     });
     res.status(201).json(activity);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateActivity = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const { name, date, time, location, category, notes, trip_id } = req.body;
+
+    if (!name || !date || !time) {
+      return next(Boom.badRequest('Missing required fields: name, date, time'));
+    }
+
+    const activity = await updateActivityService(id, req.user!.id, {
+      name,
+      date,
+      time,
+      location,
+      category,
+      notes,
+      trip_id: trip_id ?? null,
+    });
+    res.json(activity);
   } catch (err) {
     next(err);
   }

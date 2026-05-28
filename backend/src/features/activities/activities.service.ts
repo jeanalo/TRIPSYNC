@@ -96,6 +96,27 @@ export const createActivityService = async (userId: string, data: CreateActivity
   return inserted;
 };
 
+export const updateActivityService = async (id: string, userId: string, data: CreateActivityRequest): Promise<Activity> => {
+  const { data: updated, error } = await supabase
+    .from('activities')
+    .update({
+      name: data.name,
+      date: data.date,
+      time: data.time,
+      location: data.location ?? '',
+      category: data.category ?? '',
+      notes: data.notes ?? '',
+    })
+    .eq('id', id)
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  if (!updated) throw Boom.notFound('Activity not found');
+  return updated;
+};
+
 export const deleteActivityService = async (id: string, userId: string): Promise<void> => {
   const { error, count } = await supabase
     .from('activities')

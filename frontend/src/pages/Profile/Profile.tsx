@@ -80,7 +80,7 @@ const Profile = () => {
                         className="w-full text-[20px] leading-[36px] text-[#1CA698] outline-none bg-transparent"
                         value={passwordValue}
                         onChange={(e) => setPasswordValue(e.target.value)}
-                        placeholder="Nueva contraseña"
+                        placeholder="New password"
                       />
                       <button
                         type="button"
@@ -100,7 +100,7 @@ const Profile = () => {
               icon={isEditing ? <Save size={24} /> : <Settings size={24} />}
               onClick={handleEditSave}
             >
-              {isEditing ? 'Guardar cambios' : 'Edit Profile'}
+              {isEditing ? 'Save changes' : 'Edit Profile'}
             </SubmitButton>
           </div>
         </FormCard>

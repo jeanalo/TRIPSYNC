@@ -30,7 +30,10 @@ const EditActivity = () => {
   });
 
   useEffect(() => {
-    if (!activity) return;
+    if (!activity) {
+      navigate('/app/schedule');
+      return;
+    }
     reset({
       name: activity.name,
       date: activity.date,

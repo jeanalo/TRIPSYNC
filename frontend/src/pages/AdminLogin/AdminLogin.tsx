@@ -31,7 +31,7 @@ const AdminLogin = () => {
       navigate('/admin');
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : 'Error al iniciar sesión como administrador.'
+        err instanceof Error ? err.message : 'Admin login failed. Please check your credentials.'
       );
     } finally {
       setIsLoading(false);

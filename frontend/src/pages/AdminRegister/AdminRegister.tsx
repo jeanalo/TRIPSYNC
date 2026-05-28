@@ -39,7 +39,7 @@ const AdminRegister = () => {
       navigate('/admin/login');
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : 'Error al crear la cuenta de administrador.'
+        err instanceof Error ? err.message : 'Failed to create admin account. Please try again.'
       );
     } finally {
       setIsLoading(false);

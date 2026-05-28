@@ -23,7 +23,7 @@ const Register = () => {
       navigate('/login');
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : 'Error al crear la cuenta. Intenta de nuevo.'
+        err instanceof Error ? err.message : 'Failed to create account. Please try again.'
       );
     } finally {
       setIsLoading(false);

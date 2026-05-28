@@ -65,7 +65,7 @@ export default function AdminUsers() {
         className="mb-7"
       />
 
-      <div className="bg-[#F5F7FA] rounded-3xl p-1">
+      <div className="px-4 lg:px-12">
         <UserFilters
           filters={filters}
           onFilterChange={setFilters}

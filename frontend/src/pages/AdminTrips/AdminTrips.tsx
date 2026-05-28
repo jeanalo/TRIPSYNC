@@ -68,7 +68,7 @@ export default function AdminTrips() {
         className="mb-7"
       />
 
-      <div className="bg-[#F5F7FA] rounded-3xl p-1">
+      <div className="px-4 lg:px-12">
         <TripsFilters
           filters={filters}
           onFilterChange={setFilters}

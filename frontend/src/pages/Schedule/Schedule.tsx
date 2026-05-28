@@ -38,6 +38,11 @@ const Schedule = () => {
   const { activities, deleteActivity } = useExpenseActivity();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  const handleDelete = async (id: string) => {
+    await deleteActivity(id);
+    if (selectedId === id) setSelectedId(null);
+  };
+
   const grouped = groupByDate(activities);
   const sortedDates = Object.keys(grouped).sort();
 

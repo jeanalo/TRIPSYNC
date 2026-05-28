@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, CalendarDays, MapPin, Tag, FileText, Trash2 } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Tag, FileText, Trash2, Pencil } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import type { Activity } from '../../types/travel.types';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, CalendarDays, MapPin, Tag, FileText } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Tag, FileText, Trash2, Pencil } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import type { Activity } from '../../types/travel.types';
@@ -18,6 +18,10 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function formatTime(timeStr: string): string {
+  return timeStr.slice(0, 5);
+}
+
 function groupByDate(activities: Activity[]): Record<string, Activity[]> {
   return activities.reduce(
     (acc, act) => {
@@ -31,8 +35,14 @@ function groupByDate(activities: Activity[]): Record<string, Activity[]> {
 
 const Schedule = () => {
   const navigate = useNavigate();
-  const { activities } = useExpenseActivity();
+  const { activities, deleteActivity } = useExpenseActivity();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Delete this activity?')) return;
+    await deleteActivity(id);
+    if (selectedId === id) setSelectedId(null);
+  };
 
   const grouped = groupByDate(activities);
   const sortedDates = Object.keys(grouped).sort();
@@ -75,7 +85,7 @@ const Schedule = () => {
                         <div className="flex items-center justify-between py-5">
                           <div className="flex items-center gap-[45px]">
                             <span className="text-[22px] font-bold text-[#0066D2] min-w-[64px]">
-                              {activity.time}
+                              {formatTime(activity.time)}
                             </span>
                             <div className="flex flex-col gap-1">
                               <span className="text-[22px] font-bold text-[#0066D2]">
@@ -104,17 +114,35 @@ const Schedule = () => {
                               </div>
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors shrink-0"
-                            onClick={() =>
-                              setSelectedId(
-                                selectedId === activity.id ? null : activity.id
-                              )
-                            }
-                          >
-                            {selectedId === activity.id ? 'Close' : 'Details'}
-                          </button>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 bg-[#0066D2] text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#005ab8] transition-colors"
+                              onClick={() => navigate(`/app/schedule/edit/${activity.id}`)}
+                            >
+                              <Pencil size={18} />
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 bg-red-500 text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-red-600 transition-colors"
+                              onClick={() => handleDelete(activity.id)}
+                            >
+                              <Trash2 size={18} />
+                              Delete
+                            </button>
+                            <button
+                              type="button"
+                              className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors"
+                              onClick={() =>
+                                setSelectedId(
+                                  selectedId === activity.id ? null : activity.id
+                                )
+                              }
+                            >
+                              {selectedId === activity.id ? 'Close' : 'Details'}
+                            </button>
+                          </div>
                         </div>
                         {selectedId === activity.id && (
                           <motion.div
@@ -131,7 +159,7 @@ const Schedule = () => {
                                 className="text-[#0066D2] shrink-0"
                               />
                               <span>
-                                {formatDate(activity.date)} &middot; {activity.time}
+                                {formatDate(activity.date)} &middot; {formatTime(activity.time)}
                               </span>
                             </div>
                             {activity.location && (

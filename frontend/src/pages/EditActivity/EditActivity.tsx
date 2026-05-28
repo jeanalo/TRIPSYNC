@@ -21,7 +21,7 @@ const CATEGORIES = ['Free Tour', 'Adventure', 'Cultural', 'Chill', 'Food', 'Tran
 
 const EditActivity = () => {
   const { id } = useParams<{ id: string }>();
-  const { activities } = useExpenseActivity();
+  const { activities, updateActivity } = useExpenseActivity();
   const navigate = useNavigate();
   const activity = activities.find((a) => a.id === id);
 
@@ -41,7 +41,9 @@ const EditActivity = () => {
     });
   }, [activity, reset]);
 
-  const onSubmit = async (_data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
+    if (!id) return;
+    await updateActivity(id, data);
     navigate('/app/schedule');
   };
 

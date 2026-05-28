@@ -36,6 +36,7 @@ const defaultTripDetails: TripDetails = {
   departureDate: '',
   arrivalDate: '',
   budget: 0,
+  userIdOwner: '',
 };
 
 const defaultExperiences: Experience[] = [
@@ -108,6 +109,7 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
           departureDate: data.departure_date ?? '',
           arrivalDate: data.arrival_date ?? '',
           budget: Number(data.budget) || 0,
+          userIdOwner: data.user_id,
         });
         if (data.jet_lag_plan) {
           try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }

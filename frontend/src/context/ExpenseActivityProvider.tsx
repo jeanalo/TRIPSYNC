@@ -10,6 +10,7 @@ interface ExpenseActivityContextType {
   deleteExpense: (id: string) => Promise<void>;
   activities: Activity[];
   addActivity: (activity: Omit<Activity, 'id'>) => Promise<void>;
+  updateActivity: (id: string, activity: Omit<Activity, 'id'>) => Promise<void>;
   deleteActivity: (id: string) => Promise<void>;
 }
 

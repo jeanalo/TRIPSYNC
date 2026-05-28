@@ -89,10 +89,10 @@ export default function CreateExperienceModal({
   }, [isOpen, onClose]);
 
   const selectClasses =
-    'w-full appearance-none rounded-lg border border-[#daa520] bg-white px-4 py-3 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#1CA698] focus:ring-1 focus:ring-[#1CA698]/30 cursor-pointer';
+    'w-full appearance-none rounded-lg border border-[#0066D2]/30 bg-white px-4 py-3 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#0066D2] focus:ring-1 focus:ring-[#0066D2]/30 cursor-pointer';
 
   const inputClasses =
-    'w-full rounded-lg border border-[#daa520] bg-white px-4 py-3 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#1CA698] focus:ring-1 focus:ring-[#1CA698]/30';
+    'w-full rounded-lg border border-[#0066D2]/30 bg-white px-4 py-3 text-[14px] text-[#333] outline-none transition-colors duration-200 focus:border-[#0066D2] focus:ring-1 focus:ring-[#0066D2]/30';
 
   const textareaClasses = `${inputClasses} resize-none min-h-[72px]`;
 
@@ -127,12 +127,8 @@ export default function CreateExperienceModal({
               </button>
             </div>
 
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex-1 flex flex-col min-h-0"
-            >
+            <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col min-h-0">
               <div className="flex-1 overflow-y-auto px-7 py-2 flex flex-col gap-3.5 custom-scrollbar">
-                {/* Name */}
                 <input
                   type="text"
                   {...register('name', { required: true })}
@@ -140,7 +136,6 @@ export default function CreateExperienceModal({
                   placeholder="Experience name"
                 />
 
-                {/* Country */}
                 <input type="hidden" {...register('country', { required: true })} />
                 <div ref={countryRef} className="relative">
                   <input
@@ -156,12 +151,9 @@ export default function CreateExperienceModal({
                     disabled={loadingCountries}
                     className={inputClasses}
                   />
-                  <ChevronDown
-                    size={16}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-                  />
+                  <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none" />
                   {countryOpen && (
-                    <div className="absolute left-0 top-full z-50 mt-1 max-h-[220px] w-full overflow-y-auto rounded-xl border border-[#daa520]/50 bg-white shadow-lg custom-scrollbar">
+                    <div className="absolute left-0 top-full z-50 mt-1 max-h-[220px] w-full overflow-y-auto rounded-xl border border-[#0066D2]/30 bg-white shadow-lg custom-scrollbar">
                       {loadingCountries ? (
                         <p className="p-3 text-center text-[14px] text-[#999]">Loading...</p>
                       ) : filteredCountries.length === 0 ? (
@@ -175,7 +167,7 @@ export default function CreateExperienceModal({
                             setCountrySearch(c.name);
                             setCountryOpen(false);
                           }}
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#1CA698]/10"
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-[#0066D2]/10"
                         >
                           <span className="text-lg">{c.flag}</span>
                           <span className="text-[14px] text-gray-800">{c.name}</span>
@@ -185,7 +177,6 @@ export default function CreateExperienceModal({
                   )}
                 </div>
 
-                {/* Location */}
                 <input
                   type="text"
                   {...register('location', { required: true })}
@@ -193,26 +184,16 @@ export default function CreateExperienceModal({
                   placeholder="Location (e.g. Krabi Bay)"
                 />
 
-                {/* Category */}
                 <div className="relative">
-                  <select
-                    {...register('category', { required: true })}
-                    className={selectClasses}
-                  >
+                  <select {...register('category', { required: true })} className={selectClasses}>
                     <option value="">Category</option>
                     {categoryOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
-                  <ChevronDown
-                    size={16}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-                  />
+                  <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none" />
                 </div>
 
-                {/* Duration + Difficulty */}
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="text"
@@ -221,64 +202,23 @@ export default function CreateExperienceModal({
                     placeholder="Duration (e.g. 3 hours)"
                   />
                   <div className="relative">
-                    <select
-                      {...register('difficulty', { required: true })}
-                      className={selectClasses}
-                    >
+                    <select {...register('difficulty', { required: true })} className={selectClasses}>
                       <option value="">Difficulty</option>
                       {DIFFICULTY_OPTIONS.map((d) => (
                         <option key={d} value={d}>{d}</option>
                       ))}
                     </select>
-                    <ChevronDown
-                      size={16}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none"
-                    />
+                    <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999] pointer-events-none" />
                   </div>
                 </div>
 
-                {/* Description */}
-                <textarea
-                  {...register('description', { required: true })}
-                  className={textareaClasses}
-                  placeholder="Description"
-                  rows={3}
-                />
+                <textarea {...register('description', { required: true })} className={textareaClasses} placeholder="Description" rows={3} />
+                <textarea {...register('eco')} className={textareaClasses} placeholder="Eco note (optional)" rows={2} />
+                <textarea {...register('highlights')} className={textareaClasses} placeholder="Highlights — one per line (e.g. Sea cave exploration)" rows={3} />
+                <textarea {...register('included')} className={textareaClasses} placeholder="What's included — one item per line" rows={3} />
+                <textarea {...register('tips')} className={textareaClasses} placeholder="Traveler tips — one per line" rows={3} />
 
-                {/* Eco note */}
-                <textarea
-                  {...register('eco')}
-                  className={textareaClasses}
-                  placeholder="Eco note (optional)"
-                  rows={2}
-                />
-
-                {/* Highlights – one per line */}
-                <textarea
-                  {...register('highlights')}
-                  className={textareaClasses}
-                  placeholder="Highlights — one per line (e.g. Sea cave exploration)"
-                  rows={3}
-                />
-
-                {/* Included – one per line */}
-                <textarea
-                  {...register('included')}
-                  className={textareaClasses}
-                  placeholder="What's included — one item per line"
-                  rows={3}
-                />
-
-                {/* Tips – one per line */}
-                <textarea
-                  {...register('tips')}
-                  className={textareaClasses}
-                  placeholder="Traveler tips — one per line"
-                  rows={3}
-                />
-
-                {/* Image search */}
-                <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#daa520]/30 bg-[#F5F7FA]/50">
+                <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#0066D2]/30 bg-[#F5F7FA]/50">
                   <label className="text-[13px] font-semibold text-[#0066D2] flex items-center gap-2">
                     <ImageIcon size={16} /> Select Experience Image
                   </label>
@@ -311,8 +251,8 @@ export default function CreateExperienceModal({
                           onClick={() => setValue('imageUrl', img.url)}
                           className={`relative aspect-square rounded-md overflow-hidden border-2 transition-all ${
                             selectedImageUrl === img.url
-                              ? 'border-[#1CA698] scale-95'
-                              : 'border-transparent hover:border-[#1CA698]/50'
+                              ? 'border-[#0066D2] scale-95'
+                              : 'border-transparent hover:border-[#0066D2]/50'
                           }`}
                         >
                           <img src={img.thumb} alt={img.alt_description} className="w-full h-full object-cover" />
@@ -323,8 +263,8 @@ export default function CreateExperienceModal({
 
                   {selectedImageUrl && (
                     <div className="mt-2">
-                      <p className="text-[11px] text-[#1CA698] font-medium mb-1">Preview:</p>
-                      <div className="relative h-[100px] w-full rounded-lg overflow-hidden border border-[#1CA698]/30">
+                      <p className="text-[11px] text-[#0066D2] font-medium mb-1">Preview:</p>
+                      <div className="relative h-[100px] w-full rounded-lg overflow-hidden border border-[#0066D2]/30">
                         <img src={selectedImageUrl} alt="Selected" className="w-full h-full object-cover" />
                         <button
                           type="button"
@@ -346,13 +286,10 @@ export default function CreateExperienceModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-xl bg-[#1CA698] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#178f83] hover:shadow-md mt-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full rounded-xl bg-[#0066D2] px-4 py-3 text-[15px] font-semibold text-white border-none cursor-pointer transition-all duration-200 hover:bg-[#0055b0] hover:shadow-md mt-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      Creating...
-                    </>
+                    <><Loader2 size={18} className="animate-spin" />Creating...</>
                   ) : (
                     'Create Experience'
                   )}

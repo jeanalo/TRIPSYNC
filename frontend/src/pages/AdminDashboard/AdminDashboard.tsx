@@ -5,7 +5,7 @@ import { Users, Plane, MapPin, User, Mail, Calendar, Globe, Plus } from 'lucide-
 import PageHeader from '@/components/PageHeader/PageHeader';
 import ActionButton from '@/components/ActionButton/ActionButton';
 
-import StatsCard from '@/components/admin/StatsCard/StatsCard';
+import SummaryCard from '@/components/SummaryCard/SummaryCard';
 import SearchTripsCard from '@/components/admin/SearchTripsCard/SearchTripsCard';
 import MostVisitedCountriesCard from '@/components/admin/MostVisitedCitiesCard/MostVisitedCitiesCard';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
@@ -149,7 +149,6 @@ export default function AdminDashboard() {
       <PageHeader
         title={`Welcome back, ${user?.name || 'Admin'}`}
         subtitle="Here's what's happening with your admin dashboard"
-        className="mb-7"
         action={
           <ActionButton
             icon={<Plus size={18} />}
@@ -160,28 +159,29 @@ export default function AdminDashboard() {
         }
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-7">
-        <StatsCard
+      <div className="flex flex-col gap-[30px] px-4 lg:px-12 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[30px]">
+        <SummaryCard
           icon={<Users size={22} />}
-          label="Active users"
-          value={dashboardStats.activeUsers}
+          title="Active users"
+          subtitle={dashboardStats.activeUsers}
           delay={0.1}
         />
-        <StatsCard
+        <SummaryCard
           icon={<Plane size={22} />}
-          label="Active trips"
-          value={dashboardStats.activeTrips}
+          title="Active trips"
+          subtitle={dashboardStats.activeTrips}
           delay={0.2}
         />
-        <StatsCard
+        <SummaryCard
           icon={<MapPin size={22} />}
-          label="Top destination"
-          value={tripsStats.topDestination}
+          title="Top destination"
+          subtitle={tripsStats.topDestination}
           delay={0.3}
         />
-      </div>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
         <SearchTripsCard onSearch={handleSearch} loading={searchLoading} />
         <MostVisitedCountriesCard countries={dashboardStats.topCountries} />
       </div>
@@ -262,6 +262,7 @@ export default function AdminDashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
 
       <CreateExperienceModal
         isOpen={isCreateModalOpen}

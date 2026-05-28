@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'motion/react';
+import DetailCard from '@/components/DetailCard/DetailCard';
 import { Search, ChevronDown, Loader2 } from 'lucide-react';
 import { useCountries } from '@/hooks/useCountries';
 import type { SearchTripsFilters } from '@/types/admin.types';
@@ -22,12 +22,7 @@ export default function SearchTripsCard({
   };
 
   return (
-    <motion.div
-      className="rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.4 }}
-    >
+    <DetailCard delay={0.4}>
       
       <h3 className="text-[18px] font-bold text-[#0066D2] mb-5">
         Search Trips
@@ -81,6 +76,6 @@ export default function SearchTripsCard({
           {loading ? 'Searching...' : 'Search'}
         </button>
       </div>
-    </motion.div>
+    </DetailCard>
   );
 }

@@ -48,6 +48,7 @@ function App() {
           <Route path="budget/add" element={<AddExpense />} />
           <Route path="schedule" element={<Schedule />} />
           <Route path="schedule/add" element={<AddActivity />} />
+          <Route path="schedule/edit/:id" element={<EditActivity />} />
           <Route path="experiences" element={<Experiences />} />
           <Route path="experiences/:id" element={<ExperienceDetail />} />
           <Route path="profile" element={<Profile />} />

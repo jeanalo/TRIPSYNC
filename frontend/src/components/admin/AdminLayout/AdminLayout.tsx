@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate, Link } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import AdminSidebar from '../AdminSidebar/AdminSidebar';
-import AdminHeader from '../AdminHeader/AdminHeader';
 import { useAuth } from '../../../context/AuthProvider';
 
 export default function AdminLayout() {
@@ -13,19 +13,24 @@ export default function AdminLayout() {
   if (user.role !== 'admin') return <Navigate to="/" replace />;
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row bg-[#F5F7FA]">
+    <div className="flex min-h-screen flex-col lg:flex-row bg-white">
+      <div className="flex lg:hidden items-center justify-between p-4 bg-white border-b border-[#e0e0e0] sticky top-0 z-30">
+        <button onClick={() => setIsMobileMenuOpen(true)}>
+          <Menu size={28} className="text-[#0066D2]" />
+        </button>
+        <Link to="/admin" className="flex items-center no-underline">
+          <img src="/logo.png" alt="TripSync logo" className="h-8" />
+        </Link>
+      </div>
+
       <AdminSidebar
         isMobileOpen={isMobileMenuOpen}
         onMobileClose={() => setIsMobileMenuOpen(false)}
       />
 
-      <div className="lg:ml-[240px] flex-1 flex flex-col min-w-0">
-        <AdminHeader onMenuToggle={() => setIsMobileMenuOpen(true)} />
-
-        <main className="flex-1 px-4 lg:px-8 pb-8">
-          <Outlet />
-        </main>
-      </div>
+      <main className="lg:ml-[280px] flex-1 p-0 flex flex-col min-w-0">
+        <Outlet />
+      </main>
     </div>
   );
 }

@@ -78,6 +78,19 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
     setActivities((prev) => [...prev, created]);
   };
 
+  const updateActivity = async (id: string, activity: Omit<Activity, 'id'>) => {
+    const updated = await apiClient.put<Activity>(`/api/activities/${id}`, {
+      trip_id: tripId ?? null,
+      name: activity.name,
+      date: activity.date,
+      time: activity.time,
+      location: activity.location,
+      category: activity.category,
+      notes: activity.notes,
+    });
+    setActivities((prev) => prev.map((a) => (a.id === id ? updated : a)));
+  };
+
   const deleteActivity = async (id: string) => {
     await apiClient.delete(`/api/activities/${id}`);
     setActivities((prev) => prev.filter((a) => a.id !== id));

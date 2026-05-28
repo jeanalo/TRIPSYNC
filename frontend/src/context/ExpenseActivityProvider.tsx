@@ -98,7 +98,7 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
 
   return (
     <ExpenseActivityContext.Provider
-      value={{ expenses, addExpense, deleteExpense, activities, addActivity, deleteActivity }}
+      value={{ expenses, addExpense, deleteExpense, activities, addActivity, updateActivity, deleteActivity }}
     >
       {children}
     </ExpenseActivityContext.Provider>

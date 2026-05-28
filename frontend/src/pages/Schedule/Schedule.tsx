@@ -108,17 +108,26 @@ const Schedule = () => {
                               </div>
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors shrink-0"
-                            onClick={() =>
-                              setSelectedId(
-                                selectedId === activity.id ? null : activity.id
-                              )
-                            }
-                          >
-                            {selectedId === activity.id ? 'Close' : 'Details'}
-                          </button>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 bg-red-500 text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-red-600 transition-colors"
+                            >
+                              <Trash2 size={18} />
+                              Delete
+                            </button>
+                            <button
+                              type="button"
+                              className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors"
+                              onClick={() =>
+                                setSelectedId(
+                                  selectedId === activity.id ? null : activity.id
+                                )
+                              }
+                            >
+                              {selectedId === activity.id ? 'Close' : 'Details'}
+                            </button>
+                          </div>
                         </div>
                         {selectedId === activity.id && (
                           <motion.div

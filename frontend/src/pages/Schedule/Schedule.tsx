@@ -117,6 +117,7 @@ const Schedule = () => {
                             <button
                               type="button"
                               className="flex items-center gap-2 bg-red-500 text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-red-600 transition-colors"
+                              onClick={() => handleDelete(activity.id)}
                             >
                               <Trash2 size={18} />
                               Delete

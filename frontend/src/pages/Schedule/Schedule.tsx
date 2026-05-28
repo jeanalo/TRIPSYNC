@@ -39,6 +39,7 @@ const Schedule = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
+    if (!window.confirm('Delete this activity?')) return;
     await deleteActivity(id);
     if (selectedId === id) setSelectedId(null);
   };

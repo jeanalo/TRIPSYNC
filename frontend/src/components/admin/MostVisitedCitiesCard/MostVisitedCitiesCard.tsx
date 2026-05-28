@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import DetailCard from '@/components/DetailCard/DetailCard';
 import type { VisitedCountry } from '@/types/admin.types';
 
 interface MostVisitedCitiesCardProps {
@@ -9,12 +9,7 @@ export default function MostVisitedCitiesCard({
   countries,
 }: MostVisitedCitiesCardProps) {
   return (
-    <motion.div
-      className="rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.5 }}
-    >
+    <DetailCard delay={0.5}>
       <h3 className="text-[18px] font-bold text-[#0066D2] mb-1">
         Most Visited Countries
       </h3>
@@ -42,6 +37,6 @@ export default function MostVisitedCitiesCard({
           </div>
         ))}
       </div>
-    </motion.div>
+    </DetailCard>
   );
 }

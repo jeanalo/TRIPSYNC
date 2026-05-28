@@ -9,6 +9,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@hapi/boom": "^10.0.1",
     "@supabase/supabase-js": "^2.105.4",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",

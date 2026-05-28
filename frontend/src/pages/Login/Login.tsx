@@ -25,7 +25,7 @@ const Login = () => {
       setError(
         err instanceof Error
           ? err.message
-          : 'Error al iniciar sesión. Verifica tus credenciales.'
+          : 'Login failed. Please check your credentials.'
       );
     } finally {
       setIsLoading(false);

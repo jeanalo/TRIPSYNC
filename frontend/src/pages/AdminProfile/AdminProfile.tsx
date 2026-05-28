@@ -19,17 +19,15 @@ import ActionButton from '@/components/ActionButton/ActionButton';
 import FormCard from '@/components/FormCard/FormCard';
 import FormField from '@/components/FormField/FormField';
 import SubmitButton from '@/components/SubmitButton/SubmitButton';
-import { mockAdminFullProfile } from '@/services/admin.mock';
-
 export default function AdminProfile() {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [nameValue, setNameValue] = useState(user?.name ?? mockAdminFullProfile.name);
+  const [nameValue, setNameValue] = useState(user?.name ?? '');
   const [passwordValue, setPasswordValue] = useState('');
-  const [phoneValue, setPhoneValue] = useState(mockAdminFullProfile.phone);
-  const [locationValue, setLocationValue] = useState(mockAdminFullProfile.location);
+  const [phoneValue, setPhoneValue] = useState('');
+  const [locationValue, setLocationValue] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignOut = () => {
@@ -81,14 +79,14 @@ export default function AdminProfile() {
                 <FormField
                   label="Email Address"
                   icon={<Mail size={24} />}
-                  value={user?.email ?? mockAdminFullProfile.email}
+                  value={user?.email ?? ''}
                 />
               </div>
               <div className="flex-1">
                 <FormField
                   label="Admin Role"
                   icon={<Shield size={24} />}
-                  value={mockAdminFullProfile.role}
+                  value={user?.role ?? 'admin'}
                 />
               </div>
             </div>

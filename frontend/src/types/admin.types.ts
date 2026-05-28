@@ -15,13 +15,17 @@ export interface VisitedCountry {
 }
 
 export interface CreateExperienceFormData {
+  name: string;
   country: string;
-  date: string;
-  time: string;
-  activityName: string;
   location: string;
   category: string;
-  details: string;
+  description: string;
+  duration: string;
+  difficulty: 'Easy' | 'Moderate' | 'Challenging';
+  eco: string;
+  included: string;
+  tips: string;
+  highlights: string;
   imageUrl?: string;
 }
 
@@ -29,12 +33,11 @@ export interface AdminExperience {
   id: string;
   name: string;
   country: string;
+  location: string;
   category: string;
-  price: number;
-  rating: number;
-  status: 'active' | 'pending';
-  imageUrl: string;
-  dateCreated: string;
+  duration: string;
+  difficulty: string;
+  image: string;
 }
 
 export interface AdminExperiencesStats {

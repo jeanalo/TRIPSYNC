@@ -1,16 +1,16 @@
+import Boom from '@hapi/boom';
 import { supabase } from '../../config/supabase';
-import { TripInvite, TripInviteInfo } from './invites.types';
+import { TripInviteInfo } from './invites.types';
 
 export const createInviteService = async (tripId: string, userId: string): Promise<string> => {
-  // Verify requester owns this trip
   const { data: trip, error: tripError } = await supabase
     .from('trips')
     .select('id, user_id, destination_country, departure_date, arrival_date')
     .eq('id', tripId)
     .single();
 
-  if (tripError || !trip) throw new Error('Trip not found');
-  if (trip.user_id !== userId) throw new Error('Forbidden');
+  if (tripError || !trip) throw Boom.notFound('Trip not found');
+  if (trip.user_id !== userId) throw Boom.forbidden('Forbidden');
 
   const token = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -35,9 +35,9 @@ export const getInviteInfoService = async (token: string): Promise<TripInviteInf
     .eq('token', token)
     .single();
 
-  if (error || !invite) throw new Error('Invalid invite token');
-  if (invite.used) throw new Error('Invite already used');
-  if (new Date(invite.expires_at) < new Date()) throw new Error('Invite expired');
+  if (error || !invite) throw Boom.badRequest('Invalid invite token');
+  if (invite.used) throw Boom.badRequest('Invite already used');
+  if (new Date(invite.expires_at) < new Date()) throw Boom.badRequest('Invite expired');
 
   const { data: trip, error: tripError } = await supabase
     .from('trips')
@@ -45,7 +45,7 @@ export const getInviteInfoService = async (token: string): Promise<TripInviteInf
     .eq('id', invite.trip_id)
     .single();
 
-  if (tripError || !trip) throw new Error('Trip not found');
+  if (tripError || !trip) throw Boom.notFound('Trip not found');
 
   return {
     trip_id: trip.id,
@@ -62,16 +62,14 @@ export const joinTripService = async (token: string, userId: string): Promise<st
     .eq('token', token)
     .single();
 
-  if (error || !invite) throw new Error('Invalid invite token');
-  if (invite.used) throw new Error('Invite already used');
-  if (new Date(invite.expires_at) < new Date()) throw new Error('Invite expired');
+  if (error || !invite) throw Boom.badRequest('Invalid invite token');
+  if (invite.used) throw Boom.badRequest('Invite already used');
+  if (new Date(invite.expires_at) < new Date()) throw Boom.badRequest('Invite expired');
 
   const tripId: string = invite.trip_id;
 
-  // Cannot join your own trip
-  if (invite.created_by === userId) throw new Error('You are the owner of this trip');
+  if (invite.created_by === userId) throw Boom.badRequest('You are the owner of this trip');
 
-  // Check if already a member
   const { data: existing } = await supabase
     .from('trip_members')
     .select('id')
@@ -79,7 +77,7 @@ export const joinTripService = async (token: string, userId: string): Promise<st
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (existing) throw new Error('Already a member of this trip');
+  if (existing) throw Boom.badRequest('Already a member of this trip');
 
   const { error: memberError } = await supabase.from('trip_members').insert({
     id: crypto.randomUUID(),
@@ -91,7 +89,6 @@ export const joinTripService = async (token: string, userId: string): Promise<st
 
   if (memberError) throw memberError;
 
-  // Mark token as used
   await supabase.from('trip_invites').update({ used: true }).eq('id', invite.id);
 
   return tripId;

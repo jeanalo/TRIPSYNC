@@ -16,12 +16,12 @@ export const getUsersService = async (): Promise<User[]> => {
   }));
 };
 
-export const updateUserService = async (id: string, data: UpdateUserRequest): Promise<User | null> => {
+export const updateUserService = async (id: string, data: UpdateUserRequest): Promise<User> => {
   if (data.password) {
     const { error: authError } = await supabase.auth.admin.updateUserById(id, {
       password: data.password
     });
-    if (authError) return null;
+    if (authError) throw authError;
   }
 
   const profileUpdates: Record<string, unknown> = {};
@@ -35,7 +35,7 @@ export const updateUserService = async (id: string, data: UpdateUserRequest): Pr
       .select('id, name, email, role')
       .single();
 
-    if (error) return null;
+    if (error) throw error;
 
     return {
       id: updated.id,
@@ -51,7 +51,7 @@ export const updateUserService = async (id: string, data: UpdateUserRequest): Pr
     .eq('id', id)
     .single();
 
-  if (error) return null;
+  if (error) throw error;
 
   return {
     id: profile.id,

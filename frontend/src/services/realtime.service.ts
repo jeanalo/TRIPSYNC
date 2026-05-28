@@ -27,23 +27,6 @@ class RealtimeService {
       this.channel = null;
     }
   }
-
-  public sendRecommendation(country: string, recommendation: RealtimeRecommendationPayload): void {
-    const channel = supabase.channel(`recommendations:${country.toLowerCase().trim()}`);
-    channel.subscribe((status) => {
-      if (status === 'SUBSCRIBED') {
-        channel.send({
-          type: 'broadcast',
-          event: 'new-recommendation',
-          payload: recommendation,
-        }).then(() => {
-          supabase.removeChannel(channel);
-        });
-      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-        supabase.removeChannel(channel);
-      }
-    });
-  }
 }
 
 export const realtimeService = new RealtimeService();

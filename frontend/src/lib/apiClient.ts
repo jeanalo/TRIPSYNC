@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-const API_URL = (import.meta.env.VITE_API_URL as string) ?? 'http://localhost:3000';
+const API_URL = 'http://localhost:3000';
 
 async function getAuthHeaders(): Promise<HeadersInit> {
   const { data: { session } } = await supabase.auth.getSession();
@@ -18,8 +18,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   });
 
   if (!res.ok) {
-    const body = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error((body as { message?: string }).message ?? `HTTP ${res.status}`);
+    const body = await res.json().catch(() => ({}));
+    const message =
+      (body as { error?: { message?: string }; message?: string }).error?.message ??
+      (body as { message?: string }).message ??
+      `HTTP ${res.status}`;
+    throw new Error(message);
   }
 
   if (res.status === 204) return undefined as T;

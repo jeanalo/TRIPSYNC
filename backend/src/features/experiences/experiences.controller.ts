@@ -1,16 +1,71 @@
-import { Request, Response } from 'express';
-import { getExperiencesService, createExperienceService } from './experiences.service';
+import Boom from "@hapi/boom";
+import { Request, Response, NextFunction } from "express";
+import {
+  getExperiencesService,
+  createExperienceService,
+} from "./experiences.service";
 
-export const getExperiences = (req: Request, res: Response) => {
-  const experiences = getExperiencesService();
-  res.json(experiences);
+export const getExperiences = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const experiences = await getExperiencesService();
+    res.json(experiences);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const createExperience = (req: Request, res: Response) => {
-  const { title, description, country, city, price, category, imageUrl } = req.body;
-  if (!title || !description || !country || !city || price === undefined || !category || !imageUrl) {
-    return res.status(400).json({ message: 'Missing required fields' });
+export const createExperience = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const {
+    name,
+    country,
+    location,
+    category,
+    image,
+    duration,
+    difficulty,
+    description,
+    eco,
+    highlights,
+    included,
+    tips,
+  } = req.body;
+  if (
+    !name ||
+    !country ||
+    !location ||
+    !category ||
+    !image ||
+    !duration ||
+    !difficulty ||
+    !description
+  ) {
+    return next(Boom.badRequest("Missing required fields"));
   }
-  const newExp = createExperienceService(req.body);
-  res.status(201).json({ message: 'Experience created', experience: newExp });
+  try {
+    const newExp = await createExperienceService({
+      name,
+      country,
+      location,
+      category,
+      image,
+      duration,
+      difficulty,
+      description,
+      eco: eco ?? "",
+      highlights: highlights ?? [],
+      included: included ?? [],
+      tips: tips ?? [],
+    });
+    res.status(201).json({ message: "Experience created", experience: newExp });
+  } catch (err) {
+    next(err);
+  }
 };

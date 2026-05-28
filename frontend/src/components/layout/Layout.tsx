@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import IconBadge from '../IconBadge/IconBadge';
-import RealtimeRecommendationToast from '../RealtimeRecommendationToast/RealtimeRecommendationToast';
+import RealtimeRecommendationModal from '../RealtimeRecommendationModal/RealtimeRecommendationModal';
 
 const navItems = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
@@ -120,7 +120,7 @@ const Layout = () => {
         <Outlet />
       </main>
 
-      <RealtimeRecommendationToast
+      <RealtimeRecommendationModal
         notification={latestNotification}
         onClose={clearNotification}
       />

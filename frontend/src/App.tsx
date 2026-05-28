@@ -11,6 +11,7 @@ import Budget from './pages/Budget/Budget';
 import AddExpense from './pages/AddExpense/AddExpense';
 import Schedule from './pages/Schedule/Schedule';
 import AddActivity from './pages/AddActivity/AddActivity';
+import EditActivity from './pages/EditActivity/EditActivity';
 import Experiences from './pages/Experiences/Experiences';
 import ExperienceDetail from './pages/ExperienceDetail/ExperienceDetail';
 import TripSetup from './pages/TripSetup/TripSetup';
@@ -47,6 +48,7 @@ function App() {
           <Route path="budget/add" element={<AddExpense />} />
           <Route path="schedule" element={<Schedule />} />
           <Route path="schedule/add" element={<AddActivity />} />
+          <Route path="schedule/edit/:id" element={<EditActivity />} />
           <Route path="experiences" element={<Experiences />} />
           <Route path="experiences/:id" element={<ExperienceDetail />} />
           <Route path="profile" element={<Profile />} />
@@ -55,6 +57,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="experiences" element={<AdminExperiences />} />
+          <Route path="experiences/:id" element={<ExperienceDetail />} />
           <Route path="trips" element={<AdminTrips />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="analytics" element={<AdminAnalytics />} />

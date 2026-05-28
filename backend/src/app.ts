@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { CLIENT_URL } from './config';
 import { apiRouter } from './routes';
+import { errorsMiddleware } from './middlewares/errorsMiddleware';
 
 const app = express();
 
@@ -13,5 +14,7 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/api', apiRouter);
+
+app.use(errorsMiddleware);
 
 export default app;

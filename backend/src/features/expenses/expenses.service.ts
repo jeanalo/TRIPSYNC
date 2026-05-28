@@ -1,3 +1,4 @@
+import Boom from '@hapi/boom';
 import { supabase } from '../../config/supabase';
 import { Expense, CreateExpenseRequest } from './expenses.types';
 
@@ -40,7 +41,7 @@ export const createExpenseService = async (userId: string, data: CreateExpenseRe
   return { ...inserted, amount: Number(inserted.amount) || 0 };
 };
 
-export const deleteExpenseService = async (id: string, userId: string): Promise<boolean> => {
+export const deleteExpenseService = async (id: string, userId: string): Promise<void> => {
   const { error, count } = await supabase
     .from('expenses')
     .delete({ count: 'exact' })
@@ -48,5 +49,5 @@ export const deleteExpenseService = async (id: string, userId: string): Promise<
     .eq('user_id', userId);
 
   if (error) throw error;
-  return (count ?? 0) > 0;
+  if ((count ?? 0) === 0) throw Boom.notFound('Expense not found');
 };

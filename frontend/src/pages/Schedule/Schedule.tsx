@@ -118,6 +118,7 @@ const Schedule = () => {
                             <button
                               type="button"
                               className="flex items-center gap-2 bg-[#0066D2] text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#005ab8] transition-colors"
+                              onClick={() => navigate(`/app/schedule/edit/${activity.id}`)}
                             >
                               <Pencil size={18} />
                               Edit

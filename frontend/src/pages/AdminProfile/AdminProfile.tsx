@@ -12,7 +12,7 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useAuth } from '../../context/AuthProvider';
 import PageHeader from '@/components/PageHeader/PageHeader';
 import ActionButton from '@/components/ActionButton/ActionButton';
@@ -21,7 +21,6 @@ import FormField from '@/components/FormField/FormField';
 import SubmitButton from '@/components/SubmitButton/SubmitButton';
 export default function AdminProfile() {
   const { user, logout, updateUser } = useAuth();
-  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
   const [nameValue, setNameValue] = useState(user?.name ?? '');
@@ -30,9 +29,12 @@ export default function AdminProfile() {
   const [locationValue, setLocationValue] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignOut = () => {
-    logout();
-    navigate('/');
+  const handleSignOut = async () => {
+    try {
+      await logout();
+    } catch {
+      toast.error('Failed to sign out. Please try again.');
+    }
   };
 
   const handleEditSave = () => {

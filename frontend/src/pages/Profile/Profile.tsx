@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { LogOut, User, Mail, Lock, Settings, Save, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
@@ -11,7 +10,6 @@ import SubmitButton from '../../components/SubmitButton/SubmitButton';
 
 const Profile = () => {
   const { user, logout, updateUser } = useAuth();
-  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
   const [nameValue, setNameValue] = useState(user?.name ?? '');
@@ -23,7 +21,6 @@ const Profile = () => {
   const handleSignOut = async () => {
     try {
       await logout();
-      navigate('/');
     } catch {
       toast.error('Failed to sign out. Please try again.');
     }

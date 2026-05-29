@@ -1,40 +1,40 @@
+import axios from 'axios';
 import { supabase } from './supabase';
 
-const API_URL = import.meta.env.VITE_API_URL as string;
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL as string,
+  headers: { 'Content-Type': 'application/json' },
+});
 
-async function getAuthHeaders(): Promise<HeadersInit> {
+// Inject the Supabase access token on every request
+axiosInstance.interceptors.request.use(async (config) => {
   const { data: { session } } = await supabase.auth.getSession();
-  return {
-    'Content-Type': 'application/json',
-    ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-  };
-}
-
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: { ...headers, ...(options.headers ?? {}) },
-  });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const message =
-      (body as { error?: { message?: string }; message?: string }).error?.message ??
-      (body as { message?: string }).message ??
-      `HTTP ${res.status}`;
-    throw new Error(message);
+  if (session?.access_token) {
+    config.headers.Authorization = `Bearer ${session.access_token}`;
   }
+  return config;
+});
 
-  if (res.status === 204) return undefined as T;
-  return res.json() as Promise<T>;
-}
+// Handle expired / invalid sessions
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      await supabase.auth.signOut();
+    }
+    const message =
+      error.response?.data?.error?.message ??
+      error.response?.data?.message ??
+      error.message ??
+      `HTTP ${error.response?.status ?? 'unknown'}`;
+    return Promise.reject(new Error(message));
+  },
+);
 
+// Wrapper that unwraps .data to match the previous Fetch-based interface
 export const apiClient = {
-  get: <T>(path: string) => request<T>(path),
-  post: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-  put: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  get: <T>(path: string) => axiosInstance.get<T>(path).then((r) => r.data),
+  post: <T>(path: string, body?: unknown) => axiosInstance.post<T>(path, body).then((r) => r.data),
+  put: <T>(path: string, body?: unknown) => axiosInstance.put<T>(path, body).then((r) => r.data),
+  delete: <T>(path: string) => axiosInstance.delete<T>(path).then((r) => r.data),
 };

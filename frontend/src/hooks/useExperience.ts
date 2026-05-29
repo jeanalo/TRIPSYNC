@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthProvider';
-import type { Experience } from '../data/types';
+import type { Experience } from '@/types/experiences.types';
 
 export const useExperiences = () => {
   const { user } = useAuth();

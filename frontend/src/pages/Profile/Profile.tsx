@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { LogOut, User, Mail, Lock, Settings, Save, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -16,17 +17,41 @@ const Profile = () => {
   const [nameValue, setNameValue] = useState(user?.name ?? '');
   const [passwordValue, setPasswordValue] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [nameError, setNameError] = useState('');
 
-  const handleSignOut = () => {
-    logout();
-    navigate('/');
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch {
+      toast.error('Failed to sign out. Please try again.');
+    }
   };
 
-  const handleEditSave = () => {
-    if (isEditing) {
-      updateUser(nameValue);
+  const handleEditSave = async () => {
+    if (!isEditing) {
+      setIsEditing(true);
+      return;
     }
-    setIsEditing((prev) => !prev);
+
+    if (!nameValue.trim()) {
+      setNameError('Name cannot be empty.');
+      return;
+    }
+    setNameError('');
+
+    setIsSaving(true);
+    try {
+      await updateUser(nameValue.trim());
+      toast.success('Profile updated!');
+      setIsEditing(false);
+      setPasswordValue('');
+    } catch {
+      toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -47,13 +72,17 @@ const Profile = () => {
             <FormField
               label="Full Name"
               icon={<User size={24} />}
+              error={nameError || undefined}
               {...(!isEditing && { value: user?.name ?? '—' })}
             >
               {isEditing && (
                 <input
                   className="w-full text-[20px] leading-[36px] text-[#1CA698] outline-none bg-transparent"
                   value={nameValue}
-                  onChange={(e) => setNameValue(e.target.value)}
+                  onChange={(e) => {
+                    setNameValue(e.target.value);
+                    if (nameError) setNameError('');
+                  }}
                   autoFocus
                 />
               )}
@@ -98,6 +127,8 @@ const Profile = () => {
             <SubmitButton
               type="button"
               icon={isEditing ? <Save size={24} /> : <Settings size={24} />}
+              loading={isSaving}
+              loadingText="Saving..."
               onClick={handleEditSave}
             >
               {isEditing ? 'Save changes' : 'Edit Profile'}

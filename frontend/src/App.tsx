@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { AppProviders } from './context/AppProviders';
 
 import Login from './pages/Login/Login';
@@ -31,6 +32,7 @@ import JoinTrip from './pages/JoinTrip/JoinTrip';
 function App() {
   return (
     <AppProviders>
+      <Toaster position="top-right" richColors />
       <Routes>
         <Route path="/" element={<AuthSelector />} />
         <Route path="/login" element={<Login />} />

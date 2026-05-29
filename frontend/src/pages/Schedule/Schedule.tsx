@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, CalendarDays, MapPin, Tag, FileText, Trash2, Pencil } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, CalendarDays, MapPin, Tag, FileText, Trash2, Pencil, AlertTriangle } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
+import AlertModal from '../../components/AlertModal/AlertModal';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
 import { formatDate, formatTime, groupByDate } from '../../utils/dateUtils';
@@ -13,11 +15,22 @@ const Schedule = () => {
   const navigate = useNavigate();
   const { activities, deleteActivity } = useExpenseActivity();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Delete this activity?')) return;
-    await deleteActivity(id);
-    if (selectedId === id) setSelectedId(null);
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
+    setDeletingId(pendingDeleteId);
+    setPendingDeleteId(null);
+    try {
+      await deleteActivity(pendingDeleteId);
+      if (selectedId === pendingDeleteId) setSelectedId(null);
+      toast.success('Activity deleted.');
+    } catch {
+      toast.error('Failed to delete activity. Please try again.');
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const grouped = groupByDate(activities);
@@ -25,6 +38,23 @@ const Schedule = () => {
 
   return (
     <div>
+      <AlertModal
+        isOpen={!!pendingDeleteId}
+        onClose={() => setPendingDeleteId(null)}
+        onConfirm={confirmDelete}
+        confirmLabel="Delete"
+        color="#E53935"
+        bg="#FEECEB"
+        icon={<AlertTriangle size={28} className="text-[#E53935]" />}
+      >
+        <div>
+          <p className="text-xl font-bold text-[#E53935]">Delete Activity</p>
+          <p className="mt-2 text-sm text-gray-600">
+            Are you sure you want to delete this activity? This action cannot be undone.
+          </p>
+        </div>
+      </AlertModal>
+
       <PageHeader
         title="Travel Schedule"
         subtitle="Your personalized itinerary."
@@ -101,19 +131,18 @@ const Schedule = () => {
                             </button>
                             <button
                               type="button"
-                              className="flex items-center gap-2 bg-red-500 text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-red-600 transition-colors"
-                              onClick={() => handleDelete(activity.id)}
+                              disabled={deletingId === activity.id}
+                              className="flex items-center gap-2 bg-red-500 text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-red-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                              onClick={() => setPendingDeleteId(activity.id)}
                             >
                               <Trash2 size={18} />
-                              Delete
+                              {deletingId === activity.id ? 'Deleting...' : 'Delete'}
                             </button>
                             <button
                               type="button"
                               className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors"
                               onClick={() =>
-                                setSelectedId(
-                                  selectedId === activity.id ? null : activity.id
-                                )
+                                setSelectedId(selectedId === activity.id ? null : activity.id)
                               }
                             >
                               {selectedId === activity.id ? 'Close' : 'Details'}
@@ -130,10 +159,7 @@ const Schedule = () => {
                               {activity.name}
                             </span>
                             <div className="flex items-center gap-2">
-                              <CalendarDays
-                                size={16}
-                                className="text-[#0066D2] shrink-0"
-                              />
+                              <CalendarDays size={16} className="text-[#0066D2] shrink-0" />
                               <span>
                                 {formatDate(activity.date)} &middot; {formatTime(activity.time)}
                               </span>
@@ -152,10 +178,7 @@ const Schedule = () => {
                             )}
                             {activity.notes && (
                               <div className="flex items-start gap-2">
-                                <FileText
-                                  size={16}
-                                  className="text-[#0066D2] shrink-0 mt-0.5"
-                                />
+                                <FileText size={16} className="text-[#0066D2] shrink-0 mt-0.5" />
                                 <span>{activity.notes}</span>
                               </div>
                             )}

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { toast } from 'sonner';
 import { useTrip } from '../../context/TripProvider';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import {
@@ -119,6 +120,9 @@ const Budget = () => {
     const newBudget = Number(budgetDraft);
     if (!isNaN(newBudget) && newBudget >= 0) {
       setTripDetails({ ...tripDetails, budget: newBudget });
+      toast.success('Budget updated!');
+    } else {
+      toast.error('Please enter a valid budget amount.');
     }
     setIsEditingBudget(false);
   };

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Tag, Pencil, CalendarDays, Clock, MapPin, CheckCircle } from 'lucide-react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -25,7 +26,12 @@ const EditActivity = () => {
   const navigate = useNavigate();
   const activity = activities.find((a) => a.id === id);
 
-  const { register, handleSubmit, reset } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
     defaultValues: { name: '', date: '', time: '', location: '', category: 'Free Tour', notes: '' },
   });
 
@@ -46,8 +52,13 @@ const EditActivity = () => {
 
   const onSubmit = async (data: FormValues) => {
     if (!id) return;
-    await updateActivity(id, data);
-    navigate('/app/schedule');
+    try {
+      await updateActivity(id, data);
+      toast.success('Activity updated!');
+      navigate('/app/schedule');
+    } catch {
+      toast.error('Failed to update activity. Please try again.');
+    }
   };
 
   return (
@@ -56,7 +67,11 @@ const EditActivity = () => {
       <div className="px-4 lg:px-12">
         <FormCard as="form" onSubmit={() => { void handleSubmit(onSubmit)(); }} className="lg:w-[803px]">
           <div className="flex flex-col gap-[45px]">
-            <FormField label="Activity Name" icon={<Pencil size={24} />}>
+            <FormField
+              label="Activity Name"
+              icon={<Pencil size={24} />}
+              error={errors.name ? 'Activity name is required' : undefined}
+            >
               <input
                 type="text"
                 {...register('name', { required: true })}
@@ -64,15 +79,25 @@ const EditActivity = () => {
                 className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder:text-[#1CA698]/40 outline-none"
               />
             </FormField>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[45px] md:gap-[65px]">
-              <FormField label="Date" icon={<CalendarDays size={24} />}>
+              <FormField
+                label="Date"
+                icon={<CalendarDays size={24} />}
+                error={errors.date ? 'Date is required' : undefined}
+              >
                 <input
                   type="date"
                   {...register('date', { required: true })}
                   className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none"
                 />
               </FormField>
-              <FormField label="Time" icon={<Clock size={24} />}>
+
+              <FormField
+                label="Time"
+                icon={<Clock size={24} />}
+                error={errors.time ? 'Time is required' : undefined}
+              >
                 <input
                   type="time"
                   {...register('time', { required: true })}
@@ -80,6 +105,7 @@ const EditActivity = () => {
                 />
               </FormField>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[45px] md:gap-[65px]">
               <FormField label="Location" icon={<MapPin size={24} />}>
                 <input
@@ -89,6 +115,7 @@ const EditActivity = () => {
                   className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder:text-[#1CA698]/40 outline-none"
                 />
               </FormField>
+
               <FormField label="Category" icon={<Tag size={24} />}>
                 <select
                   {...register('category')}
@@ -100,6 +127,7 @@ const EditActivity = () => {
                 </select>
               </FormField>
             </div>
+
             <FormField label="Details" icon={<Pencil size={24} />}>
               <input
                 type="text"
@@ -108,7 +136,14 @@ const EditActivity = () => {
                 className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] placeholder:text-[#1CA698]/40 outline-none"
               />
             </FormField>
-            <SubmitButton icon={<CheckCircle size={24} />}>Update Activity</SubmitButton>
+
+            <SubmitButton
+              icon={<CheckCircle size={24} />}
+              loading={isSubmitting}
+              loadingText="Updating..."
+            >
+              Update Activity
+            </SubmitButton>
           </div>
         </FormCard>
       </div>

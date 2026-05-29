@@ -84,7 +84,7 @@ export default function AddExpense() {
       <PageHeader title="Add New Expense" subtitle="Track your spending on the go." />
 
       <div className="px-12">
-        <FormCard as="form" onSubmit={handleSubmit(onSubmit)} className="w-[803px]">
+        <FormCard as="form" onSubmit={() => { void handleSubmit(onSubmit)(); }} className="w-[803px]">
           <div className="flex flex-col gap-[45px]">
             <div className="grid grid-cols-2 gap-[65px]">
               <FormField label="Category" icon={<Tag size={24} />}>

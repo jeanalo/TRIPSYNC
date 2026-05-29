@@ -37,7 +37,7 @@ export default function TripSetup() {
       <div className="px-4 lg:px-12 flex justify-center lg:block">
         <FormCard
           as="form"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={() => { void handleSubmit(onSubmit)(); }}
           className="w-full max-w-[803px]"
         >
           <div className="flex flex-col gap-[45px]">

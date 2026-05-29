@@ -50,7 +50,7 @@ export default function AddActivity() {
       <PageHeader title="Add New Activity" subtitle="Plan your day." />
 
       <div className="px-4 lg:px-12">
-        <FormCard as="form" onSubmit={handleSubmit(onSubmit)} className="lg:w-[803px]">
+        <FormCard as="form" onSubmit={() => { void handleSubmit(onSubmit)(); }} className="lg:w-[803px]">
           <div className="flex flex-col gap-[45px]">
             <FormField label="Activity Name" icon={<Pencil size={24} />}>
               <input

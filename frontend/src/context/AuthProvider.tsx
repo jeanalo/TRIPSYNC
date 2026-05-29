@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { useAxios } from './AxiosProvider';
+import { getStoredAuth, setStoredAuth, removeStoredAuth } from '@/lib/storage';
 
 interface User {
   id: string;
@@ -20,85 +21,119 @@ interface AuthContextType {
   updateUser: (name: string) => Promise<void>;
 }
 
+interface AuthResponse {
+  session: {
+    access_token: string;
+    refresh_token: string;
+    expires_at: number;
+  };
+  user: User;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function toAppUser(supabaseUser: { id: string; email?: string; user_metadata?: Record<string, string> }): User {
+function decodeJwt(token: string): Record<string, unknown> {
+  try {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+  } catch {
+    return {};
+  }
+}
+
+function userFromToken(token: string): User | null {
+  const p = decodeJwt(token) as {
+    sub?: string;
+    email?: string;
+    user_metadata?: { name?: string; role?: string };
+  };
+  if (!p.sub) return null;
   return {
-    id: supabaseUser.id,
-    email: supabaseUser.email ?? '',
-    name: supabaseUser.user_metadata?.name ?? supabaseUser.email ?? '',
-    role: supabaseUser.user_metadata?.role === 'admin' ? 'admin' : 'user',
+    id: p.sub,
+    email: p.email ?? '',
+    name: p.user_metadata?.name ?? p.email ?? '',
+    role: p.user_metadata?.role === 'admin' ? 'admin' : 'user',
   };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const ax = useAxios();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ? toAppUser(session.user) : null);
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ? toAppUser(session.user) : null);
-    });
-
-    return () => subscription.unsubscribe();
+    const auth = getStoredAuth();
+    if (auth) {
+      setUser(userFromToken(auth.session.access_token));
+    }
+    setLoading(false);
   }, []);
 
   const register = async (email: string, name: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data } = await ax.post<AuthResponse>('/api/auth/register', {
       email,
+      name,
       password,
-      options: { data: { name, role: 'user' } },
     });
-    if (error) throw error;
+    setStoredAuth({ session: data.session });
+    setUser(data.user);
   };
 
   const login = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    if (data.user?.user_metadata?.role === 'admin') {
-      await supabase.auth.signOut();
+    const { data } = await ax.post<AuthResponse>('/api/auth/login', {
+      email,
+      password,
+    });
+    if (data.user.role === 'admin') {
       throw new Error('Esta cuenta es de administrador. Usa el acceso de administrador.');
     }
+    setStoredAuth({ session: data.session });
+    setUser(data.user);
   };
 
   const registerAdmin = async (email: string, name: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data } = await ax.post<AuthResponse>('/api/auth/register', {
       email,
+      name,
       password,
-      options: { data: { name, role: 'admin' } },
+      role: 'admin',
     });
-    if (error) throw error;
+    setStoredAuth({ session: data.session });
+    setUser(data.user);
   };
 
   const loginAdmin = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    if (data.user?.user_metadata?.role !== 'admin') {
-      await supabase.auth.signOut();
+    const { data } = await ax.post<AuthResponse>('/api/auth/login', {
+      email,
+      password,
+    });
+    if (data.user.role !== 'admin') {
       throw new Error('No tienes permisos de administrador.');
     }
+    setStoredAuth({ session: data.session });
+    setUser(data.user);
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    navigate('/');
+    try {
+      await ax.post('/api/auth/logout');
+    } finally {
+      removeStoredAuth();
+      setUser(null);
+      navigate('/login');
+    }
   };
 
   const updateUser = async (name: string) => {
-    const { data, error } = await supabase.auth.updateUser({ data: { name } });
-    if (error) throw error;
-    if (data.user) setUser(toAppUser(data.user));
+    const { data } = await ax.patch<{ user: User }>('/api/users/me', { name });
+    setUser(data.user);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, registerAdmin, loginAdmin, logout, updateUser }}>
+    <AuthContext.Provider
+      value={{ user, loading, register, login, registerAdmin, loginAdmin, logout, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

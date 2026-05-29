@@ -11,7 +11,13 @@ export interface AuthData {
 export function getStoredAuth(): AuthData | null {
   try {
     const raw = localStorage.getItem(AUTH_KEY);
-    return raw ? (JSON.parse(raw) as AuthData) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as AuthData;
+    if (!parsed?.session?.access_token) {
+      localStorage.removeItem(AUTH_KEY);
+      return null;
+    }
+    return parsed;
   } catch {
     return null;
   }

@@ -3,13 +3,15 @@ import { Trip, UpsertTripRequest } from './trips.types';
 
 export const getTripByUserService = async (userId: string): Promise<Trip | null> => {
   
-  const { data: ownedTrip, error: ownedError } = await supabase
+  const { data: ownedTrips, error: ownedError } = await supabase
     .from('trips')
     .select('*')
     .eq('user_id', userId)
-    .maybeSingle();
+    .order('created_at', { ascending: false })
+    .limit(1);
 
   if (ownedError) throw ownedError;
+  const ownedTrip = ownedTrips?.[0] ?? null;
 
   
   const { data: memberships, error: memberError } = await supabase

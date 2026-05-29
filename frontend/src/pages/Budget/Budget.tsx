@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useTrip } from '../../context/TripProvider';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
@@ -100,10 +101,12 @@ const THRESHOLD_CONFIG: Record<number, { color: string; bg: string; message: str
 };
 
 const Budget = () => {
+  const navigate = useNavigate();
   const { tripDetails, setTripDetails } = useTrip();
   const { expenses, deleteExpense } = useExpenseActivity();
 
   const [isEditingBudget, setIsEditingBudget] = useState(false);
+  const [showNoBudgetModal, setShowNoBudgetModal] = useState(false);
   const [budgetDraft, setBudgetDraft] = useState('');
   const [activeAlert, setActiveAlert] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -191,6 +194,14 @@ const Budget = () => {
     },
   ];
 
+  const handleAddExpense = () => {
+    if (totalBudget <= 0) {
+      setShowNoBudgetModal(true);
+    } else {
+      navigate('/app/budget/add');
+    }
+  };
+
   return (
     <div>
       {/* Budget threshold alert modal */}
@@ -221,12 +232,30 @@ const Budget = () => {
           );
         })()}
 
+      {/* No budget modal */}
+      <AlertModal
+        isOpen={showNoBudgetModal}
+        onClose={() => setShowNoBudgetModal(false)}
+        color="#0066D2"
+        bg="#EFF6FF"
+        icon={<Banknote size={28} style={{ color: '#0066D2' }} />}
+        actionLabel="Got it"
+      >
+        <div>
+          <p className="text-xl font-bold text-[#0066D2]">Set a budget first</p>
+          <p className="mt-2 text-sm text-gray-600">
+            You need to set a total budget before adding expenses. Click the pencil icon on the
+            Total Budget card to get started.
+          </p>
+        </div>
+      </AlertModal>
+
       {/* Header */}
       <PageHeader
         title="Budget Tracker"
         subtitle="Keep your finances in check while you explore."
         action={
-          <ActionButton icon={<Plus size={22} />} to="/app/budget/add">
+          <ActionButton icon={<Plus size={22} />} onClick={handleAddExpense}>
             Add Expense
           </ActionButton>
         }

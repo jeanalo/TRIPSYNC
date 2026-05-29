@@ -75,8 +75,8 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
           try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
         }
       }
-    } catch {
-      // network or server error
+    } catch (err) {
+      console.error('[TripProvider] Error loading trip:', err);
     }
 
     const savedActiveCity = localStorage.getItem(getKey('activeCity', user!.email));

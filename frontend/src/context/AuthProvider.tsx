@@ -35,7 +35,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 function decodeJwt(token: string): Record<string, unknown> {
   try {
     const payload = token.split('.')[1];
-    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
   } catch {
     return {};
   }
@@ -45,13 +47,13 @@ function userFromToken(token: string): User | null {
   const p = decodeJwt(token) as {
     sub?: string;
     email?: string;
-    user_metadata?: { name?: string; role?: string };
+    user_metadata?: { full_name?: string; name?: string; role?: string };
   };
   if (!p.sub) return null;
   return {
     id: p.sub,
     email: p.email ?? '',
-    name: p.user_metadata?.name ?? p.email ?? '',
+    name: p.user_metadata?.full_name ?? p.user_metadata?.name ?? p.email ?? '',
     role: p.user_metadata?.role === 'admin' ? 'admin' : 'user',
   };
 }
@@ -64,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const auth = getStoredAuth();
-    if (auth) {
+    if (auth?.session?.access_token) {
       setUser(userFromToken(auth.session.access_token));
     }
     setLoading(false);

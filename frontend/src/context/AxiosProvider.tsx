@@ -56,6 +56,11 @@ export function AxiosProvider({ children }: { children: React.ReactNode }) {
     ax.interceptors.response.use(
       (response) => response,
       (error) => {
+        if (error.response?.status === 401 && getStoredAuth()) {
+          removeStoredAuth();
+          globalThis.location.href = '/login';
+          return Promise.reject(new Error('Session expired'));
+        }
         const message =
           (error.response?.data as { message?: string })?.message ??
           error.message ??

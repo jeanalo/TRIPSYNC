@@ -46,7 +46,10 @@ export default function AdminExperiences() {
       CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
 
     const toLines = (raw: string) =>
-      raw.split('\n').map((s) => s.trim()).filter(Boolean);
+      raw
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean);
 
     setIsCreating(true);
     setCreateError(null);
@@ -61,7 +64,10 @@ export default function AdminExperiences() {
         duration: data.duration,
         difficulty: data.difficulty,
         eco: data.eco ?? '',
-        highlights: toLines(data.highlights ?? '').map((text) => ({ icon: 'Star', text })),
+        highlights: toLines(data.highlights ?? '').map((text) => ({
+          icon: 'Star',
+          text,
+        })),
         included: toLines(data.included ?? ''),
         tips: toLines(data.tips ?? ''),
       });
@@ -78,7 +84,8 @@ export default function AdminExperiences() {
   };
 
   const filteredExperiences = experiences.filter((exp) => {
-    const matchesSearch = exp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesSearch =
+      exp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       exp.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
       exp.country.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeCategory === 'All' || exp.category === activeCategory;
@@ -105,19 +112,19 @@ export default function AdminExperiences() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-7">
           <StatsCard
             icon={<Layers size={22} />}
-            label="Total experiences"
+            label="Total Experiences"
             value={experiences.length}
             delay={0.1}
           />
           <StatsCard
             icon={<CheckCircle2 size={22} />}
-            label="Countries covered"
+            label="Countries Covered"
             value={uniqueCountries.size}
             delay={0.2}
           />
           <StatsCard
             icon={<BarChart3 size={22} />}
-            label="Top category"
+            label="Top Category"
             value={topCategory ? topCategory[0] : '—'}
             delay={0.3}
           />
@@ -130,17 +137,17 @@ export default function AdminExperiences() {
           transition={{ duration: 0.4, delay: 0.15 }}
         >
           <Search
-  size={18}
-  className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0066D2]"
-/>
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0066D2]"
+          />
 
-<input
-  type="text"
-  placeholder="Search by name, location or country..."
-  value={searchQuery}
-  onChange={(e) => setSearchQuery(e.target.value)}
-  className="w-full rounded-xl border-2 border-[#0066D2] bg-white pl-11 pr-4 py-2.5 text-[14px] text-[#0066D2] placeholder:text-[#0066D2] outline-none transition-all duration-200 focus:border-[#0066D2] focus:ring-0"
-/>
+          <input
+            type="text"
+            placeholder="Search by name, location or country..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-xl border-2 border-[#0066D2] bg-white pl-11 pr-4 py-2.5 text-[14px] text-[#0066D2] placeholder:text-[#0066D2] outline-none transition-all duration-200 focus:border-[#0066D2] focus:ring-0"
+          />
         </motion.div>
 
         <motion.div
@@ -153,7 +160,7 @@ export default function AdminExperiences() {
             <button
               key={filter}
               onClick={() => setActiveCategory(filter)}
-              className={`px-5 py-2 rounded-full text-[14px] font-semibold transition-colors cursor-pointer border-2 ${
+              className={`px-5 py-2 rounded-full text-[14px] font-semibold transition-colors cursor-pointer border ${
                 activeCategory === filter
                   ? 'bg-[#0066D2] text-white border-[#0066D2]'
                   : 'bg-white text-[#0066D2] border-[#0066D2]/30 hover:border-[#0066D2]'

@@ -40,7 +40,7 @@ const Profile = () => {
 
     setIsSaving(true);
     try {
-      await updateUser(nameValue.trim());
+      await updateUser(nameValue.trim(), passwordValue || undefined);
       toast.success('Profile updated!');
       setIsEditing(false);
       setPasswordValue('');

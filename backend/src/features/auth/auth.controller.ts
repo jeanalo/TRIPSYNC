@@ -88,7 +88,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, name")
       .eq("id", data.user.id)
       .single();
 
@@ -102,7 +102,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       user: {
         id: data.user.id,
         email: data.user.email,
-        name: data.user.user_metadata?.full_name ?? data.user.email,
+        name: profile?.name ?? data.user.user_metadata?.full_name ?? data.user.email,
         role: profile?.role ?? "user",
       },
     });

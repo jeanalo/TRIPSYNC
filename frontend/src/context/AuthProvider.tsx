@@ -18,7 +18,7 @@ interface AuthContextType {
   registerAdmin: (email: string, name: string, password: string) => Promise<void>;
   loginAdmin: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (name: string) => Promise<void>;
+  updateUser: (name: string, password?: string) => Promise<void>;
 }
 
 interface AuthResponse {
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const auth = getStoredAuth();
     if (auth?.session?.access_token) {
-      setUser(userFromToken(auth.session.access_token));
+      setUser(auth.user ?? userFromToken(auth.session.access_token));
     }
     setLoading(false);
   }, []);
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       name,
       password,
     });
-    setStoredAuth({ session: data.session });
+    setStoredAuth({ session: data.session, user: data.user });
     setUser(data.user);
   };
 
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data.user.role === 'admin') {
       throw new Error('Esta cuenta es de administrador. Usa el acceso de administrador.');
     }
-    setStoredAuth({ session: data.session });
+    setStoredAuth({ session: data.session, user: data.user });
     setUser(data.user);
   };
 
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
       role: 'admin',
     });
-    setStoredAuth({ session: data.session });
+    setStoredAuth({ session: data.session, user: data.user });
     setUser(data.user);
   };
 
@@ -113,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data.user.role !== 'admin') {
       throw new Error('No tienes permisos de administrador.');
     }
-    setStoredAuth({ session: data.session });
+    setStoredAuth({ session: data.session, user: data.user });
     setUser(data.user);
   };
 
@@ -127,9 +127,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateUser = async (name: string) => {
-    const { data } = await ax.patch<{ user: User }>('/api/users/me', { name });
-    setUser(data.user);
+  const updateUser = async (name: string, password?: string) => {
+    const currentUser = user!;
+    const { data } = await ax.patch<{ user: User }>(`/api/users/${currentUser.id}`, {
+      fullName: name,
+      ...(password ? { password } : {}),
+    });
+    const updatedUser = { ...data.user, role: data.user.role ?? currentUser.role };
+    const auth = getStoredAuth();
+    if (auth) setStoredAuth({ ...auth, user: updatedUser });
+    setUser(updatedUser);
   };
 
   return (

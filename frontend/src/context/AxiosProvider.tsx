@@ -30,13 +30,15 @@ export function AxiosProvider({ children }: { children: React.ReactNode }) {
       if (auth) {
         if (isTokenExpired(auth.session.expires_at)) {
           try {
+            const existingAuth = auth;
             refreshPromise ??= axios
               .post<AuthData>(`${baseURL}/api/auth/refresh`, {
                 refreshToken: auth.session.refresh_token,
               })
               .then((r) => {
-                setStoredAuth(r.data);
-                return r.data;
+                const merged = { ...r.data, user: existingAuth.user };
+                setStoredAuth(merged);
+                return merged;
               })
               .finally(() => {
                 refreshPromise = null;

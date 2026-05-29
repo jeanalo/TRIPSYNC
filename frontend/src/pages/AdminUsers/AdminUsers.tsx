@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import PageHeader from '@/components/PageHeader/PageHeader';
@@ -36,26 +36,16 @@ export default function AdminUsers() {
     }
   }, [outletContext?.isCreateModalRequested]);
 
-  const countryOptions = useMemo(() => {
-    const unique = [...new Set(users.map((u) => u.country).filter(Boolean))].sort();
-    return unique.map((c) => ({ value: c.toLowerCase(), label: c }));
-  }, [users]);
-
   const handleCreateSubmit = (_data: CreateExperienceFormData) => {
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-      user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
-      user.id.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesCountry =
-      !filters.country || user.country.toLowerCase() === filters.country.toLowerCase();
-    const matchesStatus = !filters.status || user.status === filters.status;
-    return matchesSearch && matchesCountry && matchesStatus;
-  });
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+    user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
+    user.id.toLowerCase().includes(filters.search.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col">
@@ -66,11 +56,7 @@ export default function AdminUsers() {
       />
 
       <div className="px-4 lg:px-12">
-        <UserFilters
-          filters={filters}
-          onFilterChange={setFilters}
-          countryOptions={countryOptions}
-        />
+        <UserFilters filters={filters} onFilterChange={setFilters} />
         <UsersTable users={filteredUsers} />
       </div>
 

@@ -13,11 +13,11 @@ export default function TripsTable({ trips }: TripsTableProps) {
           <Plane size={32} className="text-[#ccc]" />
         </div>
 
-        <p className="text-[16px] font-semibold text-[#333]">
+        <p className="text-[16px] font-semibold text-[#0066D2]">
           No trips found
         </p>
 
-        <p className="text-[14px] text-[#999] mt-1">
+        <p className="text-[14px] text-[#0066D2]/60 mt-1">
           Try adjusting your filters
         </p>
       </div>
@@ -60,42 +60,42 @@ export default function TripsTable({ trips }: TripsTableProps) {
               >
                 <td className="px-6 py-4">
                   <div className="flex flex-col min-w-0">
-                    <span className="text-[14px] font-bold text-[#333] truncate">
+                    <span className="text-[14px] font-bold text-[#0066D2] truncate">
                       {trip.travelerName}
                     </span>
 
-                    <span className="text-[11px] text-[#999] truncate">
+                    <span className="text-[11px] text-[#0066D2]/60 truncate">
                       {trip.id}
                     </span>
                   </div>
                 </td>
 
                 <td className="px-6 py-4">
-                  <span className="text-[14px] text-[#666]">
+                  <span className="text-[14px] text-[#0066D2]">
                     {trip.originCountry}
                   </span>
                 </td>
 
                 <td className="px-6 py-4">
-                  <span className="text-[14px] font-medium text-[#333]">
+                  <span className="text-[14px] font-medium text-[#0066D2]">
                     {trip.destinationCountry}
                   </span>
                 </td>
 
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
-                    <span className="text-[13px] text-[#333] font-medium">
+                    <span className="text-[13px] text-[#0066D2] font-medium">
                       {trip.startDate}
                     </span>
 
-                    <span className="text-[11px] text-[#999]">
+                    <span className="text-[11px] text-[#0066D2]/60">
                       to {trip.endDate}
                     </span>
                   </div>
                 </td>
 
                 <td className="px-6 py-4">
-                  <span className="text-[14px] font-bold text-[#333]">
+                  <span className="text-[14px] font-bold text-[#0066D2]">
                     ${trip.budget.toLocaleString()}
                   </span>
                 </td>

@@ -4,8 +4,6 @@ import {
   User,
   Mail,
   Lock,
-  Phone,
-  MapPin,
   Shield,
   Save,
   Settings,
@@ -25,9 +23,8 @@ export default function AdminProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [nameValue, setNameValue] = useState(user?.name ?? '');
   const [passwordValue, setPasswordValue] = useState('');
-  const [phoneValue, setPhoneValue] = useState('');
-  const [locationValue, setLocationValue] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -37,11 +34,28 @@ export default function AdminProfile() {
     }
   };
 
-  const handleEditSave = () => {
-    if (isEditing) {
-      updateUser(nameValue);
+  const handleEditSave = async () => {
+    if (!isEditing) {
+      setIsEditing(true);
+      return;
     }
-    setIsEditing((prev) => !prev);
+
+    if (!nameValue.trim()) {
+      toast.error('Name cannot be empty.');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await updateUser(nameValue.trim(), passwordValue || undefined);
+      toast.success('Profile updated successfully!');
+      setIsEditing(false);
+      setPasswordValue('');
+    } catch {
+      toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -93,40 +107,6 @@ export default function AdminProfile() {
               </div>
             </div>
 
-            {/* Phone + Location */}
-            <div className="flex flex-col md:flex-row gap-[25px] md:gap-[65px]">
-              <div className="flex-1">
-                <FormField
-                  label="Phone Number"
-                  icon={<Phone size={24} />}
-                  {...(!isEditing && { value: phoneValue })}
-                >
-                  {isEditing && (
-                    <input
-                      className="w-full text-[20px] leading-[36px] text-[#1CA698] outline-none bg-transparent"
-                      value={phoneValue}
-                      onChange={(e) => setPhoneValue(e.target.value)}
-                    />
-                  )}
-                </FormField>
-              </div>
-              <div className="flex-1">
-                <FormField
-                  label="Location"
-                  icon={<MapPin size={24} />}
-                  {...(!isEditing && { value: locationValue })}
-                >
-                  {isEditing && (
-                    <input
-                      className="w-full text-[20px] leading-[36px] text-[#1CA698] outline-none bg-transparent"
-                      value={locationValue}
-                      onChange={(e) => setLocationValue(e.target.value)}
-                    />
-                  )}
-                </FormField>
-              </div>
-            </div>
-
             {/* Password */}
             <FormField
               label="Password"
@@ -157,6 +137,8 @@ export default function AdminProfile() {
               type="button"
               icon={isEditing ? <Save size={24} /> : <Settings size={24} />}
               onClick={handleEditSave}
+              loading={isSaving}
+              loadingText="Saving..."
             >
               {isEditing ? 'Save changes' : 'Edit Profile'}
             </SubmitButton>

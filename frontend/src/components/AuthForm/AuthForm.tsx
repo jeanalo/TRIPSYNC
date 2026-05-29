@@ -44,7 +44,7 @@ export default function AuthForm({
             {heading}
           </h2>
           {subtitle && (
-            <p className="text-center text-[16px] text-[#666] mb-8">{subtitle}</p>
+            <p className="text-center text-[16px] text-[#0066D2] mb-8">{subtitle}</p>
           )}
 
           <form onSubmit={onSubmit} className="flex flex-col gap-5">

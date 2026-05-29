@@ -49,7 +49,7 @@ export default function CardHeader({
         <h2 className={`${styles.title} ${textColor}`}>
           {title}
         </h2>
-        {subtitle && (
+        {subtitle != null && (
           <div className={`${styles.subtitle} ${textColor}`}>
             {subtitle}
           </div>

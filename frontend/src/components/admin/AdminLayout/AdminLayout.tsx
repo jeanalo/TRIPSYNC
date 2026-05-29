@@ -1,16 +1,10 @@
 import { useState } from 'react';
-import { Outlet, Navigate, Link } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import AdminSidebar from '../AdminSidebar/AdminSidebar';
-import { useAuth } from '../../../context/AuthProvider';
 
 export default function AdminLayout() {
-  const { user, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  if (loading) return null;
-  if (!user) return <Navigate to="/admin/login" replace />;
-  if (user.role !== 'admin') return <Navigate to="/" replace />;
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-white">

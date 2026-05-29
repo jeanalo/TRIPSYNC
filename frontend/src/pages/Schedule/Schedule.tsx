@@ -9,6 +9,7 @@ import ActionButton from '../../components/ActionButton/ActionButton';
 import AlertModal from '../../components/AlertModal/AlertModal';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
+import EmptyState from '../../components/EmptyState/EmptyState';
 import { formatDate, formatTime, groupByDate } from '../../utils/dateUtils';
 
 const Schedule = () => {
@@ -71,9 +72,15 @@ const Schedule = () => {
       <div className="flex flex-col gap-[30px] px-4 lg:px-12 pb-12">
         {activities.length === 0 ? (
           <DetailCard delay={0.2}>
-            <p className="text-center text-[18px] text-[#0066D2]/50 py-8">
-              No activities yet. Add your first activity!
-            </p>
+            <EmptyState
+              icon={<CalendarDays size={48} />}
+              message="No activities yet. Add your first activity!"
+              action={
+                <ActionButton icon={<Plus size={20} />} onClick={() => navigate('/app/schedule/add')}>
+                  Add Activity
+                </ActionButton>
+              }
+            />
           </DetailCard>
         ) : (
           sortedDates.map((date, i) => (

@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import {
-  fetchCountryByName,
-  calculateTimeDifference,
-  CountryData,
-} from '../../services/api';
+import { fetchCountryByName, calculateTimeDifference } from '../../services/api';
+import { generateJetLagRecommendations } from '../../services/jetlag.service';
 import { useTrip } from '../../context/TripProvider';
+import type { Recommendation } from '../../types/travel.types';
 import { MapPin, Clock, CalendarClock, Moon } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -19,11 +17,6 @@ import IconBadge from '../../components/IconBadge/IconBadge';
 type JetLagFormData = {
   departureTime: string;
   arrivalTime: string;
-};
-
-type Recommendation = {
-  title: string;
-  desc: string;
 };
 
 export default function JetLag() {
@@ -55,112 +48,32 @@ export default function JetLag() {
     }
   }, [jetLagPlan]);
 
-  const [countryInfo, setCountryInfo] = useState<{
-    departure: CountryData | null;
-    destination: CountryData | null;
-    timeDiff: number;
-  } | null>(null);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!formData.departureTime || !formData.arrivalTime) return;
 
     setLoading(true);
-
     try {
       const [departure, destination] = await Promise.all([
         fetchCountryByName(tripDetails.departureCountry),
         fetchCountryByName(tripDetails.destinationCountry),
       ]);
 
-      let timeDiff = 0;
+      const timeDiff =
+        departure && destination
+          ? calculateTimeDifference(departure.timezones[0], destination.timezones[0])
+          : 0;
 
-      if (departure && destination) {
-        timeDiff = calculateTimeDifference(
-          departure.timezones[0],
-          destination.timezones[0]
-        );
-      }
-
-      setCountryInfo({
-        departure,
-        destination,
+      const recs = generateJetLagRecommendations({
+        departureTime: formData.departureTime,
+        arrivalTime: formData.arrivalTime,
         timeDiff,
+        destinationName: destination?.name || 'destination',
       });
-
-      const absTimeDiff = Math.abs(timeDiff);
-      const direction = timeDiff > 0 ? 'ahead' : timeDiff < 0 ? 'behind' : 'none';
-      const daysToAdjust = Math.ceil(absTimeDiff / 1.5);
-
-      const parseTime = (timeStr: string) => {
-        const [hours, minutes] = timeStr.split(':').map(Number);
-        return hours * 60 + minutes;
-      };
-
-      const depMins = parseTime(formData.departureTime);
-      const arrMins = parseTime(formData.arrivalTime);
-
-      let flightDurationMins = arrMins - depMins - timeDiff * 60;
-      if (flightDurationMins <= 0) flightDurationMins += 24 * 60;
-
-      // Previous validations
-      const flightDurationHours = Math.max(
-        1,
-        Math.min(Math.round(flightDurationMins / 60) || 1, 48)
-      );
-
-      const arrivalHour = parseInt(formData.arrivalTime.split(':')[0], 10);
-      const perceivedArrivalHour = Math.floor(
-        (((arrivalHour - timeDiff) % 24) + 24) % 24
-      );
-
-      const recs: Recommendation[] = [
-        {
-          title: 'Morning Light',
-          desc:
-            perceivedArrivalHour < 12
-              ? `Your body perceives it as morning (${perceivedArrivalHour}:00). Get 30 mins of sunlight immediately to reset your clock.`
-              : `Your body feels like it's later in the day (${perceivedArrivalHour}:00). Avoid bright light and prioritize getting morning sun the next day.`,
-        },
-        {
-          title: 'Caffeine Curfew',
-          desc:
-            perceivedArrivalHour >= 18
-              ? `Your body feels like evening. Avoid caffeine during your ${flightDurationHours}-hour flight so you can sleep upon arrival.`
-              : `To stay alert, you can have caffeine on the flight, but stop by 2:00 PM ${destination?.name || 'destination'} time.`,
-        },
-        {
-          title: 'Sleep Adjustment',
-          desc:
-            direction === 'ahead'
-              ? `Traveling East: Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} earlier each night for ${daysToAdjust} days before departure.`
-              : direction === 'behind'
-                ? `Traveling West: Try to sleep ${Math.min(absTimeDiff, 3)} hour${Math.min(absTimeDiff, 3) > 1 ? 's' : ''} later each night for ${daysToAdjust} days before departure.`
-                : 'No adjustment needed — same timezone!',
-        },
-        {
-          title: 'Hydration',
-          desc: `Drink plenty of water during your ${flightDurationHours}-hour flight. Aim for at least 8oz every hour in the air.`,
-        },
-      ];
-
-      if (absTimeDiff >= 3) {
-        recs.push({
-          title: 'Melatonin',
-          desc:
-            direction === 'ahead'
-              ? 'Traveling East: Consider 0.5mg - 3mg of melatonin 30 minutes before your new bedtime to help you fall asleep earlier.'
-              : 'Traveling West: Consider melatonin only if you wake up in the middle of the night and cannot fall back asleep.',
-        });
-      }
 
       setRecommendations(recs);
       setJetLagPlan({

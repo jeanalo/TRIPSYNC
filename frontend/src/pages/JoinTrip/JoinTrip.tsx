@@ -3,16 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plane, MapPin, CalendarDays } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
-import { apiClient } from '../../lib/apiClient';
+import { getInviteInfo, joinTrip, type TripInviteInfo } from '../../services/invites.service';
 import Spinner from '../../components/Spinner/Spinner';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
-
-interface TripInfo {
-  trip_id: string;
-  destination_country: string;
-  departure_date: string;
-  arrival_date: string;
-}
 
 type PageState = 'loading' | 'ready' | 'joining' | 'error';
 
@@ -38,13 +31,13 @@ const JoinTrip = () => {
 
   const token = params.get('token') ?? '';
 
-  const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
+  const [tripInfo, setTripInfo] = useState<TripInviteInfo | null>(null);
   const [pageState, setPageState] = useState<PageState>('loading');
   const [errorMsg, setErrorMsg] = useState('');
 
   async function loadInviteTripInfo() {
     try {
-      const data = await apiClient.get<TripInfo>(`/api/trips/join?token=${token}`);
+      const data = await getInviteInfo(token);
       setTripInfo(data);
       setPageState('ready');
     } catch (err: unknown) {
@@ -67,7 +60,7 @@ const JoinTrip = () => {
     if (!token) return;
     setPageState('joining');
     try {
-      const { tripId } = await apiClient.post<{ tripId: string }>('/api/trips/join', { token });
+      const tripId = await joinTrip(token);
       navigate(`/app?joined=${tripId}`, { replace: true });
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Could not join trip.');

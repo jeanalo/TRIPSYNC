@@ -3,7 +3,7 @@ import { useTrip } from '../../context/TripProvider';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import { useAuth } from '../../context/AuthProvider';
 import { Plane, Moon, CalendarDays, Share2, Map, PieChart, AlertCircle } from 'lucide-react';
-import { apiClient } from '../../lib/apiClient';
+import { createInviteLink } from '../../services/invites.service';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
@@ -32,11 +32,8 @@ const Dashboard = () => {
     }
     setSharing(true);
     try {
-      const { token } = await apiClient.post<{ token: string }>(
-        `/api/trips/${tripId}/invite`,
-        {}
-      );
-      setInviteUrl(`${window.location.origin}/join-trip?token=${token}`);
+      const url = await createInviteLink(tripId);
+      setInviteUrl(url);
       setModalOpen(true);
     } catch (err) {
       setAlertMsg(err instanceof Error ? err.message : 'Could not generate invite link.');

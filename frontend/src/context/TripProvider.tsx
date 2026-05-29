@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthProvider';
 import { apiClient } from '../lib/apiClient';
-import type { Experience, TripDetails, JetLagPlan } from '../types/travel.types';
+import type { TripDetails, JetLagPlan } from '../types/travel.types';
 
 interface BackendTrip {
   id: string;
@@ -21,8 +21,6 @@ interface TripContextType {
   setJetLagPlan: (plan: JetLagPlan | null) => void;
   activeCity: string;
   setActiveCity: (city: string) => void;
-  experiences: Experience[];
-  toggleSaveExperience: (id: string) => void;
   tripId: string | null;
 }
 
@@ -39,40 +37,6 @@ const defaultTripDetails: TripDetails = {
   userIdOwner: '',
 };
 
-const defaultExperiences: Experience[] = [
-  {
-    id: '1',
-    name: 'Sunset Kayaking',
-    location: 'Blue Bay',
-    category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1595368062405-e4d7840cba14?w=600&q=80',
-    saved: false,
-  },
-  {
-    id: '2',
-    name: 'Ancient Temple Visit',
-    location: 'Old Town',
-    category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1598177183224-b3cec6da6b04?w=600&q=80',
-    saved: true,
-  },
-  {
-    id: '3',
-    name: 'Street Food Tour',
-    location: 'Night Market',
-    category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
-    saved: false,
-  },
-  {
-    id: '4',
-    name: 'Hidden Waterfall Hike',
-    location: 'National Park',
-    category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1594671733084-66a82cc4304a?w=600&q=80',
-    saved: false,
-  },
-];
 
 const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -92,10 +56,6 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const [tripDetails, setTripDetailsState] = useState<TripDetails>(defaultTripDetails);
-  const [experiences, setExperiences] = useState<Experience[]>(() => {
-    const saved = localStorage.getItem(getKey('experiences', user?.email));
-    return saved ? JSON.parse(saved) : defaultExperiences;
-  });
   const [jetLagPlan, setJetLagPlanState] = useState<JetLagPlan | null>(null);
 
   async function loadUserTrip() {
@@ -118,9 +78,6 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     } catch {
       // network or server error
     }
-
-    const savedExperiences = localStorage.getItem(getKey('experiences', user!.email));
-    setExperiences(savedExperiences ? JSON.parse(savedExperiences) : defaultExperiences);
 
     const savedActiveCity = localStorage.getItem(getKey('activeCity', user!.email));
     setActiveCity(savedActiveCity || 'tokyo');
@@ -189,22 +146,12 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (user?.email) {
-      localStorage.setItem(getKey('experiences', user.email), JSON.stringify(experiences));
-    }
-  }, [experiences, user?.email]);
-
-  useEffect(() => {
-    if (user?.email) {
       localStorage.setItem(getKey('activeCity', user.email), activeCity);
     }
   }, [activeCity, user?.email]);
 
   const setTripDetails = (details: TripDetails) => setTripDetailsState(details);
   const setJetLagPlan = (plan: JetLagPlan | null) => setJetLagPlanState(plan);
-
-  const toggleSaveExperience = (id: string) => {
-    setExperiences(experiences.map((exp) => (exp.id === id ? { ...exp, saved: !exp.saved } : exp)));
-  };
 
   return (
     <TripContext.Provider
@@ -215,8 +162,6 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
         setJetLagPlan,
         activeCity,
         setActiveCity,
-        experiences,
-        toggleSaveExperience,
         tripId,
       }}
     >

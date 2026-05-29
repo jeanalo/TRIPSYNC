@@ -3,35 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, CalendarDays, MapPin, Tag, FileText, Trash2, Pencil } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
-import type { Activity } from '../../types/travel.types';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
-
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
-function formatTime(timeStr: string): string {
-  return timeStr.slice(0, 5);
-}
-
-function groupByDate(activities: Activity[]): Record<string, Activity[]> {
-  return activities.reduce(
-    (acc, act) => {
-      if (!acc[act.date]) acc[act.date] = [];
-      acc[act.date].push(act);
-      return acc;
-    },
-    {} as Record<string, Activity[]>
-  );
-}
+import { formatDate, formatTime, groupByDate } from '../../utils/dateUtils';
 
 const Schedule = () => {
   const navigate = useNavigate();

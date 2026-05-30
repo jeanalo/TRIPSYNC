@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useTrip } from '../../context/TripProvider';
@@ -33,6 +33,7 @@ import {
   BarChart2,
 } from 'lucide-react';
 
+import { useBudgetAlert, THRESHOLD_CONFIG } from '../../hooks/useBudgetAlert';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
 import AlertModal from '../../components/AlertModal/AlertModal';
@@ -69,50 +70,20 @@ const DEMO_TRANSACTIONS = [
   },
 ];
 
-const THRESHOLDS = [30, 50, 70, 90, 100] as const;
-
-const THRESHOLD_CONFIG: Record<number, { color: string; bg: string; message: string }> = {
-  30: {
-    color: '#F2B705',
-    bg: '#FEF9E7',
-    message: "You've used 30% of your budget. Still plenty left — keep it up!",
-  },
-  50: {
-    color: '#F2B705',
-    bg: '#FEF9E7',
-    message: 'Halfway through your budget. Time to keep a closer eye on spending.',
-  },
-  70: {
-    color: '#E8890C',
-    bg: '#FDF3E7',
-    message: '70% of your budget is spent. Consider cutting back on non-essentials.',
-  },
-  90: {
-    color: '#E53935',
-    bg: '#FEECEB',
-    message: 'Almost out of budget! Only 10% remains — spend wisely.',
-  },
-  100: {
-    color: '#B71C1C',
-    bg: '#FEECEB',
-    message:
-      'Your budget is completely spent. No funds remain — review your expenses before adding more.',
-  },
-};
 
 const Budget = () => {
   const navigate = useNavigate();
   const { tripDetails, setTripDetails } = useTrip();
-  const { expenses, deleteExpense } = useExpenseActivity();
+  const { expenses, deleteExpense, totalSpent, deletingId, categoryTotals } = useExpenseActivity();
 
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [showNoBudgetModal, setShowNoBudgetModal] = useState(false);
   const [budgetDraft, setBudgetDraft] = useState('');
-  const [activeAlert, setActiveAlert] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const shownThresholds = useRef<Set<number>>(new Set());
 
   const totalBudget = Number(tripDetails.budget) || 0;
+  const remaining = totalBudget - totalSpent;
+  const { activeAlert, setActiveAlert } = useBudgetAlert(totalSpent, totalBudget);
 
   const startEditing = () => {
     setBudgetDraft(String(totalBudget));
@@ -134,38 +105,9 @@ const Budget = () => {
     setIsEditingBudget(false);
   };
 
-  useEffect(() => {
-    if (isEditingBudget && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditingBudget]);
+  const effectiveTotals = expenses.length > 0 ? categoryTotals : { Food: 45, Accommodation: 98 };
 
-  const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-
-  useEffect(() => {
-    if (totalBudget <= 0) return;
-    const pct = (totalSpent / totalBudget) * 100;
-    for (const threshold of [...THRESHOLDS].reverse()) {
-      if (pct >= threshold && !shownThresholds.current.has(threshold)) {
-        shownThresholds.current.add(threshold);
-        setActiveAlert(threshold);
-        break;
-      }
-    }
-  }, [totalSpent, totalBudget]);
-  const remaining = totalBudget - totalSpent;
-
-  const categoryTotals =
-    expenses.length > 0
-      ? expenses.reduce<Record<string, number>>((acc, e) => {
-          const cat = e.category || 'Other';
-          acc[cat] = (acc[cat] || 0) + (Number(e.amount) || 0);
-          return acc;
-        }, {})
-      : { Food: 45, Accommodation: 98 };
-
-  const chartData = Object.entries(categoryTotals).map(([name, value], i) => ({
+  const chartData = Object.entries(effectiveTotals).map(([name, value], i) => ({
     name,
     value,
     color: PIE_COLORS[i % PIE_COLORS.length],
@@ -423,6 +365,7 @@ const Budget = () => {
                 amount={Number(tx.amount) || 0}
                 showDivider={idx > 0}
                 onDelete={expenses.length > 0 ? () => deleteExpense(tx.id) : undefined}
+                isDeleting={deletingId === tx.id}
               />
             ))}
           </div>

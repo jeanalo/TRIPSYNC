@@ -4,14 +4,13 @@ import { motion } from 'motion/react';
 import { BarChart3, CheckCircle2, Layers, Search, MapPin, Leaf } from 'lucide-react';
 
 import PageHeader from '@/components/PageHeader/PageHeader';
-
 import StatsCard from '@/components/admin/StatsCard/StatsCard';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useExperiences } from '@/hooks/useExperience';
+import { useAdmin } from '@/context/AdminProvider';
 import { CATEGORY_OPTIONS } from '@/constants/experiences';
-import { apiClient } from '@/lib/apiClient';
 
 import type { CreateExperienceFormData } from '@/types/admin.types';
 
@@ -24,7 +23,9 @@ const CATEGORY_FILTERS = ['All', ...CATEGORY_OPTIONS.map((c) => c.label)] as con
 
 export default function AdminExperiences() {
   const navigate = useNavigate();
-  const { experiences, loading, refetch } = useExperiences();
+  const { experiences, loading, refetch, topCategory, uniqueCountries } = useExperiences();
+  const { createExperience } = useAdmin();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -42,41 +43,15 @@ export default function AdminExperiences() {
   }, [outletContext?.isCreateModalRequested]);
 
   const handleCreateSubmit = async (data: CreateExperienceFormData) => {
-    const categoryLabel =
-      CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
-
-    const toLines = (raw: string) =>
-      raw
-        .split('\n')
-        .map((s) => s.trim())
-        .filter(Boolean);
-
     setIsCreating(true);
     setCreateError(null);
     try {
-      await apiClient.post('/api/experiences', {
-        name: data.name,
-        country: data.country,
-        location: data.location,
-        category: categoryLabel,
-        image: data.imageUrl ?? '',
-        description: data.description,
-        duration: data.duration,
-        difficulty: data.difficulty,
-        eco: data.eco ?? '',
-        highlights: toLines(data.highlights ?? '').map((text) => ({
-          icon: 'Star',
-          text,
-        })),
-        included: toLines(data.included ?? ''),
-        tips: toLines(data.tips ?? ''),
-      });
+      await createExperience(data);
     } catch (err) {
       setCreateError(err instanceof Error ? err.message : 'Failed to create experience');
       setIsCreating(false);
       return;
     }
-
     refetch();
     setIsCreating(false);
     setIsCreateModalOpen(false);
@@ -91,14 +66,6 @@ export default function AdminExperiences() {
     const matchesCategory = activeCategory === 'All' || exp.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
-
-  const categoryCounts: Record<string, number> = {};
-  experiences.forEach((exp) => {
-    categoryCounts[exp.category] = (categoryCounts[exp.category] || 0) + 1;
-  });
-  const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0];
-
-  const uniqueCountries = new Set(experiences.map((e) => e.country));
 
   return (
     <div className="flex flex-col">
@@ -125,7 +92,7 @@ export default function AdminExperiences() {
           <StatsCard
             icon={<BarChart3 size={22} />}
             label="Top Category"
-            value={topCategory ? topCategory[0] : '—'}
+            value={topCategory}
             delay={0.3}
           />
         </div>
@@ -140,7 +107,6 @@ export default function AdminExperiences() {
             size={18}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0066D2]"
           />
-
           <input
             type="text"
             placeholder="Search by name, location or country..."
@@ -186,17 +152,10 @@ export default function AdminExperiences() {
                 transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
               >
                 <div className="relative h-[170px] shrink-0">
-                  <img
-                    src={exp.image}
-                    alt={exp.name}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={exp.image} alt={exp.name} className="w-full h-full object-cover" />
                 </div>
-
                 <div className="flex flex-col gap-3 px-4 pt-4 pb-4 flex-1">
-                  <p className="text-[18px] font-bold text-white leading-snug">
-                    {exp.name}
-                  </p>
+                  <p className="text-[18px] font-bold text-white leading-snug">{exp.name}</p>
                   <div className="flex items-center gap-4 flex-wrap">
                     <div className="flex items-center gap-1.5">
                       <MapPin size={15} className="text-white shrink-0" />

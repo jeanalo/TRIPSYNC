@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthProvider';
 import { apiClient } from '../lib/apiClient';
+import { createInviteLink } from '../services/invites.service';
+import { fetchCountryByName, calculateTimeDifference } from '../services/api';
+import { generateJetLagRecommendations } from '../services/jetlag.service';
 import type { TripDetails, JetLagPlan } from '../types/travel.types';
 
 interface BackendTrip {
@@ -22,6 +25,9 @@ interface TripContextType {
   activeCity: string;
   setActiveCity: (city: string) => void;
   tripId: string | null;
+  loading: boolean;
+  shareTrip: () => Promise<string>;
+  generateJetLagPlan: (departureTime: string, arrivalTime: string) => Promise<void>;
 }
 
 const TripContext = createContext<TripContextType | undefined>(undefined);
@@ -45,6 +51,7 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const isLoadedRef = useRef(false);
 
   const [tripId, setTripIdState] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const setTripId = (id: string | null) => {
     tripIdRef.current = id;
@@ -59,6 +66,7 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const [jetLagPlan, setJetLagPlanState] = useState<JetLagPlan | null>(null);
 
   async function loadUserTrip() {
+    setLoading(true);
     try {
       const data = await apiClient.get<BackendTrip | undefined>('/api/trips/me');
       if (data) {
@@ -83,6 +91,7 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     setActiveCity(savedActiveCity || 'tokyo');
 
     isLoadedRef.current = true;
+    setLoading(false);
   }
 
   // Load trip from backend on user change
@@ -153,6 +162,29 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const setTripDetails = (details: TripDetails) => setTripDetailsState(details);
   const setJetLagPlan = (plan: JetLagPlan | null) => setJetLagPlanState(plan);
 
+  const shareTrip = async (): Promise<string> => {
+    if (!tripIdRef.current) throw new Error('Set up your trip first before sharing it.');
+    return createInviteLink(tripIdRef.current);
+  };
+
+  const generateJetLagPlan = async (departureTime: string, arrivalTime: string): Promise<void> => {
+    const [departure, destination] = await Promise.all([
+      fetchCountryByName(tripDetails.departureCountry),
+      fetchCountryByName(tripDetails.destinationCountry),
+    ]);
+    const timeDiff =
+      departure && destination
+        ? calculateTimeDifference(departure.timezones[0], destination.timezones[0])
+        : 0;
+    const recs = generateJetLagRecommendations({
+      departureTime,
+      arrivalTime,
+      timeDiff,
+      destinationName: destination?.name || 'destination',
+    });
+    setJetLagPlanState({ departureTime, arrivalTime, recommendations: recs });
+  };
+
   return (
     <TripContext.Provider
       value={{
@@ -163,6 +195,9 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
         activeCity,
         setActiveCity,
         tripId,
+        loading,
+        shareTrip,
+        generateJetLagPlan,
       }}
     >
       {children}

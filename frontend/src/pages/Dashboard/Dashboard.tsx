@@ -3,7 +3,6 @@ import { useTrip } from '../../context/TripProvider';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import { useAuth } from '../../context/AuthProvider';
 import { Plane, Moon, CalendarDays, Share2, Map, PieChart, AlertCircle } from 'lucide-react';
-import { createInviteLink } from '../../services/invites.service';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ActionButton from '../../components/ActionButton/ActionButton';
@@ -15,8 +14,8 @@ import AlertModal from '../../components/AlertModal/AlertModal';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { tripDetails, tripId } = useTrip();
-  const { expenses, activities } = useExpenseActivity();
+  const { tripDetails, shareTrip } = useTrip();
+  const { activities, totalSpent } = useExpenseActivity();
 
   const isGuest = !!(tripDetails.userIdOwner && user?.id && tripDetails.userIdOwner !== user.id);
 
@@ -26,13 +25,9 @@ const Dashboard = () => {
   const [alertMsg, setAlertMsg] = useState('');
 
   const handleShareTrip = async () => {
-    if (!tripId) {
-      setAlertMsg('Set up your trip first before sharing it.');
-      return;
-    }
     setSharing(true);
     try {
-      const url = await createInviteLink(tripId);
+      const url = await shareTrip();
       setInviteUrl(url);
       setModalOpen(true);
     } catch (err) {
@@ -42,7 +37,6 @@ const Dashboard = () => {
     }
   };
 
-  const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remainingBudget = (Number(tripDetails.budget) || 0) - totalSpent;
 
   

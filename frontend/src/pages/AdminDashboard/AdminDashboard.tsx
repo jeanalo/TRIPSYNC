@@ -4,7 +4,6 @@ import { Users, Plane, MapPin, User, Mail, Calendar, Globe, Plus } from 'lucide-
 
 import PageHeader from '@/components/PageHeader/PageHeader';
 import ActionButton from '@/components/ActionButton/ActionButton';
-
 import SummaryCard from '@/components/SummaryCard/SummaryCard';
 import SearchTripsCard from '@/components/admin/SearchTripsCard/SearchTripsCard';
 import MostVisitedCountriesCard from '@/components/admin/MostVisitedCitiesCard/MostVisitedCitiesCard';
@@ -13,26 +12,14 @@ import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useAdmin } from '@/context/AdminProvider';
 import { useAuth } from '@/context/AuthProvider';
-import { supabase } from '@/lib/supabase';
-import { apiClient } from '@/lib/apiClient';
 import { CATEGORY_OPTIONS } from '@/constants/experiences';
 
-import type { CreateExperienceFormData, SearchTripsFilters } from '@/types/admin.types';
-
-interface TripResult {
-  id: string;
-  user_id: string;
-  destination_country: string;
-  departure_country: string;
-  departure_date: string;
-  arrival_date: string;
-  user_email: string;
-  user_name: string;
-}
+import type { CreateExperienceFormData, SearchTripsFilters, TripResult } from '@/types/admin.types';
 
 export default function AdminDashboard() {
-  const { tripsStats, dashboardStats, users } = useAdmin();
+  const { tripsStats, dashboardStats, createExperience, searchTripsByCountry } = useAdmin();
   const { user } = useAuth();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -43,34 +30,10 @@ export default function AdminDashboard() {
   const [hasSearched, setHasSearched] = useState(false);
 
   const handleCreateSubmit = async (data: CreateExperienceFormData) => {
-    const categoryLabel =
-      CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
-    const toLines = (raw: string) =>
-      raw
-        .split('\n')
-        .map((s) => s.trim())
-        .filter(Boolean);
-
     setIsCreating(true);
     setCreateError(null);
     try {
-      await apiClient.post('/api/experiences', {
-        name: data.name,
-        country: data.country,
-        location: data.location,
-        category: categoryLabel,
-        image: data.imageUrl ?? '',
-        description: data.description,
-        duration: data.duration,
-        difficulty: data.difficulty,
-        eco: data.eco ?? '',
-        highlights: toLines(data.highlights ?? '').map((text) => ({
-          icon: 'Star',
-          text,
-        })),
-        included: toLines(data.included ?? ''),
-        tips: toLines(data.tips ?? ''),
-      });
+      await createExperience(data);
       setIsCreateModalOpen(false);
       setIsSuccessModalOpen(true);
     } catch (err) {
@@ -82,59 +45,13 @@ export default function AdminDashboard() {
 
   const handleSearch = async (filters: SearchTripsFilters) => {
     if (!filters.country) return;
-
     setSearchLoading(true);
     setSearchedCountry(filters.country);
     setHasSearched(true);
-
     try {
-      const { data: trips, error } = await supabase
-        .from('trips')
-        .select('*')
-        .ilike('destination_country', filters.country);
-
-      if (error) {
-        console.error('Error fetching trips:', error);
-        setSearchResults([]);
-        return;
-      }
-
-      if (!trips || trips.length === 0) {
-        setSearchResults([]);
-        return;
-      }
-
-      const usersMap = new Map<string, { email: string; name: string }>();
-      for (const u of users) {
-        usersMap.set(u.id, { email: u.email, name: u.name });
-      }
-
-      const results: TripResult[] = trips.map(
-        (t: {
-          id: string;
-          user_id: string;
-          destination_country: string;
-          departure_country: string;
-          departure_date: string;
-          arrival_date: string;
-        }) => {
-          const userData = usersMap.get(t.user_id);
-          return {
-            id: t.id,
-            user_id: t.user_id,
-            destination_country: t.destination_country ?? '',
-            departure_country: t.departure_country ?? '',
-            departure_date: t.departure_date ?? '',
-            arrival_date: t.arrival_date ?? '',
-            user_email: userData?.email ?? t.user_id,
-            user_name: userData?.name ?? 'Unknown User',
-          };
-        }
-      );
-
+      const results = await searchTripsByCountry(filters.country);
       setSearchResults(results);
-    } catch (err) {
-      console.error('Search error:', err);
+    } catch {
       setSearchResults([]);
     } finally {
       setSearchLoading(false);

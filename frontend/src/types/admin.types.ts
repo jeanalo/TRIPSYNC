@@ -185,3 +185,14 @@ export interface SelectOption {
   value: string;
   label: string;
 }
+
+export interface TripResult {
+  id: string;
+  user_id: string;
+  destination_country: string;
+  departure_country: string;
+  departure_date: string;
+  arrival_date: string;
+  user_email: string;
+  user_name: string;
+}

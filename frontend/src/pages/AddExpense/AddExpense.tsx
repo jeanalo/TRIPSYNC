@@ -30,7 +30,7 @@ const CATEGORIES = ['Food', 'Transport', 'Accommodation', 'Activities', 'Shoppin
 
 export default function AddExpense() {
   const { tripDetails } = useTrip();
-  const { addExpense, expenses } = useExpenseActivity();
+  const { addExpense, totalSpent } = useExpenseActivity();
   const navigate = useNavigate();
   const {
     register,
@@ -42,7 +42,6 @@ export default function AddExpense() {
   const [showOverBudgetModal, setShowOverBudgetModal] = useState(false);
 
   const totalBudget = Number(tripDetails.budget) || 0;
-  const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remaining = totalBudget - totalSpent;
 
   const onSubmit = async (data: FormValues) => {

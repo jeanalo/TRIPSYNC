@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getAdminTripsService, getAdminUsersService } from '../services/admin.service';
 import { supabase } from '../lib/supabase';
+import { apiClient } from '../lib/apiClient';
 import { useAuth } from './AuthProvider';
+import { CATEGORY_OPTIONS } from '../constants/experiences';
 import type {
   AdminTrip,
   AdminTripsStats,
@@ -10,6 +12,8 @@ import type {
   AdminUser,
   AdminUserStats,
   VisitedCountry,
+  CreateExperienceFormData,
+  TripResult,
 } from '../types/admin.types';
 
 interface DashboardStats {
@@ -28,6 +32,8 @@ interface AdminContextType {
   dashboardStats: DashboardStats;
   loading: boolean;
   error: string | null;
+  createExperience: (data: CreateExperienceFormData) => Promise<void>;
+  searchTripsByCountry: (country: string) => Promise<TripResult[]>;
 }
 
 const emptyTripsStats: AdminTripsStats = {
@@ -126,6 +132,50 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     loadAdminDashboardData();
   }, [user, authLoading]);
 
+  const toLines = (raw: string) =>
+    raw.split('\n').map((s) => s.trim()).filter(Boolean);
+
+  const createExperience = async (data: CreateExperienceFormData): Promise<void> => {
+    const categoryLabel =
+      CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
+    await apiClient.post('/api/experiences', {
+      name: data.name,
+      country: data.country,
+      location: data.location,
+      category: categoryLabel,
+      image: data.imageUrl ?? '',
+      description: data.description,
+      duration: data.duration,
+      difficulty: data.difficulty,
+      eco: data.eco ?? '',
+      highlights: toLines(data.highlights ?? '').map((text) => ({ icon: 'Star', text })),
+      included: toLines(data.included ?? ''),
+      tips: toLines(data.tips ?? ''),
+    });
+  };
+
+  const searchTripsByCountry = async (country: string): Promise<TripResult[]> => {
+    const { data: rows, error } = await supabase
+      .from('trips')
+      .select('*')
+      .ilike('destination_country', country);
+    if (error || !rows?.length) return [];
+    const usersMap = new Map(users.map((u) => [u.id, { email: u.email, name: u.name }]));
+    return rows.map((t: {
+      id: string; user_id: string; destination_country: string;
+      departure_country: string; departure_date: string; arrival_date: string;
+    }) => ({
+      id: t.id,
+      user_id: t.user_id,
+      destination_country: t.destination_country ?? '',
+      departure_country: t.departure_country ?? '',
+      departure_date: t.departure_date ?? '',
+      arrival_date: t.arrival_date ?? '',
+      user_email: usersMap.get(t.user_id)?.email ?? t.user_id,
+      user_name: usersMap.get(t.user_id)?.name ?? 'Unknown User',
+    }));
+  };
+
   return (
     <AdminContext.Provider
       value={{
@@ -138,6 +188,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         dashboardStats,
         loading,
         error,
+        createExperience,
+        searchTripsByCountry,
       }}
     >
       {children}

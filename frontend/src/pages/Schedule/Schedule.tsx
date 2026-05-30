@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, CalendarDays, MapPin, Tag, FileText, Trash2, Pencil, AlertTriangle } from 'lucide-react';
+import {
+  Plus,
+  CalendarDays,
+  MapPin,
+  Tag,
+  FileText,
+  Trash2,
+  Pencil,
+  AlertTriangle,
+} from 'lucide-react';
 import { motion } from 'motion/react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -10,32 +19,27 @@ import AlertModal from '../../components/AlertModal/AlertModal';
 import DetailCard from '../../components/DetailCard/DetailCard';
 import CardHeader from '../../components/CardHeader/CardHeader';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import { formatDate, formatTime, groupByDate } from '../../utils/dateUtils';
+import { formatDate, formatTime } from '../../utils/dateUtils';
 
 const Schedule = () => {
   const navigate = useNavigate();
-  const { activities, deleteActivity } = useExpenseActivity();
+  const { activities, deleteActivity, deletingId, groupedActivities, sortedDates } =
+    useExpenseActivity();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const confirmDelete = async () => {
     if (!pendingDeleteId) return;
-    setDeletingId(pendingDeleteId);
+    const id = pendingDeleteId;
     setPendingDeleteId(null);
     try {
-      await deleteActivity(pendingDeleteId);
-      if (selectedId === pendingDeleteId) setSelectedId(null);
+      await deleteActivity(id);
+      if (selectedId === id) setSelectedId(null);
       toast.success('Activity deleted.');
     } catch {
       toast.error('Failed to delete activity. Please try again.');
-    } finally {
-      setDeletingId(null);
     }
   };
-
-  const grouped = groupByDate(activities);
-  const sortedDates = Object.keys(grouped).sort();
 
   return (
     <div>
@@ -76,7 +80,10 @@ const Schedule = () => {
               icon={<CalendarDays size={48} />}
               message="No activities yet. Add your first activity!"
               action={
-                <ActionButton icon={<Plus size={20} />} onClick={() => navigate('/app/schedule/add')}>
+                <ActionButton
+                  icon={<Plus size={20} />}
+                  onClick={() => navigate('/app/schedule/add')}
+                >
                   Add Activity
                 </ActionButton>
               }
@@ -88,7 +95,7 @@ const Schedule = () => {
               <div className="flex flex-col gap-6">
                 <CardHeader icon={<CalendarDays size={24} />} title={formatDate(date)} />
                 <div className="flex flex-col">
-                  {grouped[date]
+                  {groupedActivities[date]
                     .sort((a, b) => a.time.localeCompare(b.time))
                     .map((activity, index) => (
                       <div
@@ -131,7 +138,9 @@ const Schedule = () => {
                             <button
                               type="button"
                               className="flex items-center gap-2 bg-[#0066D2] text-white font-semibold text-[18px] px-5 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#005ab8] transition-colors"
-                              onClick={() => navigate(`/app/schedule/edit/${activity.id}`)}
+                              onClick={() =>
+                                navigate(`/app/schedule/edit/${activity.id}`)
+                              }
                             >
                               <Pencil size={18} />
                               Edit
@@ -149,7 +158,9 @@ const Schedule = () => {
                               type="button"
                               className="bg-[#0066D2] text-white font-semibold text-[18px] px-8 py-3 rounded-[15px] cursor-pointer border-none hover:bg-[#0055b0] transition-colors"
                               onClick={() =>
-                                setSelectedId(selectedId === activity.id ? null : activity.id)
+                                setSelectedId(
+                                  selectedId === activity.id ? null : activity.id
+                                )
                               }
                             >
                               {selectedId === activity.id ? 'Close' : 'Details'}
@@ -166,9 +177,13 @@ const Schedule = () => {
                               {activity.name}
                             </span>
                             <div className="flex items-center gap-2">
-                              <CalendarDays size={16} className="text-[#0066D2] shrink-0" />
+                              <CalendarDays
+                                size={16}
+                                className="text-[#0066D2] shrink-0"
+                              />
                               <span>
-                                {formatDate(activity.date)} &middot; {formatTime(activity.time)}
+                                {formatDate(activity.date)} &middot;{' '}
+                                {formatTime(activity.time)}
                               </span>
                             </div>
                             {activity.location && (
@@ -185,7 +200,10 @@ const Schedule = () => {
                             )}
                             {activity.notes && (
                               <div className="flex items-start gap-2">
-                                <FileText size={16} className="text-[#0066D2] shrink-0 mt-0.5" />
+                                <FileText
+                                  size={16}
+                                  className="text-[#0066D2] shrink-0 mt-0.5"
+                                />
                                 <span>{activity.notes}</span>
                               </div>
                             )}

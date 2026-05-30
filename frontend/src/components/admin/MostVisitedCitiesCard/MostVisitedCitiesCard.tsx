@@ -1,20 +1,15 @@
-import { motion } from 'motion/react';
+import DetailCard from '@/components/DetailCard/DetailCard';
 import type { VisitedCountry } from '@/types/admin.types';
 
-interface MostVisitedCitiesCardProps {
+interface MostVisitedCountriesCardProps {
   countries: VisitedCountry[];
 }
 
-export default function MostVisitedCitiesCard({
+export default function MostVisitedCountriesCard({
   countries,
-}: MostVisitedCitiesCardProps) {
+}: MostVisitedCountriesCardProps) {
   return (
-    <motion.div
-      className="rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.5 }}
-    >
+    <DetailCard delay={0.5}>
       <h3 className="text-[18px] font-bold text-[#0066D2] mb-1">
         Most Visited Countries
       </h3>
@@ -27,21 +22,21 @@ export default function MostVisitedCitiesCard({
           <div
             key={item.rank}
             className={`flex items-center justify-between py-3 ${
-              index > 0 ? 'border-t border-[#e0e0e0]/60' : ''
+              index > 0 ? 'border-t border-[#0066D2]/15' : ''
             }`}
           >
             <div className="flex items-center gap-3">
               <span className="text-[16px] font-bold text-[#0066D2] w-5 text-center">
                 {item.rank}
               </span>
-              <span className="text-[14px] text-[#333]">{item.country}</span>
+              <span className="text-[14px] text-[#0066D2]">{item.country}</span>
             </div>
-            <span className="text-[13px] font-semibold text-[#1CA698]">
+            <span className="text-[13px] font-semibold text-[#0066D2]">
               {item.visitors} {item.visitors === 1 ? 'user' : 'users'}
             </span>
           </div>
         ))}
       </div>
-    </motion.div>
+    </DetailCard>
   );
 }

@@ -2,16 +2,77 @@ import { supabase } from '../../config/supabase';
 import { Trip, UpsertTripRequest } from './trips.types';
 
 export const getTripByUserService = async (userId: string): Promise<Trip | null> => {
-  const { data, error } = await supabase
+  
+  const { data: ownedTrips, error: ownedError } = await supabase
     .from('trips')
     .select('*')
     .eq('user_id', userId)
-    .maybeSingle();
+    .order('created_at', { ascending: false })
+    .limit(1);
 
-  if (error) throw error;
-  if (!data) return null;
+  if (ownedError) throw ownedError;
+  const ownedTrip = ownedTrips?.[0] ?? null;
 
-  return { ...data, budget: Number(data.budget) || 0 };
+  
+  const { data: memberships, error: memberError } = await supabase
+    .from('trip_members')
+    .select('joined_at, trip_id')
+    .eq('user_id', userId);
+
+  if (memberError) throw memberError;
+
+  
+  if (!ownedTrip && (!memberships || memberships.length === 0)) {
+    return null;
+  }
+
+  
+  let joinedTrips: Trip[] = [];
+  if (memberships && memberships.length > 0) {
+    const tripIds = memberships.map((m) => m.trip_id);
+    const { data: tripsData, error: tripsError } = await supabase
+      .from('trips')
+      .select('*')
+      .in('id', tripIds);
+
+    if (tripsError) throw tripsError;
+    if (tripsData) {
+      joinedTrips = tripsData;
+    }
+  }
+
+ 
+  interface Candidate {
+    trip: Trip;
+    date: Date;
+  }
+  const candidates: Candidate[] = [];
+
+  if (ownedTrip) {
+    candidates.push({
+      trip: ownedTrip,
+      date: ownedTrip.created_at ? new Date(ownedTrip.created_at) : new Date(0),
+    });
+  }
+
+  for (const m of memberships || []) {
+    const tripObj = joinedTrips.find((t) => t.id === m.trip_id);
+    if (tripObj) {
+      candidates.push({
+        trip: tripObj,
+        date: m.joined_at ? new Date(m.joined_at) : new Date(0),
+      });
+    }
+  }
+
+  if (candidates.length === 0) return null;
+
+  
+  candidates.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const selectedTrip = candidates[0].trip;
+
+  return { ...selectedTrip, budget: Number(selectedTrip.budget) || 0 };
 };
 
 export const upsertTripService = async (userId: string, data: UpsertTripRequest): Promise<Trip> => {

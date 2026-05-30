@@ -1,20 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plane, MapPin, CalendarDays } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { useAuth } from '../../context/AuthProvider';
-import { apiClient } from '../../lib/apiClient';
+import { useJoinTrip } from '../../hooks/useJoinTrip';
 import Spinner from '../../components/Spinner/Spinner';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
-
-interface TripInfo {
-  trip_id: string;
-  destination_country: string;
-  departure_date: string;
-  arrival_date: string;
-}
-
-type PageState = 'loading' | 'ready' | 'joining' | 'error';
+import { useNavigate } from 'react-router-dom';
 
 const TripInfoRow = ({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) => (
   <div className="flex items-center gap-3">
@@ -32,48 +21,8 @@ const formatDate = (dateStr: string) => {
 };
 
 const JoinTrip = () => {
-  const [params] = useSearchParams();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
-
-  const token = params.get('token') ?? '';
-
-  const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
-  const [pageState, setPageState] = useState<PageState>('loading');
-  const [errorMsg, setErrorMsg] = useState('');
-
-  async function loadInviteTripInfo() {
-    try {
-      const data = await apiClient.get<TripInfo>(`/api/trips/join?token=${token}`);
-      setTripInfo(data);
-      setPageState('ready');
-    } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : 'Invalid or expired invite link.');
-      setPageState('error');
-    }
-  }
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      navigate(`/login?redirect=${encodeURIComponent(`/join-trip?token=${token}`)}`, { replace: true });
-      return;
-    }
-    if (!token) return;
-    loadInviteTripInfo();
-  }, [user, authLoading, navigate, token]);
-
-  const handleJoin = async () => {
-    if (!token) return;
-    setPageState('joining');
-    try {
-      const { tripId } = await apiClient.post<{ tripId: string }>('/api/trips/join', { token });
-      navigate(`/app?joined=${tripId}`, { replace: true });
-    } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : 'Could not join trip.');
-      setPageState('error');
-    }
-  };
+  const { tripInfo, pageState, errorMsg, authLoading, user, handleJoin } = useJoinTrip();
 
   if (authLoading || (pageState === 'loading' && user)) {
     return (

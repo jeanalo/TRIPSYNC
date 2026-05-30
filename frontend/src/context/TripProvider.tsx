@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthProvider';
 import { apiClient } from '../lib/apiClient';
-import type { Experience, TripDetails, JetLagPlan } from '../types/travel.types';
+import { createInviteLink } from '../services/invites.service';
+import { fetchCountryByName, calculateTimeDifference } from '../services/api';
+import { generateJetLagRecommendations } from '../services/jetlag.service';
+import type { TripDetails, JetLagPlan } from '../types/travel.types';
 
 interface BackendTrip {
   id: string;
@@ -21,9 +24,10 @@ interface TripContextType {
   setJetLagPlan: (plan: JetLagPlan | null) => void;
   activeCity: string;
   setActiveCity: (city: string) => void;
-  experiences: Experience[];
-  toggleSaveExperience: (id: string) => void;
   tripId: string | null;
+  loading: boolean;
+  shareTrip: () => Promise<string>;
+  generateJetLagPlan: (departureTime: string, arrivalTime: string) => Promise<void>;
 }
 
 const TripContext = createContext<TripContextType | undefined>(undefined);
@@ -36,42 +40,9 @@ const defaultTripDetails: TripDetails = {
   departureDate: '',
   arrivalDate: '',
   budget: 0,
+  userIdOwner: '',
 };
 
-const defaultExperiences: Experience[] = [
-  {
-    id: '1',
-    name: 'Sunset Kayaking',
-    location: 'Blue Bay',
-    category: 'Adventure',
-    image: 'https://images.unsplash.com/photo-1595368062405-e4d7840cba14?w=600&q=80',
-    saved: false,
-  },
-  {
-    id: '2',
-    name: 'Ancient Temple Visit',
-    location: 'Old Town',
-    category: 'Cultural',
-    image: 'https://images.unsplash.com/photo-1598177183224-b3cec6da6b04?w=600&q=80',
-    saved: true,
-  },
-  {
-    id: '3',
-    name: 'Street Food Tour',
-    location: 'Night Market',
-    category: 'Chill',
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80',
-    saved: false,
-  },
-  {
-    id: '4',
-    name: 'Hidden Waterfall Hike',
-    location: 'National Park',
-    category: 'Free Tour',
-    image: 'https://images.unsplash.com/photo-1594671733084-66a82cc4304a?w=600&q=80',
-    saved: false,
-  },
-];
 
 const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -80,6 +51,7 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const isLoadedRef = useRef(false);
 
   const [tripId, setTripIdState] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const setTripId = (id: string | null) => {
     tripIdRef.current = id;
@@ -91,13 +63,10 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const [tripDetails, setTripDetailsState] = useState<TripDetails>(defaultTripDetails);
-  const [experiences, setExperiences] = useState<Experience[]>(() => {
-    const saved = localStorage.getItem(getKey('experiences', user?.email));
-    return saved ? JSON.parse(saved) : defaultExperiences;
-  });
   const [jetLagPlan, setJetLagPlanState] = useState<JetLagPlan | null>(null);
 
   async function loadUserTrip() {
+    setLoading(true);
     try {
       const data = await apiClient.get<BackendTrip | undefined>('/api/trips/me');
       if (data) {
@@ -108,22 +77,21 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
           departureDate: data.departure_date ?? '',
           arrivalDate: data.arrival_date ?? '',
           budget: Number(data.budget) || 0,
+          userIdOwner: data.user_id,
         });
         if (data.jet_lag_plan) {
           try { setJetLagPlanState(JSON.parse(data.jet_lag_plan)); } catch { /* invalid JSON */ }
         }
       }
-    } catch {
-      // network or server error
+    } catch (err) {
+      console.error('[TripProvider] Error loading trip:', err);
     }
-
-    const savedExperiences = localStorage.getItem(getKey('experiences', user!.email));
-    setExperiences(savedExperiences ? JSON.parse(savedExperiences) : defaultExperiences);
 
     const savedActiveCity = localStorage.getItem(getKey('activeCity', user!.email));
     setActiveCity(savedActiveCity || 'tokyo');
 
     isLoadedRef.current = true;
+    setLoading(false);
   }
 
   // Load trip from backend on user change
@@ -187,12 +155,6 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (user?.email) {
-      localStorage.setItem(getKey('experiences', user.email), JSON.stringify(experiences));
-    }
-  }, [experiences, user?.email]);
-
-  useEffect(() => {
-    if (user?.email) {
       localStorage.setItem(getKey('activeCity', user.email), activeCity);
     }
   }, [activeCity, user?.email]);
@@ -200,8 +162,27 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const setTripDetails = (details: TripDetails) => setTripDetailsState(details);
   const setJetLagPlan = (plan: JetLagPlan | null) => setJetLagPlanState(plan);
 
-  const toggleSaveExperience = (id: string) => {
-    setExperiences(experiences.map((exp) => (exp.id === id ? { ...exp, saved: !exp.saved } : exp)));
+  const shareTrip = async (): Promise<string> => {
+    if (!tripIdRef.current) throw new Error('Set up your trip first before sharing it.');
+    return createInviteLink(tripIdRef.current);
+  };
+
+  const generateJetLagPlan = async (departureTime: string, arrivalTime: string): Promise<void> => {
+    const [departure, destination] = await Promise.all([
+      fetchCountryByName(tripDetails.departureCountry),
+      fetchCountryByName(tripDetails.destinationCountry),
+    ]);
+    const timeDiff =
+      departure && destination
+        ? calculateTimeDifference(departure.timezones[0], destination.timezones[0])
+        : 0;
+    const recs = generateJetLagRecommendations({
+      departureTime,
+      arrivalTime,
+      timeDiff,
+      destinationName: destination?.name || 'destination',
+    });
+    setJetLagPlanState({ departureTime, arrivalTime, recommendations: recs });
   };
 
   return (
@@ -213,9 +194,10 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
         setJetLagPlan,
         activeCity,
         setActiveCity,
-        experiences,
-        toggleSaveExperience,
         tripId,
+        loading,
+        shareTrip,
+        generateJetLagPlan,
       }}
     >
       {children}

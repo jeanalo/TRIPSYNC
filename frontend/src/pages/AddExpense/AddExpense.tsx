@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   Tag,
   Pencil,
@@ -25,26 +26,22 @@ type FormValues = {
   date: string;
 };
 
-const CATEGORIES = [
-  'Food',
-  'Transport',
-  'Accommodation',
-  'Activities',
-  'Shopping',
-  'Other',
-];
+const CATEGORIES = ['Food', 'Transport', 'Accommodation', 'Activities', 'Shopping', 'Other'];
 
 export default function AddExpense() {
   const { tripDetails } = useTrip();
-  const { addExpense, expenses } = useExpenseActivity();
+  const { addExpense, totalSpent } = useExpenseActivity();
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
     defaultValues: { category: 'Food', notes: '', amount: '', date: '' },
   });
   const [showOverBudgetModal, setShowOverBudgetModal] = useState(false);
 
   const totalBudget = Number(tripDetails.budget) || 0;
-  const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const remaining = totalBudget - totalSpent;
 
   const onSubmit = async (data: FormValues) => {
@@ -53,13 +50,18 @@ export default function AddExpense() {
       setShowOverBudgetModal(true);
       return;
     }
-    await addExpense({
-      category: data.category,
-      notes: data.notes,
-      amount,
-      date: data.date,
-    });
-    navigate('/app/budget');
+    try {
+      await addExpense({
+        category: data.category,
+        notes: data.notes,
+        amount,
+        date: data.date,
+      });
+      toast.success('Expense saved!');
+      navigate('/app/budget');
+    } catch {
+      toast.error('Failed to save expense. Please try again.');
+    }
   };
 
   return (
@@ -83,19 +85,17 @@ export default function AddExpense() {
 
       <PageHeader title="Add New Expense" subtitle="Track your spending on the go." />
 
-      <div className="px-12">
-        <FormCard as="form" onSubmit={handleSubmit(onSubmit)} className="w-[803px]">
+      <div className="px-4 lg:px-12">
+        <FormCard as="form" onSubmit={() => { void handleSubmit(onSubmit)(); }} className="lg:w-[803px]">
           <div className="flex flex-col gap-[45px]">
-            <div className="grid grid-cols-2 gap-[65px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-[65px]">
               <FormField label="Category" icon={<Tag size={24} />}>
                 <select
                   {...register('category', { required: true })}
                   className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none cursor-pointer"
                 >
                   {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
+                    <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
               </FormField>
@@ -110,8 +110,12 @@ export default function AddExpense() {
               </FormField>
             </div>
 
-            <div className="grid grid-cols-2 gap-[65px]">
-              <FormField label="Amount" icon={<DollarSign size={24} />}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-[65px]">
+              <FormField
+                label="Amount"
+                icon={<DollarSign size={24} />}
+                error={errors.amount ? 'Amount is required' : undefined}
+              >
                 <input
                   type="number"
                   step="0.01"
@@ -122,7 +126,11 @@ export default function AddExpense() {
                 />
               </FormField>
 
-              <FormField label="Date" icon={<CalendarDays size={24} />}>
+              <FormField
+                label="Date"
+                icon={<CalendarDays size={24} />}
+                error={errors.date ? 'Date is required' : undefined}
+              >
                 <input
                   type="date"
                   {...register('date', { required: true })}
@@ -131,7 +139,13 @@ export default function AddExpense() {
               </FormField>
             </div>
 
-            <SubmitButton icon={<CheckCircle size={24} />}>Save Expense</SubmitButton>
+            <SubmitButton
+              icon={<CheckCircle size={24} />}
+              loading={isSubmitting}
+              loadingText="Saving..."
+            >
+              Save Expense
+            </SubmitButton>
           </div>
         </FormCard>
       </div>

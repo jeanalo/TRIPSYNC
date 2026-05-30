@@ -51,7 +51,7 @@ export default function RealtimeRecommendationModal({
                 <Sparkles size={18} />
               </IconBadge>
               <span className="text-[15px] font-bold text-[#0066D2]">
-                Nueva experiencia
+                New experience
               </span>
             </div>
             <button
@@ -103,13 +103,13 @@ export default function RealtimeRecommendationModal({
                 onClick={onClose}
                 className="flex-1 py-2.5 rounded-xl bg-[#0066D2]/5 text-[#0066D2] text-[13px] font-semibold border border-[#0066D2]/20 cursor-pointer hover:bg-[#0066D2]/10 transition-colors"
               >
-                Descartar
+                Dismiss
               </button>
               <button
                 onClick={handleViewMore}
                 className="flex-1 py-2.5 rounded-xl bg-[#0066D2] text-white text-[13px] font-semibold border-none cursor-pointer hover:opacity-90 transition-opacity"
               >
-                Ver más
+                View more
               </button>
             </div>
           </div>

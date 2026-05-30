@@ -23,33 +23,26 @@ export const createExperience = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const {
-    name,
-    country,
-    location,
-    category,
-    image,
-    duration,
-    difficulty,
-    description,
-    eco,
-    highlights,
-    included,
-    tips,
-  } = req.body;
-  if (
-    !name ||
-    !country ||
-    !location ||
-    !category ||
-    !image ||
-    !duration ||
-    !difficulty ||
-    !description
-  ) {
-    return next(Boom.badRequest("Missing required fields"));
-  }
   try {
+    const {
+      name,
+      country,
+      location,
+      category,
+      image,
+      duration,
+      difficulty,
+      description,
+      eco,
+      highlights,
+      included,
+      tips,
+    } = req.body;
+
+    if (!name || !country || !location || !category || !image || !duration || !difficulty || !description) {
+      return next(Boom.badRequest("Missing required fields"));
+    }
+
     const newExp = await createExperienceService({
       name,
       country,

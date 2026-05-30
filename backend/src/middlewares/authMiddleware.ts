@@ -1,21 +1,18 @@
 import { Response, NextFunction } from 'express';
+import Boom from '@hapi/boom';
 import { supabase } from '../config/supabase';
 import { AuthRequest } from '../shared/types';
 import { UserRole } from '../features/users/users.types';
 
-export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: AuthRequest, _res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
+    if (!token) return next(Boom.unauthorized('No token provided'));
 
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
-    if (error || !user) {
-      return res.status(401).json({ message: 'Invalid token' });
-    }
+    if (error || !user) return next(Boom.unauthorized('Invalid token'));
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -32,6 +29,6 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
 
     next();
   } catch {
-    return res.status(401).json({ message: 'Invalid token' });
+    next(Boom.unauthorized('Invalid token'));
   }
 };

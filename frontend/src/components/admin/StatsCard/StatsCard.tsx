@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
+import CardHeader from '@/components/CardHeader/CardHeader';
 
 interface StatsCardProps {
   icon: ReactNode;
@@ -16,23 +17,20 @@ export default function StatsCard({
 }: StatsCardProps) {
   return (
     <motion.div
-      className="flex flex-col gap-3 rounded-2xl bg-gradient-to-br from-[#1CA698] to-[#17897d] px-6 py-5 shadow-sm transition-shadow duration-300 hover:shadow-lg"
+      className="flex h-[180px] flex-col justify-between rounded-[15px] bg-[#1CA698] p-[24px] transition-all duration-300 hover:shadow-lg hover:brightness-110"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
     >
-      
-      <div className="flex h-[42px] w-[42px] items-center justify-center rounded-xl bg-white/20 text-white">
-        {icon}
-      </div>
-
-      
-      <span className="text-[13px] font-medium text-white/80">{label}</span>
-
-      
-      <span className="text-[28px] font-bold leading-tight text-white">
-        {value}
-      </span>
+      <CardHeader
+        icon={icon}
+        title={label}
+        subtitle={String(value)}
+        layout="vertical"
+        size="sm"
+        colorScheme="white"
+        iconColor="teal"
+      />
     </motion.div>
   );
 }

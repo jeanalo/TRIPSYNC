@@ -1,40 +1,20 @@
-import { supabase } from './supabase';
-
-const API_URL = 'http://localhost:3000';
-
-async function getAuthHeaders(): Promise<HeadersInit> {
-  const { data: { session } } = await supabase.auth.getSession();
-  return {
-    'Content-Type': 'application/json',
-    ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-  };
-}
-
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: { ...headers, ...(options.headers ?? {}) },
-  });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const message =
-      (body as { error?: { message?: string }; message?: string }).error?.message ??
-      (body as { message?: string }).message ??
-      `HTTP ${res.status}`;
-    throw new Error(message);
-  }
-
-  if (res.status === 204) return undefined as T;
-  return res.json() as Promise<T>;
-}
+import { getAxiosInstance } from '@/context/AxiosProvider';
 
 export const apiClient = {
-  get: <T>(path: string) => request<T>(path),
-  post: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-  put: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  get: <T>(path: string) =>
+    getAxiosInstance()
+      .get<T>(path)
+      .then((r) => r.data),
+  post: <T>(path: string, body?: unknown) =>
+    getAxiosInstance()
+      .post<T>(path, body)
+      .then((r) => r.data),
+  put: <T>(path: string, body?: unknown) =>
+    getAxiosInstance()
+      .put<T>(path, body)
+      .then((r) => r.data),
+  delete: <T>(path: string) =>
+    getAxiosInstance()
+      .delete<T>(path)
+      .then((r) => r.data),
 };

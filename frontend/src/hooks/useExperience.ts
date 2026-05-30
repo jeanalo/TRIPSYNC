@@ -1,13 +1,16 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthProvider';
-import type { Experience } from '../data/types';
+import type { Experience } from '@/types/experiences.types';
 
 export const useExperiences = () => {
   const { user } = useAuth();
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
+
+  const refetch = useCallback(() => setRefetchTrigger((n) => n + 1), []);
 
   useEffect(() => {
     const fetchExperiences = async () => {
@@ -21,7 +24,7 @@ export const useExperiences = () => {
     };
 
     fetchExperiences();
-  }, []);
+  }, [refetchTrigger]);
 
   useEffect(() => {
     if (!user?.id) {
@@ -93,5 +96,24 @@ export const useExperiences = () => {
     [user?.id, savedIds]
   );
 
-  return { experiences, savedIds, toggleSave, loading };
+  const categoryCounts = useMemo(
+    () =>
+      experiences.reduce<Record<string, number>>((acc, exp) => {
+        acc[exp.category] = (acc[exp.category] || 0) + 1;
+        return acc;
+      }, {}),
+    [experiences]
+  );
+
+  const topCategory = useMemo(
+    () => Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—',
+    [categoryCounts]
+  );
+
+  const uniqueCountries = useMemo(
+    () => new Set(experiences.map((e) => e.country)),
+    [experiences]
+  );
+
+  return { experiences, savedIds, toggleSave, loading, refetch, categoryCounts, topCategory, uniqueCountries };
 };

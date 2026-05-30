@@ -2,11 +2,9 @@ export interface RealtimeRecommendationPayload {
   id: string;
   country: string;
   category: string;
-  activityName: string;
+  name: string;
   location: string;
-  date: string;
-  time: string;
-  details?: string;
+  description?: string;
   imageUrl?: string;
 }
 

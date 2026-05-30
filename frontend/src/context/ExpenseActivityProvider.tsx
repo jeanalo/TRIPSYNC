@@ -1,15 +1,24 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useAuth } from './AuthProvider';
 import { useTrip } from './TripProvider';
-import { supabase } from '../lib/supabase';
+import { apiClient } from '../lib/apiClient';
+import { groupByDate } from '../utils/dateUtils';
 import type { Expense, Activity } from '../types/travel.types';
 
 interface ExpenseActivityContextType {
   expenses: Expense[];
+  activities: Activity[];
+  loading: boolean;
+  isCreating: boolean;
+  deletingId: string | null;
+  totalSpent: number;
+  categoryTotals: Record<string, number>;
+  groupedActivities: Record<string, Activity[]>;
+  sortedDates: string[];
   addExpense: (expense: Omit<Expense, 'id'>) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
-  activities: Activity[];
   addActivity: (activity: Omit<Activity, 'id'>) => Promise<void>;
+  updateActivity: (id: string, activity: Omit<Activity, 'id'>) => Promise<void>;
   deleteActivity: (id: string) => Promise<void>;
 }
 
@@ -21,77 +30,102 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Load expenses and activities from Supabase on user change
+  const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
+  const categoryTotals = useMemo(
+    () =>
+      expenses.reduce<Record<string, number>>((acc, e) => {
+        const cat = e.category || 'Other';
+        acc[cat] = (acc[cat] || 0) + (Number(e.amount) || 0);
+        return acc;
+      }, {}),
+    [expenses]
+  );
+
+  const groupedActivities = useMemo(() => groupByDate(activities), [activities]);
+  const sortedDates = useMemo(() => Object.keys(groupedActivities).sort(), [groupedActivities]);
+
+  async function loadExpensesAndActivities() {
+    setLoading(true);
+    try {
+      const url = tripId ? `/api/expenses?tripId=${tripId}` : '/api/expenses';
+      const expenseRows = await apiClient.get<Expense[]>(url);
+      setExpenses(expenseRows);
+    } catch (err) {
+      console.error('Error loading expenses:', err);
+    }
+
+    try {
+      const url = tripId ? `/api/activities?tripId=${tripId}` : '/api/activities';
+      const activityRows = await apiClient.get<Activity[]>(url);
+      setActivities(activityRows);
+    } catch (err) {
+      console.error('Error loading activities:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (!user?.id) {
       setExpenses([]);
       setActivities([]);
       return;
     }
-
-    (async () => {
-      const { data: expenseRows } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('user_id', user.id);
-      setExpenses(
-        (expenseRows ?? []).map((e) => ({
-          id: e.id,
-          amount: Number(e.amount) || 0,
-          category: e.category,
-          date: e.date,
-          notes: e.notes ?? '',
-        }))
-      );
-
-      const { data: activityRows } = await supabase
-        .from('activities')
-        .select('*')
-        .eq('user_id', user.id);
-      setActivities(
-        (activityRows ?? []).map((a) => ({
-          id: a.id,
-          name: a.name,
-          date: a.date,
-          time: a.time,
-          location: a.location ?? '',
-          category: a.category,
-          notes: a.notes ?? '',
-        }))
-      );
-    })();
-  }, [user?.id]);
+    loadExpensesAndActivities();
+  }, [user?.id, tripId]);
 
   const addExpense = async (expense: Omit<Expense, 'id'>) => {
-    const id = crypto.randomUUID();
-    const { error } = await supabase.from('expenses').insert({
-      id,
-      trip_id: tripId ?? null,
-      user_id: user?.id,
-      amount: expense.amount,
-      category: expense.category,
-      date: expense.date,
-      notes: expense.notes,
-    });
-    if (!error) {
-      setExpenses((prev) => [...prev, { ...expense, id }]);
+    setIsCreating(true);
+    try {
+      const created = await apiClient.post<Expense>('/api/expenses', {
+        trip_id: tripId ?? null,
+        amount: expense.amount,
+        category: expense.category,
+        date: expense.date,
+        notes: expense.notes,
+      });
+      setExpenses((prev) => [...prev, created]);
+    } finally {
+      setIsCreating(false);
     }
   };
 
   const deleteExpense = async (id: string) => {
-    const { error } = await supabase.from('expenses').delete().eq('id', id);
-    if (!error) {
+    setDeletingId(id);
+    try {
+      await apiClient.delete(`/api/expenses/${id}`);
       setExpenses((prev) => prev.filter((e) => e.id !== id));
+    } finally {
+      setDeletingId(null);
     }
   };
 
   const addActivity = async (activity: Omit<Activity, 'id'>) => {
-    const id = crypto.randomUUID();
-    const { error } = await supabase.from('activities').insert({
-      id,
+    setIsCreating(true);
+    try {
+      const created = await apiClient.post<Activity>('/api/activities', {
+        trip_id: tripId ?? null,
+        name: activity.name,
+        date: activity.date,
+        time: activity.time,
+        location: activity.location,
+        category: activity.category,
+        notes: activity.notes,
+      });
+      setActivities((prev) => [...prev, created]);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const updateActivity = async (id: string, activity: Omit<Activity, 'id'>) => {
+    const updated = await apiClient.put<Activity>(`/api/activities/${id}`, {
       trip_id: tripId ?? null,
-      user_id: user?.id,
       name: activity.name,
       date: activity.date,
       time: activity.time,
@@ -99,21 +133,37 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
       category: activity.category,
       notes: activity.notes,
     });
-    if (!error) {
-      setActivities((prev) => [...prev, { ...activity, id }]);
-    }
+    setActivities((prev) => prev.map((a) => (a.id === id ? updated : a)));
   };
 
   const deleteActivity = async (id: string) => {
-    const { error } = await supabase.from('activities').delete().eq('id', id);
-    if (!error) {
+    setDeletingId(id);
+    try {
+      await apiClient.delete(`/api/activities/${id}`);
       setActivities((prev) => prev.filter((a) => a.id !== id));
+    } finally {
+      setDeletingId(null);
     }
   };
 
   return (
     <ExpenseActivityContext.Provider
-      value={{ expenses, addExpense, deleteExpense, activities, addActivity, deleteActivity }}
+      value={{
+        expenses,
+        activities,
+        loading,
+        isCreating,
+        deletingId,
+        totalSpent,
+        categoryTotals,
+        groupedActivities,
+        sortedDates,
+        addExpense,
+        deleteExpense,
+        addActivity,
+        updateActivity,
+        deleteActivity,
+      }}
     >
       {children}
     </ExpenseActivityContext.Provider>

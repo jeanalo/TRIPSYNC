@@ -21,6 +21,7 @@ interface FormFieldProps {
   colorScheme?: 'teal' | 'blue';
   value?: string;
   children?: ReactNode;
+  error?: string;
 }
 
 export default function FormField({
@@ -29,6 +30,7 @@ export default function FormField({
   colorScheme = 'teal',
   value,
   children,
+  error,
 }: FormFieldProps) {
   const colors = colorMap[colorScheme];
 
@@ -38,9 +40,9 @@ export default function FormField({
         {label}
       </label>
       <div
-        className={`flex h-[52px] items-center gap-5 rounded-[15px] border ${colors.border} bg-white pl-5 pr-6`}
+        className={`flex h-[52px] items-center gap-5 rounded-[15px] border ${error ? 'border-red-400' : colors.border} bg-white pl-5 pr-6`}
       >
-        <span className={`shrink-0 ${colors.icon}`}>{icon}</span>
+        <span className={`shrink-0 ${error ? 'text-red-400' : colors.icon}`}>{icon}</span>
         {value !== undefined ? (
           <span className={`text-[20px] leading-[36px] ${colors.text}`}>
             {value}
@@ -49,6 +51,7 @@ export default function FormField({
           children
         )}
       </div>
+      {error && <span className="pl-1 text-[13px] text-red-500">{error}</span>}
     </div>
   );
 }

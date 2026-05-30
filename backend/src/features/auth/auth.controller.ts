@@ -1,75 +1,112 @@
-import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { getAuthService } from './auth.service';
-import { usersMock } from '../users/users.service';
+import Boom from '@hapi/boom';
+import { Request, Response, NextFunction } from "express";
+import { supabase } from "../../config/supabase";
+import { AuthRequest } from "../../shared/types";
 
-export const getAuth = (req: Request, res: Response) => {
-  const authData = getAuthService();
-  res.json(authData);
+export const getAuth = (req: AuthRequest, res: Response) => {
+  res.json({ user: req.user });
 };
 
-export const register = async (req: Request, res: Response) => {
+export const refresh = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password, name } = req.body;
+    const { refreshToken } = req.body;
+    if (!refreshToken) return next(Boom.badRequest("refreshToken required"));
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const newUser = {
-      id: Math.random().toString(36).substring(7),
-      email,
-      name: name || "New User",
-      role: "user" as const,
-      password: hashedPassword
-    };
-    
-    usersMock.push(newUser);
+    const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
 
-    res.status(201).json({
-      message: 'Usuario registrado',
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        role: newUser.role
-      }
+    if (error || !data.session) {
+      return next(Boom.unauthorized("Invalid or expired refresh token"));
+    }
+
+    res.json({
+      session: {
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+        expires_at: data.session.expires_at,
+      },
     });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Error registrando usuario'
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const logout = (_req: Request, res: Response) => {
+  res.json({ message: "Logout exitoso" });
+};
+
+export const register = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, password, name, role } = req.body;
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name || "New User", role: role || "user" },
+      },
+    });
+
+    if (error) {
+      return next(Boom.badRequest(error.message));
+    }
+
+    if (!data.session) {
+      return next(Boom.badRequest("Email verification required"));
+    }
+
+    res.status(201).json({
+      message: "Usuario registrado",
+      session: {
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+        expires_at: data.session.expires_at,
+      },
+      user: {
+        id: data.user?.id,
+        email: data.user?.email,
+        name: name || "New User",
+        role: role || "user",
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
-    const user = usersMock.find(u => u.email === email);
-    
-    if (!user) {
-      return res.status(401).json({ message: 'Credenciales inválidas' });
-    }
-    
-    if (user.password && user.password !== password) {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-         return res.status(401).json({ message: 'Credenciales inválidas' });
-      }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error || !data.user || !data.session) {
+      return next(Boom.unauthorized("Credenciales inválidas"));
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      'secretkey',
-      { expiresIn: '1d' }
-    );
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, name")
+      .eq("id", data.user.id)
+      .single();
 
     res.status(200).json({
-      message: 'Login exitoso',
-      token
+      message: "Login exitoso",
+      session: {
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+        expires_at: data.session.expires_at,
+      },
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        name: profile?.name ?? data.user.user_metadata?.full_name ?? data.user.email,
+        role: profile?.role ?? "user",
+      },
     });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Error en login'
-    });
+  } catch (err) {
+    next(err);
   }
 };

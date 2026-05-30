@@ -1,16 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { motion } from 'motion/react';
 
 import PageHeader from '@/components/PageHeader/PageHeader';
-
 import TripsFilters from '@/components/admin/TripsFilters/TripsFilters';
 import TripsTable from '@/components/admin/TripsTable/TripsTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useAdmin } from '@/context/AdminProvider';
-import { mockCountryOptions, mockCategoryOptions } from '@/services/admin.mock';
+import { CATEGORY_OPTIONS } from '@/constants/experiences';
 
 import type { AdminTripFilters, CreateExperienceFormData } from '@/types/admin.types';
 
@@ -20,7 +18,7 @@ interface AdminLayoutOutletContext {
 }
 
 export default function AdminTrips() {
-  const { trips, tripsStats } = useAdmin();
+  const { trips } = useAdmin();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [filters, setFilters] = useState<AdminTripFilters>({
@@ -38,7 +36,14 @@ export default function AdminTrips() {
     }
   }, [outletContext?.isCreateModalRequested]);
 
-  const handleCreateSubmit = (data: CreateExperienceFormData) => {
+  const countryOptions = useMemo(() => {
+    const unique = [
+      ...new Set(trips.map((t) => t.destinationCountry).filter(Boolean)),
+    ].sort();
+    return unique.map((c) => ({ value: c.toLowerCase(), label: c }));
+  }, [trips]);
+
+  const handleCreateSubmit = (_data: CreateExperienceFormData) => {
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
@@ -47,14 +52,11 @@ export default function AdminTrips() {
     const matchesSearch =
       trip.travelerName.toLowerCase().includes(filters.search.toLowerCase()) ||
       trip.id.toLowerCase().includes(filters.search.toLowerCase());
-
     const matchesCountry =
       !filters.country ||
       trip.destinationCountry.toLowerCase() === filters.country.toLowerCase();
-
     const matchesDate =
       !filters.date || trip.startDate >= filters.date || trip.endDate >= filters.date;
-
     return matchesSearch && matchesCountry && matchesDate;
   });
 
@@ -66,13 +68,12 @@ export default function AdminTrips() {
         className="mb-7"
       />
 
-      <div className="bg-[#F5F7FA] rounded-3xl p-1">
+      <div className="px-4 lg:px-12">
         <TripsFilters
           filters={filters}
           onFilterChange={setFilters}
-          countryOptions={mockCountryOptions}
+          countryOptions={countryOptions}
         />
-
         <TripsTable trips={filteredTrips} />
       </div>
 
@@ -80,7 +81,7 @@ export default function AdminTrips() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        categoryOptions={mockCategoryOptions}
+        categoryOptions={CATEGORY_OPTIONS}
       />
 
       <SuccessModal

@@ -1,34 +1,29 @@
-import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
+import Boom from '@hapi/boom';
+import { Request, Response, NextFunction } from 'express';
 import { getUsersService, updateUserService } from './users.service';
 import { AuthRequest } from '../../shared/types';
 
-export const getUsers = (req: Request, res: Response) => {
-  const users = getUsersService();
-  res.json(users);
+export const getUsers = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const users = await getUsersService();
+    res.json(users);
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const updateUser = async (req: AuthRequest, res: Response) => {
-  const { id } = req.params;
-  const { fullName, password } = req.body;
+export const updateUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const { fullName, password } = req.body;
 
-  if (req.user?.id !== id && req.user?.role !== 'admin') {
-    return res.status(403).json({ message: 'Forbidden' });
+    if (req.user?.id !== id && req.user?.role !== 'admin') {
+      return next(Boom.forbidden('Forbidden'));
+    }
+
+    const updatedUser = await updateUserService(id, { fullName, password });
+    res.json({ message: 'User updated', user: { id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, role: updatedUser.role } });
+  } catch (err) {
+    next(err);
   }
-
-  let hashedPassword;
-  if (password) {
-    hashedPassword = await bcrypt.hash(password, 10);
-  }
-
-  const updatedUser = updateUserService(id, {
-    fullName,
-    password: hashedPassword
-  });
-
-  if (!updatedUser) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-
-  res.json({ message: 'User updated', user: { id: updatedUser.id, name: updatedUser.name, email: updatedUser.email } });
 };

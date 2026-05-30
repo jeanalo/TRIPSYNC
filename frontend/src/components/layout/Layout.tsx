@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 import { useRealtime } from '../../context/RealtimeProvider';
 import {
@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import IconBadge from '../IconBadge/IconBadge';
-import RealtimeRecommendationToast from '../RealtimeRecommendationToast/RealtimeRecommendationToast';
+import RealtimeRecommendationModal from '../RealtimeRecommendationModal/RealtimeRecommendationModal';
 
 const navItems = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
@@ -27,7 +27,7 @@ const navItems = [
 ];
 
 const Layout = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const { latestNotification, clearNotification } = useRealtime();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -35,9 +35,6 @@ const Layout = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
-
-  if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-white">
@@ -120,7 +117,7 @@ const Layout = () => {
         <Outlet />
       </main>
 
-      <RealtimeRecommendationToast
+      <RealtimeRecommendationModal
         notification={latestNotification}
         onClose={clearNotification}
       />

@@ -6,6 +6,7 @@ import { expensesRouter } from '../features/expenses/expenses.router';
 import { activitiesRouter } from '../features/activities/activities.router';
 import { experiencesRouter } from '../features/experiences/experiences.router';
 import { jetlagRouter } from '../features/jetlag/jetlag.router';
+import { adminRouter } from '../features/admin/admin.router';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/expenses', expensesRouter);
 router.use('/activities', activitiesRouter);
 router.use('/experiences', experiencesRouter);
 router.use('/jetlag', jetlagRouter);
+router.use('/admin', adminRouter);
 
 export const apiRouter = router;

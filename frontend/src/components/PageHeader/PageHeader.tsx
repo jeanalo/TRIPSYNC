@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 interface PageHeaderProps {
-  title: string;
+  title: string | ReactNode;
   subtitle: string | ReactNode;
   action?: ReactNode;
   className?: string;
@@ -11,7 +11,7 @@ interface PageHeaderProps {
 export default function PageHeader({ title, subtitle, action, className }: PageHeaderProps) {
   return (
     <motion.div
-      className={className ?? "px-4 lg:px-12 pt-8 lg:pt-[73px] pb-8 lg:pb-[42px]"}
+      className={`px-4 lg:px-12 pt-8 lg:pt-[73px] pb-4 lg:pb-6 ${className ?? ''}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

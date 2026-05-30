@@ -18,9 +18,9 @@ export type Activity = {
 
 export type Experience = {
   id: string;
-  title: string;
+  name: string;
   location: string;
-  category: 'Chill' | 'Adventure' | 'Cultural' | 'Free Tour' | 'Gastronomy' | 'Nature';
+  category: 'Chill' | 'Adventure' | 'Cultural' | 'Free Tour';
   image: string;
   saved: boolean;
 };
@@ -31,6 +31,7 @@ export type TripDetails = {
   departureDate: string;
   arrivalDate: string;
   budget: number;
+  userIdOwner?: string;
 };
 
 export type Recommendation = {

@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Tag, Pencil, CalendarDays, CheckCircle, Clock, MapPin } from 'lucide-react';
 import { useExpenseActivity } from '../../context/ExpenseActivityProvider';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -16,33 +17,27 @@ type FormValues = {
   notes: string;
 };
 
-const CATEGORIES = [
-  'Free Tour',
-  'Adventure',
-  'Cultural',
-  'Chill',
-  'Food',
-  'Transport',
-  'Other',
-];
+const CATEGORIES = ['Free Tour', 'Adventure', 'Cultural', 'Chill', 'Food', 'Transport', 'Other'];
 
 export default function AddActivity() {
   const { addActivity } = useExpenseActivity();
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<FormValues>({
-    defaultValues: {
-      name: '',
-      date: '',
-      time: '',
-      location: '',
-      category: 'Free Tour',
-      notes: '',
-    },
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: { name: '', date: '', time: '', location: '', category: 'Free Tour', notes: '' },
   });
 
   const onSubmit = async (data: FormValues) => {
-    await addActivity(data);
-    navigate('/app/schedule');
+    try {
+      await addActivity(data);
+      toast.success('Activity added!');
+      navigate('/app/schedule');
+    } catch {
+      toast.error('Failed to add activity. Please try again.');
+    }
   };
 
   return (
@@ -50,9 +45,13 @@ export default function AddActivity() {
       <PageHeader title="Add New Activity" subtitle="Plan your day." />
 
       <div className="px-4 lg:px-12">
-        <FormCard as="form" onSubmit={handleSubmit(onSubmit)} className="lg:w-[803px]">
+        <FormCard as="form" onSubmit={() => { void handleSubmit(onSubmit)(); }} className="lg:w-[803px]">
           <div className="flex flex-col gap-[45px]">
-            <FormField label="Activity Name" icon={<Pencil size={24} />}>
+            <FormField
+              label="Activity Name"
+              icon={<Pencil size={24} />}
+              error={errors.name ? 'Activity name is required' : undefined}
+            >
               <input
                 type="text"
                 {...register('name', { required: true })}
@@ -62,7 +61,11 @@ export default function AddActivity() {
             </FormField>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[45px] md:gap-[65px]">
-              <FormField label="Date" icon={<CalendarDays size={24} />}>
+              <FormField
+                label="Date"
+                icon={<CalendarDays size={24} />}
+                error={errors.date ? 'Date is required' : undefined}
+              >
                 <input
                   type="date"
                   {...register('date', { required: true })}
@@ -70,7 +73,11 @@ export default function AddActivity() {
                 />
               </FormField>
 
-              <FormField label="Time" icon={<Clock size={24} />}>
+              <FormField
+                label="Time"
+                icon={<Clock size={24} />}
+                error={errors.time ? 'Time is required' : undefined}
+              >
                 <input
                   type="time"
                   {...register('time', { required: true })}
@@ -95,9 +102,7 @@ export default function AddActivity() {
                   className="h-full w-full border-none bg-transparent text-[20px] leading-[36px] text-[#1CA698] outline-none cursor-pointer"
                 >
                   {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
+                    <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
               </FormField>
@@ -112,7 +117,13 @@ export default function AddActivity() {
               />
             </FormField>
 
-            <SubmitButton icon={<CheckCircle size={24} />}>Save Activity</SubmitButton>
+            <SubmitButton
+              icon={<CheckCircle size={24} />}
+              loading={isSubmitting}
+              loadingText="Saving..."
+            >
+              Save Activity
+            </SubmitButton>
           </div>
         </FormCard>
       </div>

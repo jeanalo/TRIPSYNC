@@ -9,6 +9,8 @@ interface AlertModalProps {
   bg: string;
   icon: ReactNode;
   actionLabel?: string;
+  onConfirm?: () => void;
+  confirmLabel?: string;
   children: ReactNode;
 }
 
@@ -19,6 +21,8 @@ const AlertModal = ({
   bg,
   icon,
   actionLabel = 'Got it',
+  onConfirm,
+  confirmLabel = 'Confirm',
   children,
 }: AlertModalProps) => {
   return (
@@ -57,13 +61,31 @@ const AlertModal = ({
 
               {children}
 
-              <button
-                onClick={onClose}
-                className="mt-1 w-full rounded-xl py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ backgroundColor: color }}
-              >
-                {actionLabel}
-              </button>
+              {onConfirm ? (
+                <div className="mt-1 flex w-full gap-3">
+                  <button
+                    onClick={onClose}
+                    className="flex-1 rounded-xl py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  >
+                    {actionLabel === 'Got it' ? 'Cancel' : actionLabel}
+                  </button>
+                  <button
+                    onClick={onConfirm}
+                    className="flex-1 rounded-xl py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: color }}
+                  >
+                    {confirmLabel}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={onClose}
+                  className="mt-1 w-full rounded-xl py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: color }}
+                >
+                  {actionLabel}
+                </button>
+              )}
             </div>
           </motion.div>
         </motion.div>

@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Bookmark, BookmarkCheck, Leaf } from 'lucide-react';
+import { MapPin, Leaf, Map } from 'lucide-react';
+import SaveButton from '../../components/SaveButton/SaveButton';
 import { motion } from 'motion/react';
 import PageHeader from '../../components/PageHeader/PageHeader';
+import EmptyState from '../../components/EmptyState/EmptyState';
+import Spinner from '../../components/Spinner/Spinner';
 import { useExperiences } from '@/hooks/useExperience';
 import { useTrip } from '../../context/TripProvider';
 
@@ -29,7 +32,11 @@ const Experiences = () => {
   });
 
   if (loading) {
-    return <p className="p-10">Loading...</p>;
+    return (
+      <div className="flex h-full flex-1 items-center justify-center py-32">
+        <Spinner size="md" />
+      </div>
+    );
   }
 
   return (
@@ -76,16 +83,12 @@ const Experiences = () => {
                   alt={exp.name}
                   className="w-full h-full object-cover"
                 />
-                <button
-                  onClick={() => toggleSave(exp.id)}
-                  className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow hover:bg-white transition-colors cursor-pointer border-none"
-                >
-                  {savedIds.has(exp.id) ? (
-                    <BookmarkCheck size={16} className="text-[#0066D2]" />
-                  ) : (
-                    <Bookmark size={16} className="text-[#0066D2]" />
-                  )}
-                </button>
+                <SaveButton
+                  experienceId={exp.id}
+                  savedIds={savedIds}
+                  onToggle={toggleSave}
+                  variant="card"
+                />
               </div>
 
               <div className="flex flex-col gap-3 px-4 pt-4 pb-4 flex-1">
@@ -113,13 +116,12 @@ const Experiences = () => {
           ))}
 
           {visible.length === 0 && (
-            <motion.p
-              className="col-span-full text-center text-[18px] text-[#0066D2]/50 py-16"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              No experiences found.
-            </motion.p>
+            <div className="col-span-full">
+              <EmptyState
+                icon={<Map size={48} />}
+                message="No experiences found."
+              />
+            </div>
           )}
         </div>
       </div>

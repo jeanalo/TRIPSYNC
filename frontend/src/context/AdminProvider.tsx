@@ -1,19 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { VisitedCountry } from '../types/admin.types';
-import {
-  mockAdminTripsStats,
-  mockAdminExperiences,
-  mockAdminExperiencesStats,
-  mockAdminUserStats
-} from '../services/admin.mock';
+import { getAdminTripsService, getAdminUsersService } from '../services/admin.service';
 import { supabase } from '../lib/supabase';
+import { apiClient } from '../lib/apiClient';
+import { useAuth } from './AuthProvider';
+import { CATEGORY_OPTIONS } from '../constants/experiences';
 import type {
   AdminTrip,
   AdminTripsStats,
   AdminExperience,
   AdminExperiencesStats,
   AdminUser,
-  AdminUserStats
+  AdminUserStats,
+  VisitedCountry,
+  CreateExperienceFormData,
+  TripResult,
 } from '../types/admin.types';
 
 interface DashboardStats {
@@ -30,143 +30,166 @@ interface AdminContextType {
   users: AdminUser[];
   usersStats: AdminUserStats;
   dashboardStats: DashboardStats;
+  loading: boolean;
+  error: string | null;
+  createExperience: (data: CreateExperienceFormData) => Promise<void>;
+  searchTripsByCountry: (country: string) => Promise<TripResult[]>;
 }
+
+const emptyTripsStats: AdminTripsStats = {
+  totalTrips: 0,
+  activeTrips: 0,
+  completedTrips: 0,
+  topDestination: '—',
+};
+
+const emptyUserStats: AdminUserStats = {
+  totalUsers: 0,
+  activeUsers: 0,
+  newThisMonth: 0,
+  topCountry: '—',
+};
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {
+  const { user, loading: authLoading } = useAuth();
   const [trips, setTrips] = useState<AdminTrip[]>([]);
-  const [tripsStats, setTripsStats] = useState<AdminTripsStats>(mockAdminTripsStats);
-  const [experiences] = useState<AdminExperience[]>(mockAdminExperiences);
-  const [experiencesStats] = useState<AdminExperiencesStats>(mockAdminExperiencesStats);
+  const [tripsStats, setTripsStats] = useState<AdminTripsStats>(emptyTripsStats);
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [usersStats, setUsersStats] = useState<AdminUserStats>(mockAdminUserStats);
+  const [usersStats, setUsersStats] = useState<AdminUserStats>(emptyUserStats);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     activeUsers: 0,
     activeTrips: 0,
     topCountries: [],
   });
+  const [experiences, setExperiences] = useState<AdminExperience[]>([]);
+  const [experiencesStats, setExperiencesStats] = useState<AdminExperiencesStats>({
+    totalExperiences: 0,
+    activeExperiences: 0,
+    pendingApproval: 0,
+    mostPopularCategory: '—',
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  async function loadAdminDashboardData() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [tripsData, usersData, expResult] = await Promise.all([
+        getAdminTripsService(),
+        getAdminUsersService(),
+        supabase
+          .from('experiences')
+          .select('id, name, country, location, category, duration, difficulty, image'),
+      ]);
+
+      setTrips(tripsData.trips);
+      setTripsStats(tripsData.stats);
+      setDashboardStats({
+        activeTrips: tripsData.stats.totalTrips,
+        activeUsers: usersData.stats.activeUsers,
+        topCountries: tripsData.topCountries,
+      });
+
+      setUsers(usersData.users);
+      setUsersStats((prev) => ({
+        ...prev,
+        totalUsers: usersData.stats.totalUsers,
+        activeUsers: usersData.stats.activeUsers,
+      }));
+
+      const expData = (expResult.data ?? []) as AdminExperience[];
+      setExperiences(expData);
+
+      const categoryCounts: Record<string, number> = {};
+      expData.forEach((e) => {
+        categoryCounts[e.category] = (categoryCounts[e.category] || 0) + 1;
+      });
+      const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0];
+      setExperiencesStats({
+        totalExperiences: expData.length,
+        activeExperiences: expData.length,
+        pendingApproval: 0,
+        mostPopularCategory: topCategory ? topCategory[0] : '—',
+      });
+    } catch (err) {
+      console.error('Error fetching admin dashboard data:', err);
+      setError(err instanceof Error ? err.message : 'Error loading admin data');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function fetchDashboardData() {
-      try {
-        const { data: allTrips, error: tripsError } = await supabase
-          .from('trips')
-          .select('id, user_id, departure_country, destination_country, departure_date, arrival_date, budget');
-
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('*');
-
-        if (!tripsError && allTrips && allTrips.length > 0) {
-          const profileMap: Record<string, string> = {};
-          if (!profilesError && profilesData) {
-            for (const p of profilesData) {
-              profileMap[p.id] = p.full_name ?? `User ${p.id.slice(0, 8)}`;
-            }
-          }
-
-          const today = new Date().toISOString().split('T')[0];
-
-          const mappedTrips: AdminTrip[] = allTrips.map((t) => {
-            let status: AdminTrip['status'] = 'active';
-            if (t.departure_date > today) status = 'upcoming';
-            else if (t.arrival_date < today) status = 'completed';
-
-            return {
-              id: t.id,
-              travelerName: profileMap[t.user_id] ?? `User ${String(t.user_id).slice(0, 8)}`,
-              originCountry: t.departure_country ?? '',
-              destinationCountry: t.destination_country ?? '',
-              startDate: t.departure_date ?? '',
-              endDate: t.arrival_date ?? '',
-              budget: t.budget ?? 0,
-              status,
-            };
-          });
-
-          setTrips(mappedTrips);
-
-          const countryCount: Record<string, number> = {};
-          for (const trip of allTrips) {
-            const country = trip.destination_country;
-            if (country) countryCount[country] = (countryCount[country] || 0) + 1;
-          }
-
-          let topCountry = '';
-          let maxCount = 0;
-          for (const [country, count] of Object.entries(countryCount)) {
-            if (count > maxCount) { maxCount = count; topCountry = country; }
-          }
-
-          if (topCountry) {
-            setTripsStats((prev) => ({
-              ...prev,
-              totalTrips: allTrips.length,
-              topDestination: topCountry,
-            }));
-          }
-
-          const sortedCountries = Object.entries(countryCount)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, 5)
-            .map(([country, count], index) => ({ rank: index + 1, country, visitors: count }));
-
-          setDashboardStats((prev) => ({
-            ...prev,
-            activeTrips: allTrips.length,
-            topCountries: sortedCountries,
-          }));
-        }
-
-        if (!profilesError && profilesData) {
-          const travelerCount = profilesData.filter((p) => p.role !== 'admin').length;
-
-          setDashboardStats((prev) => ({ ...prev, activeUsers: travelerCount }));
-          setUsersStats((prev) => ({
-            ...prev,
-            totalUsers: profilesData.length,
-            activeUsers: travelerCount,
-          }));
-
-          const tripCountByUser: Record<string, number> = {};
-          if (!tripsError && allTrips) {
-            for (const trip of allTrips) {
-              tripCountByUser[trip.user_id] = (tripCountByUser[trip.user_id] || 0) + 1;
-            }
-          }
-
-          const mappedUsers: AdminUser[] = profilesData.map((p) => ({
-            id: p.id,
-            name: p.full_name ?? `User ${String(p.id).slice(0, 8)}`,
-            email: p.email ?? '',
-            avatar: p.avatar_url ?? `https://i.pravatar.cc/150?u=${p.id}`,
-            country: p.country ?? '',
-            joinDate: p.created_at ? p.created_at.slice(0, 10) : '',
-            tripCount: tripCountByUser[p.id] ?? 0,
-            status: (p.role === 'admin' ? 'active' : 'active') as AdminUser['status'],
-          }));
-
-          setUsers(mappedUsers);
-        }
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-      }
+    if (authLoading) return;
+    if (user?.role !== 'admin') {
+      setLoading(false);
+      return;
     }
+    loadAdminDashboardData();
+  }, [user, authLoading]);
 
-    fetchDashboardData();
-  }, []);
+  const toLines = (raw: string) =>
+    raw.split('\n').map((s) => s.trim()).filter(Boolean);
+
+  const createExperience = async (data: CreateExperienceFormData): Promise<void> => {
+    const categoryLabel =
+      CATEGORY_OPTIONS.find((opt) => opt.value === data.category)?.label ?? data.category;
+    await apiClient.post('/api/experiences', {
+      name: data.name,
+      country: data.country,
+      location: data.location,
+      category: categoryLabel,
+      image: data.imageUrl ?? '',
+      description: data.description,
+      duration: data.duration,
+      difficulty: data.difficulty,
+      eco: data.eco ?? '',
+      highlights: toLines(data.highlights ?? '').map((text) => ({ icon: 'Star', text })),
+      included: toLines(data.included ?? ''),
+      tips: toLines(data.tips ?? ''),
+    });
+  };
+
+  const searchTripsByCountry = async (country: string): Promise<TripResult[]> => {
+    const { data: rows, error } = await supabase
+      .from('trips')
+      .select('*')
+      .ilike('destination_country', country);
+    if (error || !rows?.length) return [];
+    const usersMap = new Map(users.map((u) => [u.id, { email: u.email, name: u.name }]));
+    return rows.map((t: {
+      id: string; user_id: string; destination_country: string;
+      departure_country: string; departure_date: string; arrival_date: string;
+    }) => ({
+      id: t.id,
+      user_id: t.user_id,
+      destination_country: t.destination_country ?? '',
+      departure_country: t.departure_country ?? '',
+      departure_date: t.departure_date ?? '',
+      arrival_date: t.arrival_date ?? '',
+      user_email: usersMap.get(t.user_id)?.email ?? t.user_id,
+      user_name: usersMap.get(t.user_id)?.name ?? 'Unknown User',
+    }));
+  };
 
   return (
-    <AdminContext.Provider 
-      value={{ 
-        trips, 
-        tripsStats, 
-        experiences, 
-        experiencesStats, 
-        users, 
+    <AdminContext.Provider
+      value={{
+        trips,
+        tripsStats,
+        experiences,
+        experiencesStats,
+        users,
         usersStats,
         dashboardStats,
+        loading,
+        error,
+        createExperience,
+        searchTripsByCountry,
       }}
     >
       {children}

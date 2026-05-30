@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import PageHeader from '@/components/PageHeader/PageHeader';
-
 import UserFilters from '@/components/admin/UserFilters/UserFilters';
 import UsersTable from '@/components/admin/UsersTable/UsersTable';
 import CreateExperienceModal from '@/components/admin/CreateExperienceModal/CreateExperienceModal';
 import SuccessModal from '@/components/admin/SuccessModal/SuccessModal';
 
 import { useAdmin } from '@/context/AdminProvider';
-import { mockCountryOptions, mockCategoryOptions } from '@/services/admin.mock';
+import { CATEGORY_OPTIONS } from '@/constants/experiences';
 
 import type { AdminUserFilters, CreateExperienceFormData } from '@/types/admin.types';
 
@@ -37,24 +36,16 @@ export default function AdminUsers() {
     }
   }, [outletContext?.isCreateModalRequested]);
 
-  const handleCreateSubmit = (data: CreateExperienceFormData) => {
+  const handleCreateSubmit = (_data: CreateExperienceFormData) => {
     setIsCreateModalOpen(false);
     setIsSuccessModalOpen(true);
   };
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-      user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
-      user.id.toLowerCase().includes(filters.search.toLowerCase());
-
-    const matchesCountry =
-      !filters.country || user.country.toLowerCase() === filters.country.toLowerCase();
-
-    const matchesStatus = !filters.status || user.status === filters.status;
-
-    return matchesSearch && matchesCountry && matchesStatus;
-  });
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+    user.email.toLowerCase().includes(filters.search.toLowerCase()) ||
+    user.id.toLowerCase().includes(filters.search.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col">
@@ -64,13 +55,8 @@ export default function AdminUsers() {
         className="mb-7"
       />
 
-      <div className="bg-[#F5F7FA] rounded-3xl p-1">
-        <UserFilters
-          filters={filters}
-          onFilterChange={setFilters}
-          countryOptions={mockCountryOptions}
-        />
-
+      <div className="px-4 lg:px-12">
+        <UserFilters filters={filters} onFilterChange={setFilters} />
         <UsersTable users={filteredUsers} />
       </div>
 
@@ -78,7 +64,7 @@ export default function AdminUsers() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}
-        categoryOptions={mockCategoryOptions}
+        categoryOptions={CATEGORY_OPTIONS}
       />
 
       <SuccessModal

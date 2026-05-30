@@ -9,6 +9,7 @@ interface TransactionItemProps {
   amount: number;
   showDivider?: boolean;
   onDelete?: () => void;
+  isDeleting?: boolean;
 }
 
 export default function TransactionItem({
@@ -18,6 +19,7 @@ export default function TransactionItem({
   amount,
   showDivider = false,
   onDelete,
+  isDeleting = false,
 }: TransactionItemProps) {
   return (
     <div>
@@ -36,7 +38,8 @@ export default function TransactionItem({
           {onDelete && (
             <button
               onClick={onDelete}
-              className="flex items-center justify-center rounded-full p-1.5 text-[#E53935]/50 hover:text-[#E53935] hover:bg-[#E53935]/10 transition-colors border-none bg-transparent cursor-pointer"
+              disabled={isDeleting}
+              className="flex items-center justify-center rounded-full p-1.5 text-[#E53935]/50 hover:text-[#E53935] hover:bg-[#E53935]/10 transition-colors border-none bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               title="Delete expense"
             >
               <Trash2 size={16} />

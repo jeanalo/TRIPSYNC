@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { useAuth } from './AuthProvider';
 import { useTrip } from './TripProvider';
 import { apiClient } from '../lib/apiClient';
+import { realtimeService } from '../services/realtime.service';
 import { groupByDate } from '../utils/dateUtils';
 import type { Expense, Activity } from '../types/travel.types';
 
@@ -78,6 +79,11 @@ const ExpenseActivityProvider = ({ children }: { children: React.ReactNode }) =>
     }
     loadExpensesAndActivities();
   }, [user?.id, tripId]);
+
+  useEffect(() => {
+    if (!tripId) return;
+    return realtimeService.subscribeToTrip(tripId, loadExpensesAndActivities);
+  }, [tripId]);
 
   const addExpense = async (expense: Omit<Expense, 'id'>) => {
     setIsCreating(true);

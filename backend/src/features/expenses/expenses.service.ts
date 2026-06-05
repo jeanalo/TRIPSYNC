@@ -70,6 +70,12 @@ export const getExpensesByTripService = async (tripId: string, userId: string): 
   }));
 };
 
+const broadcastTripChange = async (tripId: string): Promise<void> => {
+  const channel = supabase.channel(`trip:${tripId}`);
+  await channel.httpSend('trip-changed', { tripId });
+  supabase.removeChannel(channel);
+};
+
 export const createExpenseService = async (userId: string, data: CreateExpenseRequest): Promise<Expense> => {
   const id = crypto.randomUUID();
   const { data: inserted, error } = await supabase
@@ -87,16 +93,50 @@ export const createExpenseService = async (userId: string, data: CreateExpenseRe
     .single();
 
   if (error) throw error;
+  if (data.trip_id) broadcastTripChange(data.trip_id);
   return { ...inserted, amount: Number(inserted.amount) || 0 };
 };
 
+const assertTripAccess = async (tripId: string, userId: string): Promise<void> => {
+  const { data: trip } = await supabase
+    .from('trips')
+    .select('user_id')
+    .eq('id', tripId)
+    .maybeSingle();
+
+  if (trip?.user_id === userId) return;
+
+  const { data: member } = await supabase
+    .from('trip_members')
+    .select('id')
+    .eq('trip_id', tripId)
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (!member) throw Boom.forbidden('Access denied');
+};
+
 export const deleteExpenseService = async (id: string, userId: string): Promise<void> => {
+  const { data: expense, error: fetchError } = await supabase
+    .from('expenses')
+    .select('id, trip_id, user_id')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) throw fetchError;
+  if (!expense) throw Boom.notFound('Expense not found');
+
+  if (expense.user_id !== userId) {
+    if (!expense.trip_id) throw Boom.forbidden('Access denied');
+    await assertTripAccess(expense.trip_id, userId);
+  }
+
   const { error, count } = await supabase
     .from('expenses')
     .delete({ count: 'exact' })
-    .eq('id', id)
-    .eq('user_id', userId);
+    .eq('id', id);
 
   if (error) throw error;
   if ((count ?? 0) === 0) throw Boom.notFound('Expense not found');
+  if (expense.trip_id) broadcastTripChange(expense.trip_id);
 };

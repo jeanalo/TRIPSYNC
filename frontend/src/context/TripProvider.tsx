@@ -4,6 +4,7 @@ import { apiClient } from '../lib/apiClient';
 import { createInviteLink } from '../services/invites.service';
 import { fetchCountryByName, calculateTimeDifference } from '../services/api';
 import { generateJetLagRecommendations } from '../services/jetlag.service';
+import { realtimeService } from '../services/realtime.service';
 import type { TripDetails, JetLagPlan } from '../types/travel.types';
 
 interface BackendTrip {
@@ -49,6 +50,8 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
 
   const tripIdRef = useRef<string | null>(null);
   const isLoadedRef = useRef(false);
+  const hasPendingTripChangesRef = useRef(false);
+  const hasPendingJetLagChangesRef = useRef(false);
 
   const [tripId, setTripIdState] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -124,10 +127,12 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  // Sync trip details to backend
+  // Sync trip details to backend only when user makes a local change
   useEffect(() => {
     if (!isLoadedRef.current || !user?.id) return;
+    if (!hasPendingTripChangesRef.current) return;
     if (!tripDetails.departureCountry && !tripDetails.destinationCountry) return;
+    hasPendingTripChangesRef.current = false;
     syncTripDetailsToBackend();
   }, [tripDetails, user?.id]);
 
@@ -147,11 +152,19 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  // Sync jet lag plan to backend
+  // Sync jet lag plan to backend only when user makes a local change
   useEffect(() => {
     if (!isLoadedRef.current || !user?.id || !tripIdRef.current) return;
+    if (!hasPendingJetLagChangesRef.current) return;
+    hasPendingJetLagChangesRef.current = false;
     syncJetLagPlanToBackend();
   }, [jetLagPlan, user?.id]);
+
+  // Subscribe to realtime trip changes from other collaborators
+  useEffect(() => {
+    if (!tripId) return;
+    return realtimeService.subscribeToTrip(tripId, loadUserTrip);
+  }, [tripId]);
 
   useEffect(() => {
     if (user?.email) {
@@ -159,8 +172,15 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [activeCity, user?.email]);
 
-  const setTripDetails = (details: TripDetails) => setTripDetailsState(details);
-  const setJetLagPlan = (plan: JetLagPlan | null) => setJetLagPlanState(plan);
+  const setTripDetails = (details: TripDetails) => {
+    hasPendingTripChangesRef.current = true;
+    setTripDetailsState(details);
+  };
+
+  const setJetLagPlan = (plan: JetLagPlan | null) => {
+    hasPendingJetLagChangesRef.current = true;
+    setJetLagPlanState(plan);
+  };
 
   const shareTrip = async (): Promise<string> => {
     if (!tripIdRef.current) throw new Error('Set up your trip first before sharing it.');
@@ -182,6 +202,7 @@ const TripProvider = ({ children }: { children: React.ReactNode }) => {
       timeDiff,
       destinationName: destination?.name || 'destination',
     });
+    hasPendingJetLagChangesRef.current = true;
     setJetLagPlanState({ departureTime, arrivalTime, recommendations: recs });
   };
 

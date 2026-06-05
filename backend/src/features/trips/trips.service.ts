@@ -1,5 +1,12 @@
+import Boom from '@hapi/boom';
 import { supabase } from '../../config/supabase';
 import { Trip, UpsertTripRequest } from './trips.types';
+
+const broadcastTripChange = async (tripId: string): Promise<void> => {
+  const channel = supabase.channel(`trip:${tripId}`);
+  await channel.httpSend('trip-changed', { tripId });
+  supabase.removeChannel(channel);
+};
 
 export const getTripByUserService = async (userId: string): Promise<Trip | null> => {
   
@@ -77,6 +84,28 @@ export const getTripByUserService = async (userId: string): Promise<Trip | null>
 
 export const upsertTripService = async (userId: string, data: UpsertTripRequest): Promise<Trip> => {
   if (data.id) {
+    const { data: trip, error: tripError } = await supabase
+      .from('trips')
+      .select('id, user_id')
+      .eq('id', data.id)
+      .maybeSingle();
+
+    if (tripError) throw tripError;
+    if (!trip) throw Boom.notFound('Trip not found');
+
+    const isOwner = trip.user_id === userId;
+    if (!isOwner) {
+      const { data: member, error: memberError } = await supabase
+        .from('trip_members')
+        .select('id')
+        .eq('trip_id', data.id)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (memberError) throw memberError;
+      if (!member) throw Boom.forbidden('Access denied to this trip');
+    }
+
     const { data: updated, error } = await supabase
       .from('trips')
       .update({
@@ -88,11 +117,11 @@ export const upsertTripService = async (userId: string, data: UpsertTripRequest)
         ...(data.jet_lag_plan !== undefined ? { jet_lag_plan: data.jet_lag_plan } : {}),
       })
       .eq('id', data.id)
-      .eq('user_id', userId)
       .select()
       .single();
 
     if (error) throw error;
+    broadcastTripChange(data.id);
     return { ...updated, budget: Number(updated.budget) || 0 };
   }
 

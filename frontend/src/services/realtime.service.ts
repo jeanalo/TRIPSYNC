@@ -5,6 +5,8 @@ import type { RealtimeRecommendationPayload } from '@/types/realtime.types';
 class RealtimeService {
   private channel: RealtimeChannel | null = null;
   private tripChannel: RealtimeChannel | null = null;
+  private currentTripId: string | null = null;
+  private tripCallbacks: Set<() => void> = new Set();
 
   public subscribe(
     country: string,
@@ -30,23 +32,37 @@ class RealtimeService {
   }
 
   public subscribeToTrip(tripId: string, onChanged: () => void): () => void {
-    this.unsubscribeFromTrip();
+    if (this.currentTripId !== tripId) {
+      this._teardownTripChannel();
+      this.currentTripId = tripId;
+    }
 
-    this.tripChannel = supabase
-      .channel(`trip:${tripId}`)
-      .on('broadcast', { event: 'trip-changed' }, () => {
-        onChanged();
-      })
-      .subscribe();
+    this.tripCallbacks.add(onChanged);
 
-    return () => this.unsubscribeFromTrip();
+    if (!this.tripChannel) {
+      this.tripChannel = supabase
+        .channel(`trip:${tripId}`)
+        .on('broadcast', { event: 'trip-changed' }, () => {
+          this.tripCallbacks.forEach((cb) => cb());
+        })
+        .subscribe();
+    }
+
+    return () => {
+      this.tripCallbacks.delete(onChanged);
+      if (this.tripCallbacks.size === 0) {
+        this._teardownTripChannel();
+      }
+    };
   }
 
-  public unsubscribeFromTrip(): void {
+  private _teardownTripChannel(): void {
     if (this.tripChannel) {
       supabase.removeChannel(this.tripChannel);
       this.tripChannel = null;
     }
+    this.currentTripId = null;
+    this.tripCallbacks.clear();
   }
 }
 

@@ -74,6 +74,12 @@ export const getActivitiesByTripService = async (tripId: string, userId: string)
   }));
 };
 
+const broadcastTripChange = async (tripId: string): Promise<void> => {
+  const channel = supabase.channel(`trip:${tripId}`);
+  await channel.httpSend('trip-changed', { tripId });
+  supabase.removeChannel(channel);
+};
+
 export const createActivityService = async (userId: string, data: CreateActivityRequest): Promise<Activity> => {
   const id = crypto.randomUUID();
   const { data: inserted, error } = await supabase
@@ -93,10 +99,44 @@ export const createActivityService = async (userId: string, data: CreateActivity
     .single();
 
   if (error) throw error;
+  if (data.trip_id) broadcastTripChange(data.trip_id);
   return inserted;
 };
 
+const assertTripAccess = async (tripId: string, userId: string): Promise<void> => {
+  const { data: trip } = await supabase
+    .from('trips')
+    .select('user_id')
+    .eq('id', tripId)
+    .maybeSingle();
+
+  if (trip?.user_id === userId) return;
+
+  const { data: member } = await supabase
+    .from('trip_members')
+    .select('id')
+    .eq('trip_id', tripId)
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (!member) throw Boom.forbidden('Access denied');
+};
+
 export const updateActivityService = async (id: string, userId: string, data: CreateActivityRequest): Promise<Activity> => {
+  const { data: activity, error: fetchError } = await supabase
+    .from('activities')
+    .select('id, trip_id, user_id')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) throw fetchError;
+  if (!activity) throw Boom.notFound('Activity not found');
+
+  if (activity.user_id !== userId) {
+    if (!activity.trip_id) throw Boom.forbidden('Access denied');
+    await assertTripAccess(activity.trip_id, userId);
+  }
+
   const { data: updated, error } = await supabase
     .from('activities')
     .update({
@@ -108,22 +148,36 @@ export const updateActivityService = async (id: string, userId: string, data: Cr
       notes: data.notes ?? '',
     })
     .eq('id', id)
-    .eq('user_id', userId)
     .select()
     .single();
 
   if (error) throw error;
   if (!updated) throw Boom.notFound('Activity not found');
+  if (activity.trip_id) broadcastTripChange(activity.trip_id);
   return updated;
 };
 
 export const deleteActivityService = async (id: string, userId: string): Promise<void> => {
+  const { data: activity, error: fetchError } = await supabase
+    .from('activities')
+    .select('id, trip_id, user_id')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) throw fetchError;
+  if (!activity) throw Boom.notFound('Activity not found');
+
+  if (activity.user_id !== userId) {
+    if (!activity.trip_id) throw Boom.forbidden('Access denied');
+    await assertTripAccess(activity.trip_id, userId);
+  }
+
   const { error, count } = await supabase
     .from('activities')
     .delete({ count: 'exact' })
-    .eq('id', id)
-    .eq('user_id', userId);
+    .eq('id', id);
 
   if (error) throw error;
   if ((count ?? 0) === 0) throw Boom.notFound('Activity not found');
+  if (activity.trip_id) broadcastTripChange(activity.trip_id);
 };

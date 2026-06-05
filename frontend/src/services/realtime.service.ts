@@ -4,6 +4,7 @@ import type { RealtimeRecommendationPayload } from '@/types/realtime.types';
 
 class RealtimeService {
   private channel: RealtimeChannel | null = null;
+  private tripChannel: RealtimeChannel | null = null;
 
   public subscribe(
     country: string,
@@ -25,6 +26,26 @@ class RealtimeService {
     if (this.channel) {
       supabase.removeChannel(this.channel);
       this.channel = null;
+    }
+  }
+
+  public subscribeToTrip(tripId: string, onChanged: () => void): () => void {
+    this.unsubscribeFromTrip();
+
+    this.tripChannel = supabase
+      .channel(`trip:${tripId}`)
+      .on('broadcast', { event: 'trip-changed' }, () => {
+        onChanged();
+      })
+      .subscribe();
+
+    return () => this.unsubscribeFromTrip();
+  }
+
+  public unsubscribeFromTrip(): void {
+    if (this.tripChannel) {
+      supabase.removeChannel(this.tripChannel);
+      this.tripChannel = null;
     }
   }
 }

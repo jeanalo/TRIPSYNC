@@ -18,7 +18,15 @@ export const registerService = async (email: string, password: string, name: str
     options: { data: { full_name: name, role } },
   });
   if (error) throw Boom.badRequest(error.message);
-  if (!data.session) throw Boom.badRequest('Email verification required');
+  if (!data.session || !data.user) throw Boom.badRequest('Email verification required');
+
+  await supabase.from('profiles').upsert({
+    id: data.user.id,
+    email,
+    name,
+    role,
+  });
+
   return {
     session: {
       access_token: data.session.access_token,
@@ -26,8 +34,8 @@ export const registerService = async (email: string, password: string, name: str
       expires_at: data.session.expires_at,
     },
     user: {
-      id: data.user?.id,
-      email: data.user?.email,
+      id: data.user.id,
+      email: data.user.email,
       name,
       role,
     },
